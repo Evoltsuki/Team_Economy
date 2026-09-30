@@ -1,0 +1,27 @@
+{
+  "name": "Food and your budget",
+  "icon": "minecraft:bread",
+  "category": "teamecon:basics",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Food and your budget",
+      "images": [
+        "teamecon:textures/gui/guide/economy.png"
+      ],
+      "border": false,
+      "text": "Keep a food supply; shop for emergencies."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Default retail floors per item: potato 8, raw meat 16, bread/baked potato 24, steak/cooked porkchop 32. Server settings can raise these.$(br2)Your initial 200 points buys only six steaks. Farming, breeding and cooking remain useful."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Sell spare materials; keep what you need for tools and gear. Selling varied resources usually works better than repeatedly selling one material.$(br2)Machine purchases, upgrades and stakes are separate expenses. Budget for all three."
+    }
+  ]
+}

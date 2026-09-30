@@ -1,0 +1,27 @@
+{
+  "name": "食物與升級預算",
+  "icon": "minecraft:bread",
+  "category": "teamecon:basics",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "食物與升級預算",
+      "images": [
+        "teamecon:textures/gui/guide/economy.png"
+      ],
+      "border": false,
+      "text": "保留自己的食物來源，商店用來應急。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "預設單個購買底價：土豆 8，生肉 16，麵包／烤土豆 24，牛排／熟豬排 32 點。實際價格還受伺服器配置影響。$(br2)起始 200 點只夠買 6 塊牛排。種植、養殖和烹飪仍然划算。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "優先賣多餘材料，不必賣掉做工具和升級裝備所需的資源。不同材料搭配出售，通常比反覆賣一種材料更合適。$(br2)機器價格、升級費用和遊玩金額是三筆開銷，買機器前先留好預算。"
+    }
+  ]
+}

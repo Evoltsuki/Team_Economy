@@ -1,0 +1,37 @@
+{
+  "name": "Red & Black Roulette",
+  "icon": "teamecon:roulette_table",
+  "category": "teamecon:machines",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Red & Black Roulette",
+      "images": [
+        "teamecon:textures/gui/guide/roulette.png"
+      ],
+      "border": false,
+      "text": "Select red, black or green zero directly."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "How to play",
+      "text": "Choose red, black or green zero at the low controls, or right-click a numbered pocket. Set your stake and Start. The settled ball determines the result.$(br2)The terminal also offers odd/even and 1–18 / 19–36. Zero loses all outside bets."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Event probabilities",
+      "text": "37 equally likely pockets: 18 red, 18 black and one green zero.$(br2)Outside bets: 18/37 (about 48.65%), paying ×2.$(br2)Any straight number, including zero: 1/37 (about 2.70%), paying ×32."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Requirements",
+      "text": "Default Lv.4; initial stake cap 100,000. Wallet upgrades can raise it.$(br2)The result settles automatically once.$(br2)Payouts include the stake. Server rules may differ; check the live interface."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:roulette_table",
+      "text": "Craft, then right-click to use. Machines still require the matching wallet level."
+    }
+  ]
+}

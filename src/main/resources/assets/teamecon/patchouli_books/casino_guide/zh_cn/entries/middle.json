@@ -1,0 +1,22 @@
+{
+  "name": "中阶卡",
+  "icon": "teamecon:scratch_card_fruit",
+  "category": "teamecon:tickets",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "中阶卡",
+      "images": [
+        "teamecon:textures/gui/guide/middle.png"
+      ],
+      "border": false,
+      "text": "水果连线、幸运七与宝石寻踪。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "水果 50、幸运七 100（Lv.2）；宝石 250 点（Lv.3）。$(br2)购卡时可提高票面倍数，奖金同比提高。票面上限随钱包等级增长；具体奖级见卡片。刮开后自动入账。"
+    }
+  ]
+}

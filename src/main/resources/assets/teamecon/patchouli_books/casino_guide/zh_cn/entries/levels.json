@@ -1,0 +1,32 @@
+{
+  "name": "钱包与设备等级",
+  "icon": "minecraft:experience_bottle",
+  "category": "teamecon:basics",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "钱包与设备等级",
+      "images": [
+        "teamecon:textures/gui/guide/levels.png"
+      ],
+      "border": false,
+      "text": "逐级开放六种机器，机器需另外购买。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "队友共享设备等级，退队恢复个人等级。升级需逐级支付：$(br)Lv.2：1,200 点$(br)Lv.3：10,000 点$(br)Lv.4：50,000 点$(br)Lv.5：200,000 点$(br2)升级解锁使用权限，机器需另外合成或购买。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "各机器刚解锁时的下注上限：猜大小 2,000、跳冰 10,000、幸运转盘 50,000、黑红轮盘 100,000、老虎与倍率机 200,000。$(br2)钱包高出解锁等级 1/2/3/4 级时，上限变为 ×2/5/10/25，仍受服务器总上限限制。早期机器后期仍可用。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "无线终端默认需要 Lv.5、完成「解放末地」，并支付 100,000 点。刮卡可提高票面倍数，最高票面随钱包等级提高。"
+    }
+  ]
+}

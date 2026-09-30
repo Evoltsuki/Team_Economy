@@ -1,0 +1,32 @@
+{
+  "name": "Wallets and levels",
+  "icon": "minecraft:experience_bottle",
+  "category": "teamecon:basics",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Wallets and levels",
+      "images": [
+        "teamecon:textures/gui/guide/levels.png"
+      ],
+      "border": false,
+      "text": "Unlock the machines one level at a time."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Team members share machine levels; leaving restores your personal level. Upgrade costs:$(br)Lv.2: 1,200$(br)Lv.3: 10,000$(br)Lv.4: 50,000$(br)Lv.5: 200,000$(br2)Levels unlock access; machines are crafted or purchased separately."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Initial stake limits: High/Low 2,000; Slime Hop 10,000; Lucky Wheel 50,000; Roulette 100,000; Slots/Crash 200,000.$(br2)Being 1/2/3/4 levels above unlock raises the limit by ×2/5/10/25, within the server cap. Earlier machines remain useful."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "The terminal requires Lv.5, Free the End and 100,000 points by default. Ticket stake factors increase their face value, within a limit that grows with wallet level."
+    }
+  ]
+}

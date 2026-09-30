@@ -1,0 +1,37 @@
+{
+  "name": "商店与批量回收",
+  "icon": "teamecon:shop_machine",
+  "category": "teamecon:basics",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "商店与批量回收",
+      "images": [
+        "teamecon:textures/gui/guide/economy.png"
+      ],
+      "border": false,
+      "text": "把多余物资转化为点数。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "商店分为物品、出售、机器、刮卡、升级五页。按类型图标筛选，输入名称、ID 或 #标签搜索，滚轮或箭头翻页。$(br2)购买后直接进入背包。背包放不下时不会扣费。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "出售页有 27 格待售区，Shift 点击快速放入。核对总报价后点「出售全部」。关闭时，未售物品退回。$(br2)相同材料共享需求，反复出售会降价。拆成小堆或压成方块不会增加收入，小数结余会保留。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "只交易原版物品及专用目录中的本模组设备。附魔以实体附魔书交付。$(br2)关键战利品保留探索获取，其他高阶商品需要进度条件。购买价高于回收价，适合补缺和建造，不适合倒卖。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:shop_machine",
+      "text": "也可以在生存模式按此配方合成。"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "制作与声明",
+  "icon": "teamecon:guide_book",
+  "category": "teamecon:basics",
+  "sortnum": 9,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "制作与声明",
+      "images": [
+        "teamecon:textures/gui/guide/welcome.png"
+      ],
+      "border": false,
+      "text": "Team Economy · 制作：洁柔厨"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "制作与玩法设计：洁柔厨。代码与素材制作使用了 AI 辅助工具。$(br2)本模组是非官方 Minecraft 项目，与 Mojang 或 Microsoft 无隶属关系。原版素材及依赖归各权利人所有。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "所有点数仅用于游戏内玩法，没有现实货币价值。本项目保留权利，具体使用范围见发布包 LICENSE。$(br2)感谢游玩！欢迎反馈有趣的玩法片段、平衡体验和问题。"
+    }
+  ]
+}

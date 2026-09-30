@@ -1,0 +1,27 @@
+{
+  "name": "刮卡玩法",
+  "icon": "teamecon:scratch_card_match",
+  "category": "teamecon:tickets",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "刮卡玩法",
+      "images": [
+        "teamecon:textures/gui/guide/tickets.png"
+      ],
+      "border": false,
+      "text": "购卡后拿在主手，左键打开并拖动刮取。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "从商店或终端买到实体卡，放主手$(bold)左键$()打开，按住左键拖动刮开全部银层。完成后自动兑奖，无需按钮。$(br2)购买时已确定奖项；关闭重开不会重抽。可以转交他人，由实际持卡者完成刮取后收款。每张序列只支付一次。$(br2)可选择票面倍数；奖金也同比放大，概率不变。Lv.1–5 单张票面上限为 100 / 1,000 / 10,000 / 100,000 / 250,000 点。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "数字卡：匹配幸运数字。骰子卡：同一对相加为 7。水果卡：一行三个相同水果。幸运七：找到 7。$(br2)宝石卡：至少 3 颗钻石。宾果：金币横、竖、斜连线。密码卡：匹配三位密码。皇冠卡：至少 3 顶皇冠，7 顶获得 ×500。"
+    }
+  ]
+}

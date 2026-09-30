@@ -1,0 +1,37 @@
+{
+  "name": "老虎机",
+  "icon": "teamecon:slot_machine",
+  "category": "teamecon:machines",
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "老虎机",
+      "images": [
+        "teamecon:textures/gui/guide/slots.png"
+      ],
+      "border": false,
+      "text": "任意对子 ×1.2；三钻石 ×200。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "操作与概率",
+      "text": "每个转轴独立抽取：樱桃 25%、柠檬 25%、橙子 20%、铃铛 15%、星星 10%、钻石 5%。$(br2)任意位置两个相同图案均奖励 ×1.2。三个相同时按三连奖励，仅支付最高一项。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "中奖组合",
+      "text": "三连奖励：$(br)樱桃 ×3；柠檬 ×4；橙子 ×7$(br)铃铛 ×16；星星 ×40；钻石 ×200$(br2)默认中奖概率合计 51.25%。三钻石概率 0.0125%（约八千分之一）。每局独立，连输不会提高下次概率。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "使用条件",
+      "text": "默认 Lv.5，初始单注上限 200,000 点。钱包升级可提高上限。$(br2)结果确定后自动结算一次。$(br2)倍率包含本金。服主可修改规则，以当前界面为准。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:slot_machine",
+      "text": "合成后右键使用。游戏机仍需对应钱包等级。"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "Team wallets",
+  "icon": "minecraft:emerald",
+  "category": "teamecon:basics",
+  "sortnum": 6,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Team wallets",
+      "images": [
+        "teamecon:textures/gui/guide/levels.png"
+      ],
+      "border": false,
+      "text": "Save points together with teammates."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "With FTB Teams, members share a wallet and machine level. Without it, wallets are personal. Leaving restores your previous personal level.$(br2)The small right-hand board shows the team, balance and member earnings. Grey names are offline; larger teams rotate pages."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Member net income includes recycling, game prizes, stakes, shopping, upgrades and boxes. Spending lowers the number, which may be negative.$(br2)Admin balance overrides are excluded. Old saves may lack full refund details. Advancement checks still apply to the acting player."
+    }
+  ]
+}

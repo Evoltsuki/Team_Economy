@@ -1,0 +1,37 @@
+{
+  "name": "Shop and bulk recycling",
+  "icon": "teamecon:shop_machine",
+  "category": "teamecon:basics",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Shop and bulk recycling",
+      "images": [
+        "teamecon:textures/gui/guide/economy.png"
+      ],
+      "border": false,
+      "text": "Turn spare supplies into points."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Five shop tabs: Items, Sell, Machines, Tickets and Levels. Filter by type, search names, IDs or #tags, and scroll or use arrows to browse.$(br2)Purchases go into your inventory. Insufficient space prevents charging."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "The Sell tab holds 27 stacks. Shift-click to deposit, review the total and sell all. Unsold items return on closing.$(br2)Related materials share demand decay. Splitting stacks or compressing blocks does not increase income. Fractional proceeds carry forward."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Trading supports vanilla goods and this mod’s dedicated equipment catalog. Enchants arrive as books.$(br2)Key loot remains exploration-only; other advanced goods require progress. Retail costs exceed resale values: use the shop for supplies and building."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:shop_machine",
+      "text": "You can craft this item in survival using this recipe."
+    }
+  ]
+}

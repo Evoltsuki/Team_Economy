@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "teamecon:blind_box_machine",
+    "teamecon:color_wheel_table",
+    "teamecon:hilo_table",
+    "teamecon:machine_part",
+    "teamecon:multiplier_machine",
+    "teamecon:penguin_machine",
+    "teamecon:roulette_table",
+    "teamecon:scratch_table",
+    "teamecon:shop_machine",
+    "teamecon:slot_machine"
+  ]
+}

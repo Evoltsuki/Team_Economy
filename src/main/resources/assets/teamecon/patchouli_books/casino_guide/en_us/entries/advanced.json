@@ -1,0 +1,22 @@
+{
+  "name": "Advanced cards",
+  "icon": "teamecon:scratch_card_vault",
+  "category": "teamecon:tickets",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Advanced cards",
+      "images": [
+        "teamecon:textures/gui/guide/advanced.png"
+      ],
+      "border": false,
+      "text": "Coin Bingo and Code Vault."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Bingo 500, Vault 1,000; Lv.4.$(br2)A higher stake factor scales both price and prize. Face-value limits grow with wallet level. Prize tiers appear on each card; scratching settles automatically."
+    }
+  ]
+}

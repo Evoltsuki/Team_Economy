@@ -1,0 +1,27 @@
+{
+  "name": "食物与升级预算",
+  "icon": "minecraft:bread",
+  "category": "teamecon:basics",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "食物与升级预算",
+      "images": [
+        "teamecon:textures/gui/guide/economy.png"
+      ],
+      "border": false,
+      "text": "保留自己的食物来源，商店用来应急。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "默认单个购买底价：土豆 8，生肉 16，面包／烤土豆 24，牛排／熟猪排 32 点。实际价格还受服务器配置影响。$(br2)起始 200 点只够买 6 块牛排。种植、养殖和烹饪仍然划算。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "优先卖多余材料，不必卖掉做工具和升级装备所需的资源。不同材料搭配出售，通常比反复卖一种材料更合适。$(br2)机器价格、升级费用和游玩金额是三笔开销，买机器前先留好预算。"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "無線終端",
+  "icon": "teamecon:terminal",
+  "category": "teamecon:basics",
+  "sortnum": 7,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "無線終端",
+      "images": [
+        "teamecon:textures/gui/guide/controls.png"
+      ],
+      "border": false,
+      "text": "後期把常用功能帶在身上。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "預設需要 Lv.5、完成「解放末地」，並花費 100,000 點兌換。終端不能合成。$(br2)右鍵開啟首頁，可進入商店、回收、升級和遠端小遊戲。盲盒仍需使用獨立盲盒機。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "終端轉交他人後，使用者仍需滿足許可權。遠端小遊戲同樣扣除錢包點數。$(br2)倍率競猜關閉介面不會暫停；若想拿回當前獎勵，需在崩盤前主動提取。"
+    }
+  ]
+}

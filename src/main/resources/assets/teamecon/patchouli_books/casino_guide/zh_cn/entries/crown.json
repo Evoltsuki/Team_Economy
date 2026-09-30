@@ -1,0 +1,22 @@
+{
+  "name": "皇冠大奖",
+  "icon": "teamecon:scratch_card_crown",
+  "category": "teamecon:tickets",
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "皇冠大奖",
+      "images": [
+        "teamecon:textures/gui/guide/crown.png"
+      ],
+      "border": false,
+      "text": "皇冠越多，对应的奖级越高。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "皇冠 2,500 点；Lv.5。7 顶皇冠最高 ×500。$(br2)购卡时可提高票面倍数，奖金同比提高。票面上限随钱包等级增长；具体奖级见卡片。刮开后自动入账。"
+    }
+  ]
+}

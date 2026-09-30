@@ -1,0 +1,37 @@
+{
+  "name": "第一天怎么开始",
+  "icon": "teamecon:guide_book",
+  "category": "teamecon:basics",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "第一天怎么开始",
+      "images": [
+        "teamecon:textures/gui/guide/welcome.png"
+      ],
+      "border": false,
+      "text": "一本书＋一块铁锭，也能合成这本指南。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "首次进入获赠指南，安装帕秋莉手册后右键阅读。全新个人开局领取 200 点，已有钱包不补发，换队不会重复领取。$(br2)还没造商店？输入 $(thing)/teamecon shop$() 即可打开商店。保留工具和食物，将余料放入「出售」页，核对报价后出售。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Lv.2 升级费为 1,200 点；史莱姆机器另需 1,500 点，也可按本书配方合成。全部用点数购买，至少先攒 2,700 点，并另留游玩预算。$(br2)小游戏会损失点数，升级不要求中奖。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "奖励倍数包含本金：下注 100，奖励 ×2，入账 200，净赚 100。没有中奖则入账 0。$(br2)书中列出默认规则；实际金额、权限与上限以当前服务器界面为准。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:guide_book",
+      "text": "也可以在生存模式按此配方合成。"
+    }
+  ]
+}

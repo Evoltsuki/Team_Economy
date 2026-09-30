@@ -1,0 +1,27 @@
+{
+  "name": "隊伍錢包",
+  "icon": "minecraft:emerald",
+  "category": "teamecon:basics",
+  "sortnum": 6,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "隊伍錢包",
+      "images": [
+        "teamecon:textures/gui/guide/levels.png"
+      ],
+      "border": false,
+      "text": "和隊友一起積攢點數。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "安裝 FTB Teams 後，隊員共享錢包和裝置等級；未安裝時各自獨立。退隊恢復原個人等級。$(br2)右側小欄顯示隊名、餘額和成員淨賺；灰色名字表示離線，人多時自動翻頁。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "成員淨收支包括回收、遊戲獎勵、下注、購物、升級與盲盒扣款。支出會讓榜單數字下降，也可能為負。$(br2)管理員直接設定餘額不算經營收入；歷史退款在舊檔中可能缺少完整明細。進度許可權仍按操作玩家檢查。"
+    }
+  ]
+}

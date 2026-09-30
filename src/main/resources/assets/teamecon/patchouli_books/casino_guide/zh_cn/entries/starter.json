@@ -1,0 +1,22 @@
+{
+  "name": "入门卡",
+  "icon": "teamecon:scratch_card_match",
+  "category": "teamecon:tickets",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "入门卡",
+      "images": [
+        "teamecon:textures/gui/guide/starter.png"
+      ],
+      "border": false,
+      "text": "幸运数字与骰子凑七。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "数字 10 点、骰子 25 点；Lv.1。$(br2)购卡时可提高票面倍数，奖金同比提高。票面上限随钱包等级增长；具体奖级见卡片。刮开后自动入账。"
+    }
+  ]
+}

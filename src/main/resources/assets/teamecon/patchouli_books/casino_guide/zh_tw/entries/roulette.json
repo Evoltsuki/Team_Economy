@@ -1,0 +1,37 @@
+{
+  "name": "黑紅輪盤",
+  "icon": "teamecon:roulette_table",
+  "category": "teamecon:machines",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "黑紅輪盤",
+      "images": [
+        "teamecon:textures/gui/guide/roulette.png"
+      ],
+      "border": false,
+      "text": "直接選擇紅、黑或綠色 0。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "操作與結算",
+      "text": "站在低臺前，選擇紅、黑或綠 0；也可右鍵輪面數字押單號。設定本金後點選開始，滾珠停穩即結算。$(br2)終端還可選奇偶、1–18 或 19–36。綠色 0 不屬於任何外圍下注。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "事件機率",
+      "text": "37 格等機率：18 紅、18 黑、一個綠 0。$(br2)紅黑／奇偶／大小區間：18/37，約 48.65%，預設 ×2。$(br2)任一單號（含綠 0）：1/37，約 2.70%，預設 ×32。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "使用條件",
+      "text": "預設 Lv.4，初始單註上限 100,000 點。錢包升級可提高上限。$(br2)結果確定後自動結算一次。$(br2)倍率包含本金。服主可修改規則，以當前介面為準。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:roulette_table",
+      "text": "合成後右鍵使用。遊戲機仍需對應錢包等級。"
+    }
+  ]
+}

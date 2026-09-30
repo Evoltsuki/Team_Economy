@@ -1,0 +1,22 @@
+{
+  "name": "Mid-tier cards",
+  "icon": "teamecon:scratch_card_fruit",
+  "category": "teamecon:tickets",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Mid-tier cards",
+      "images": [
+        "teamecon:textures/gui/guide/middle.png"
+      ],
+      "border": false,
+      "text": "Fruit Match, Lucky Sevens and Gem Hunt."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Fruit 50, Sevens 100 (Lv.2); Gems 250 (Lv.3).$(br2)A higher stake factor scales both price and prize. Face-value limits grow with wallet level. Prize tiers appear on each card; scratching settles automatically."
+    }
+  ]
+}

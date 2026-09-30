@@ -1,0 +1,37 @@
+{
+  "name": "倍率竞猜机",
+  "icon": "teamecon:multiplier_machine",
+  "category": "teamecon:machines",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "倍率竞猜机",
+      "images": [
+        "teamecon:textures/gui/guide/multiplier.png"
+      ],
+      "border": false,
+      "text": "曲线为玩法示意，崩盘时间每局不同。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "操作与结算",
+      "text": "下注后从 ×1 持续上涨，越往后增长越快。崩盘前点击提取，按服务器收到操作时的倍率结算。$(br2)崩盘后本金及未提取收益全部归零。走势图只显示已经发生的变化，不能预测结果。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "事件概率",
+      "text": "默认约 20.32% 的开局立即崩盘。存活到 ×2 约 39.8%，×10 约 7.97%，×100 约 0.159%。$(br2)高倍率越难遇到；这些是从开局到目标倍率的概率，实际按服务器游戏刻结算。每局独立，没有安全提取时刻或保底。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "使用条件",
+      "text": "默认 Lv.5，初始单注上限 200,000 点。钱包升级可提高上限。$(br2)关闭界面、离开机器或断线不会暂停或自动提取。存活到 ×1,000 自动提取。$(br2)倍率包含本金。服主可修改规则，以当前界面为准。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:multiplier_machine",
+      "text": "合成后右键使用。游戏机仍需对应钱包等级。"
+    }
+  ]
+}

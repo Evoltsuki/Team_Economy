@@ -1,0 +1,22 @@
+{
+  "name": "Starter cards",
+  "icon": "teamecon:scratch_card_match",
+  "category": "teamecon:tickets",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Starter cards",
+      "images": [
+        "teamecon:textures/gui/guide/starter.png"
+      ],
+      "border": false,
+      "text": "Lucky Numbers and Lucky Dice."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Numbers 10, Dice 25; Lv.1.$(br2)A higher stake factor scales both price and prize. Face-value limits grow with wallet level. Prize tiers appear on each card; scratching settles automatically."
+    }
+  ]
+}

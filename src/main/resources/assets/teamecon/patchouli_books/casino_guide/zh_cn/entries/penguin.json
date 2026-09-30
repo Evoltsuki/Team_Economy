@@ -1,0 +1,37 @@
+{
+  "name": "史莱姆跳冰",
+  "icon": "teamecon:penguin_machine",
+  "category": "teamecon:machines",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "史莱姆跳冰",
+      "images": [
+        "teamecon:textures/gui/guide/penguin.png"
+      ],
+      "border": false,
+      "text": "每次前进一层，踏空则结束本局。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "操作与结算",
+      "text": "一局只扣一次本金。点击开始跳一层，落稳后可继续或提取；踏空后冰块碎裂，整局归零。$(br2)第 1–10 层总倍率：$(br)1.2、1.5、2、2.75、4、6、10、16、25、40。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "事件概率",
+      "text": "到达第 1–5 层的单步成功概率：$(br)80%、75%、70.588%、66.667%、63.158%。$(br2)第 6–10 层：$(br)60%、57.143%、54.545%、52.174%、50%。$(br2)这是已到上一层后的单步概率，并非从开局连跳到该层的概率。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "使用条件",
+      "text": "默认 Lv.2，初始单注上限 10,000 点。钱包升级可提高上限。$(br2)最高 ×40，到达后提取。离开机器、断线或卸载区块会自动结算已完成的跳跃。$(br2)倍率包含本金。服主可修改规则，以当前界面为准。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:penguin_machine",
+      "text": "合成后右键使用。游戏机仍需对应钱包等级。"
+    }
+  ]
+}

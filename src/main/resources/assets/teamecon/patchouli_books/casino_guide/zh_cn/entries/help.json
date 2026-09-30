@@ -1,0 +1,27 @@
+{
+  "name": "常见问题",
+  "icon": "teamecon:guide_book",
+  "category": "teamecon:basics",
+  "sortnum": 8,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "常见问题",
+      "images": [
+        "teamecon:textures/gui/guide/welcome.png"
+      ],
+      "border": false,
+      "text": "卡住时，从这里找答案。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "打不开指南？确认安装了适用于 1.21.1 NeoForge 的 Patchouli。物品买不了？看商品详情中的条件。盲盒不能开？检查余额与背包空位。$(br2)升级后机器仍需单独获取；拿到机器也不代表已经解锁使用权限。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "回收比上次便宜？同类材料需求在下降，换其他材料或等待恢复。切换语言后，本书和界面会使用对应翻译；未提供的语言回退为英文。$(br2)报告问题时请附游戏／模组版本、复现步骤和相关日志。"
+    }
+  ]
+}

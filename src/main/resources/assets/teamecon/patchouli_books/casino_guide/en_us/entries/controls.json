@@ -1,0 +1,27 @@
+{
+  "name": "Physical controls",
+  "icon": "teamecon:multiplier_machine",
+  "category": "teamecon:basics",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Physical controls",
+      "images": [
+        "teamecon:textures/gui/guide/controls.png"
+      ],
+      "border": false,
+      "text": "Use Factor to change the stake, then press Start."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Most machines need 2×2 with height 3; Slime Hop is 3 wide and both wheels use a 3×3 footprint.$(br2)Panel order: Start, stake display, then choices and adjustment buttons. Right-click ±; sneak for tenfold steps."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Factors use a fixed base. With base 100, ×10 sets 1,000; changing to ×2 sets 200; ×1 restores 100. Editing a factor never compounds it. Manual stake changes establish a new base.$(br2)Applying a factor does not bet. Only the run owner can continue or cash out, into the original wallet."
+    }
+  ]
+}

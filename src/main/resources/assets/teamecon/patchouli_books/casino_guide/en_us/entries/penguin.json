@@ -1,0 +1,37 @@
+{
+  "name": "Slime Hop",
+  "icon": "teamecon:penguin_machine",
+  "category": "teamecon:machines",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Slime Hop",
+      "images": [
+        "teamecon:textures/gui/guide/penguin.png"
+      ],
+      "border": false,
+      "text": "Climb one layer per jump; a fall ends the run."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "How to play",
+      "text": "One stake funds the run. Start jumps one layer; after landing, continue or cash out. A fall breaks the ice and ends the entire run at zero.$(br2)Total multipliers, layers 1–10:$(br)1.2, 1.5, 2, 2.75, 4, 6, 10, 16, 25, 40."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Event probabilities",
+      "text": "Single-jump chances to layers 1–5:$(br)80%, 75%, 70.588%, 66.667%, 63.158%.$(br2)Layers 6–10:$(br)60%, 57.143%, 54.545%, 52.174%, 50%.$(br2)These are conditional step chances after reaching the previous layer, not full-run probabilities."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Requirements",
+      "text": "Default Lv.2; initial stake cap 10,000. Wallet upgrades can raise it.$(br2)At ×40, cash out. Leaving, disconnecting or unloading settles completed jumps.$(br2)Payouts include the stake. Server rules may differ; check the live interface."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:penguin_machine",
+      "text": "Craft, then right-click to use. Machines still require the matching wallet level."
+    }
+  ]
+}

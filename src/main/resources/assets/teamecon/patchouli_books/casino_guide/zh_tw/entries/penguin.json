@@ -1,0 +1,37 @@
+{
+  "name": "史萊姆跳冰",
+  "icon": "teamecon:penguin_machine",
+  "category": "teamecon:machines",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "史萊姆跳冰",
+      "images": [
+        "teamecon:textures/gui/guide/penguin.png"
+      ],
+      "border": false,
+      "text": "每次前進一層，踏空則結束本局。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "操作與結算",
+      "text": "一局只扣一次本金。點選開始跳一層，落穩後可繼續或提取；踏空後冰塊碎裂，整局歸零。$(br2)第 1–10 層總倍率：$(br)1.2、1.5、2、2.75、4、6、10、16、25、40。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "事件機率",
+      "text": "到達第 1–5 層的單步成功機率：$(br)80%、75%、70.588%、66.667%、63.158%。$(br2)第 6–10 層：$(br)60%、57.143%、54.545%、52.174%、50%。$(br2)這是已到上一層後的單步機率，並非從開局連跳到該層的機率。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "使用條件",
+      "text": "預設 Lv.2，初始單註上限 10,000 點。錢包升級可提高上限。$(br2)最高 ×40，到達後提取。離開機器、斷線或解除安裝區塊會自動結算已完成的跳躍。$(br2)倍率包含本金。服主可修改規則，以當前介面為準。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:penguin_machine",
+      "text": "合成後右鍵使用。遊戲機仍需對應錢包等級。"
+    }
+  ]
+}

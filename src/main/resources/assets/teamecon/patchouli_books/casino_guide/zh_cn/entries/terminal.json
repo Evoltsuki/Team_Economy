@@ -1,0 +1,27 @@
+{
+  "name": "无线终端",
+  "icon": "teamecon:terminal",
+  "category": "teamecon:basics",
+  "sortnum": 7,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "无线终端",
+      "images": [
+        "teamecon:textures/gui/guide/controls.png"
+      ],
+      "border": false,
+      "text": "后期把常用功能带在身上。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "默认需要 Lv.5、完成「解放末地」，并花费 100,000 点兑换。终端不能合成。$(br2)右键打开首页，可进入商店、回收、升级和远程小游戏。盲盒仍需使用独立盲盒机。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "终端转交他人后，使用者仍需满足权限。远程小游戏同样扣除钱包点数。$(br2)倍率竞猜关闭界面不会暂停；若想拿回当前奖励，需在崩盘前主动提取。"
+    }
+  ]
+}

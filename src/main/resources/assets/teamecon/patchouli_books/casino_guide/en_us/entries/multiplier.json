@@ -1,0 +1,37 @@
+{
+  "name": "Crash multiplier",
+  "icon": "teamecon:multiplier_machine",
+  "category": "teamecon:machines",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Crash multiplier",
+      "images": [
+        "teamecon:textures/gui/guide/multiplier.png"
+      ],
+      "border": false,
+      "text": "Illustration only: each round has its own crash time."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "How to play",
+      "text": "The multiplier rises continuously from ×1 and accelerates. Cash out before the crash; the server uses the multiplier when your action arrives.$(br2)A crash loses the stake and all unclaimed winnings. The chart shows past movement and cannot predict the result."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Event probabilities",
+      "text": "About 20.32% of default rounds crash instantly. Survival from the start: about 39.8% to ×2, 7.97% to ×10 and 0.159% to ×100.$(br2)Higher values are rarer. Settlement uses server ticks. Rounds are independent; there is no guaranteed safe cash-out time."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Requirements",
+      "text": "Default Lv.5; initial stake cap 200,000. Wallet upgrades can raise it.$(br2)Closing, leaving or disconnecting does not pause or cash out. Surviving to ×1,000 automatically cashes out.$(br2)Payouts include the stake. Server rules may differ; check the live interface."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:multiplier_machine",
+      "text": "Craft, then right-click to use. Machines still require the matching wallet level."
+    }
+  ]
+}

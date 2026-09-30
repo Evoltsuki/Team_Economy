@@ -1,0 +1,37 @@
+{
+  "name": "黑红轮盘",
+  "icon": "teamecon:roulette_table",
+  "category": "teamecon:machines",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "黑红轮盘",
+      "images": [
+        "teamecon:textures/gui/guide/roulette.png"
+      ],
+      "border": false,
+      "text": "直接选择红、黑或绿色 0。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "操作与结算",
+      "text": "站在低台前，选择红、黑或绿 0；也可右键轮面数字押单号。设置本金后点击开始，滚珠停稳即结算。$(br2)终端还可选奇偶、1–18 或 19–36。绿色 0 不属于任何外围下注。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "事件概率",
+      "text": "37 格等概率：18 红、18 黑、一个绿 0。$(br2)红黑／奇偶／大小区间：18/37，约 48.65%，默认 ×2。$(br2)任一单号（含绿 0）：1/37，约 2.70%，默认 ×32。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "使用条件",
+      "text": "默认 Lv.4，初始单注上限 100,000 点。钱包升级可提高上限。$(br2)结果确定后自动结算一次。$(br2)倍率包含本金。服主可修改规则，以当前界面为准。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:roulette_table",
+      "text": "合成后右键使用。游戏机仍需对应钱包等级。"
+    }
+  ]
+}

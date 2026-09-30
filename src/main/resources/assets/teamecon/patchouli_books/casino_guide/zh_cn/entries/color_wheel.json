@@ -1,0 +1,37 @@
+{
+  "name": "幸运转盘",
+  "icon": "teamecon:color_wheel_table",
+  "category": "teamecon:machines",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "幸运转盘",
+      "images": [
+        "teamecon:textures/gui/guide/color_wheel.png"
+      ],
+      "border": false,
+      "text": "顶部固定指针所指色块决定奖励。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "操作与结算",
+      "text": "设置本金后点击开始，不需要猜颜色。转盘旋转后逐渐停下，顶部固定指针所指色块决定奖励。$(br2)每种颜色可分布于多个扇区；同色概率按全部同色格子合计。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "事件概率",
+      "text": "40 个等概率格子：$(br)灰：23 格，57.5%，×0$(br)绿：9 格，22.5%，×1$(br)蓝：5 格，12.5%，×2$(br)紫：2 格，5%，×4$(br)金：1 格，2.5%，×10$(br2)绿色仅返还本金。每次旋转独立，无保底。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "使用条件",
+      "text": "默认 Lv.3，初始单注上限 50,000 点。钱包升级可提高上限。$(br2)结果确定后自动结算一次。$(br2)倍率包含本金。服主可修改规则，以当前界面为准。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:color_wheel_table",
+      "text": "合成后右键使用。游戏机仍需对应钱包等级。"
+    }
+  ]
+}

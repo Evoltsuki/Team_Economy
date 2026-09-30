@@ -1,0 +1,27 @@
+{
+  "name": "刮卡玩法",
+  "icon": "teamecon:scratch_card_match",
+  "category": "teamecon:tickets",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "刮卡玩法",
+      "images": [
+        "teamecon:textures/gui/guide/tickets.png"
+      ],
+      "border": false,
+      "text": "購卡後拿在主手，左鍵開啟並拖動刮取。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "從商店或終端買到實體卡，放主手$(bold)左鍵$()開啟，按住左鍵拖動刮開全部銀層。完成後自動兌獎，無需按鈕。$(br2)購買時已確定獎項；關閉重開不會重抽。可以轉交他人，由實際持卡者完成刮取後收款。每張序列只支付一次。$(br2)可選擇票面倍數；獎金也同比放大，機率不變。Lv.1–5 單張票面上限為 100 / 1,000 / 10,000 / 100,000 / 250,000 點。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "數字卡：匹配幸運數字。骰子卡：同一對相加為 7。水果卡：一行三個相同水果。幸運七：找到 7。$(br2)寶石卡：至少 3 顆鑽石。賓果：金幣橫、豎、斜連線。密碼卡：匹配三位密碼。皇冠卡：至少 3 頂皇冠，7 頂獲得 ×500。"
+    }
+  ]
+}

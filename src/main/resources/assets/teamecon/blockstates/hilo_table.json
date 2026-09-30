@@ -1,0 +1,60 @@
+{
+  "variants": {
+    "assembled=false,half=bottom,facing=north": {
+      "model": "teamecon:block/hilo_table_base",
+      "y": 0
+    },
+    "assembled=true,half=bottom,facing=north": {
+      "model": "teamecon:block/hilo_table_assembled"
+    },
+    "assembled=false,half=bottom,facing=east": {
+      "model": "teamecon:block/hilo_table_base",
+      "y": 90
+    },
+    "assembled=true,half=bottom,facing=east": {
+      "model": "teamecon:block/hilo_table_assembled"
+    },
+    "assembled=false,half=bottom,facing=south": {
+      "model": "teamecon:block/hilo_table_base",
+      "y": 180
+    },
+    "assembled=true,half=bottom,facing=south": {
+      "model": "teamecon:block/hilo_table_assembled"
+    },
+    "assembled=false,half=bottom,facing=west": {
+      "model": "teamecon:block/hilo_table_base",
+      "y": 270
+    },
+    "assembled=true,half=bottom,facing=west": {
+      "model": "teamecon:block/hilo_table_assembled"
+    },
+    "assembled=false,half=top,facing=north": {
+      "model": "teamecon:block/hilo_table",
+      "y": 0
+    },
+    "assembled=true,half=top,facing=north": {
+      "model": "teamecon:block/hilo_table_assembled"
+    },
+    "assembled=false,half=top,facing=east": {
+      "model": "teamecon:block/hilo_table",
+      "y": 90
+    },
+    "assembled=true,half=top,facing=east": {
+      "model": "teamecon:block/hilo_table_assembled"
+    },
+    "assembled=false,half=top,facing=south": {
+      "model": "teamecon:block/hilo_table",
+      "y": 180
+    },
+    "assembled=true,half=top,facing=south": {
+      "model": "teamecon:block/hilo_table_assembled"
+    },
+    "assembled=false,half=top,facing=west": {
+      "model": "teamecon:block/hilo_table",
+      "y": 270
+    },
+    "assembled=true,half=top,facing=west": {
+      "model": "teamecon:block/hilo_table_assembled"
+    }
+  }
+}

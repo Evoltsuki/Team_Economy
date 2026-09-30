@@ -1,0 +1,374 @@
+plugins {
+    id 'idea'
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.neoforged.moddev' version '2.0.91'
+}
+
+// Isolated outputs for the adjacent Minecraft release; the default remains 1.21.1.
+def adjacentTarget = providers.gradleProperty('mcTarget').orElse('1.21.1').get()
+if (!(adjacentTarget in ['1.21', '1.21.1'])) throw new GradleException('Supported NeoForge targets: 1.21, 1.21.1')
+if (adjacentTarget == '1.21') {
+    ext.minecraft_version = '1.21'
+    ext.minecraft_version_range = '[1.21]'
+    ext.neo_version = '21.0.167'
+    ext.neo_version_range = '[21.0.167,21.1)'
+    layout.buildDirectory = file('build/neoforge-1.21')
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    // Define wrapper values here so as to not have to always do so when updating gradlew.properties.
+    // Switching this to Wrapper.DistributionType.ALL will download the full gradle sources that comes with
+    // documentation attached on cursor hover of gradle classes and methods. However, this comes with increased
+    // file size for Gradle. If you do switch this to ALL, run the Gradle wrapper task twice afterwards.
+    // (Verify by checking gradle/wrapper/gradle-wrapper.properties to see if distributionUrl now points to `-all`)
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+version = mod_version
+group = mod_group_id
+
+repositories {
+    maven {
+        url = "https://maven.blamejared.com"
+        content { includeGroup "vazkii.patchouli" }
+    }
+
+    // FTB mods (FTB Teams / FTB Library)
+    maven {
+        url = "https://maven.ftb.dev/releases"
+        content { includeGroupAndSubgroups "dev.ftb.mods" }
+    }
+    maven {
+        url = "https://maven.ftb.dev/snapshots"
+        content { includeGroupAndSubgroups "dev.ftb.mods" }
+    }
+
+    // Architectury (required by FTB mods at compile time)
+    maven {
+        url = "https://maven.architectury.dev/"
+        content { includeGroupAndSubgroups "dev.architectury" }
+    }
+}
+
+base {
+    archivesName = "${mod_id}-neoforge-${minecraft_version}"
+}
+
+// Mojang ships Java 21 to end users starting in 1.20.5, so mods should target Java 21.
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+// Isolated application-level QA sources are never included in the distributable jar.
+def visualQaEnabled = providers.gradleProperty('visualQa').isPresent()
+def manualCaptureEnabled = providers.gradleProperty('manualCapture').isPresent()
+def manualCaptureDirectory = layout.projectDirectory.dir('build/manual-capture')
+if (manualCaptureEnabled && (visualQaEnabled || adjacentTarget != '1.21.1')) {
+    throw new GradleException('Manual capture uses NeoForge 1.21.1 without automated visualQa.')
+}
+def visualQaDirectory = layout.projectDirectory.dir(providers.gradleProperty('qaGameDir').orElse('build/visual-qa').get())
+def teamQaEnabled = providers.gradleProperty('teamQa').isPresent()
+def portQaEnabled = providers.gradleProperty('portQa').isPresent()
+if (portQaEnabled) {
+    sourceSets.create('portQa') {
+        java.srcDir 'src/portqa/java'
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+def qaSelection = providers.gradleProperty('qaScenarios').orElse('').get().split(',').collect { it.trim() }.findAll { !it.isEmpty() }
+def qaGroups = ['store', 'machines', 'terminal', 'team', 'guide', 'boxes', 'hilo', 'food', 'showcase', 'readme']
+if (visualQaEnabled && (qaSelection.isEmpty() || !qaGroups.containsAll(qaSelection))) {
+    throw new GradleException('Select only changed features with -PqaScenarios=boxes,hilo,food,team,guide (or a smaller selection). Unknown or empty groups are not accepted; showcase records release footage.')
+}
+if (visualQaEnabled || manualCaptureEnabled) {
+    sourceSets.create('visualQa') {
+        java.srcDir 'src/qa/java'
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+if (teamQaEnabled) {
+    sourceSets.create('teamQa') {
+        java.srcDir 'src/teamtest/java'
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+
+neoForge {
+    // Specify the version of NeoForge to use.
+    version = project.neo_version
+
+    if (adjacentTarget == '1.21.1') parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    // This line is optional. Access Transformers are automatically detected
+    // accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        if (manualCaptureEnabled) {
+            manualCaptureClient {
+                client()
+                sourceSet = sourceSets.visualQa
+                gameDirectory = manualCaptureDirectory.asFile
+                systemProperty 'teamecon.manualCapture', 'true'
+                programArguments.addAll '--width', '1600', '--height', '900', '--username', 'Dev',
+                        '--quickPlaySingleplayer', 'white-gallery'
+            }
+        }
+        if (portQaEnabled) {
+            portQaClient {
+                client()
+                sourceSet = sourceSets.portQa
+                gameDirectory = layout.buildDirectory.dir('port-client-qa').get().asFile
+                systemProperty 'teamecon.portQa', 'true'
+            }
+        }
+        client {
+            client()
+
+            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        server {
+            server()
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        // This run config launches GameTestServer and runs all registered gametests, then exits.
+        // By default, the server will crash when no gametests are provided.
+        // The gametest system is also enabled by default for other run configs under the /test command.
+        gameTestServer {
+            type = "gameTestServer"
+            gameDirectory = layout.buildDirectory.dir(teamQaEnabled ? 'gametest-teams' : 'gametest').get().asFile
+            if (teamQaEnabled) sourceSet = sourceSets.teamQa
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        if (visualQaEnabled) {
+            visualQaClient {
+                client()
+                sourceSet = sourceSets.visualQa
+                gameDirectory = visualQaDirectory.asFile
+                systemProperty 'teamecon.visualQa', 'true'
+                systemProperty 'teamecon.qaScenarios', qaSelection.join(',')
+                systemProperty 'teamecon.qaVersion', project.version.toString()
+                if (providers.gradleProperty('qaVideoEncoder').isPresent()) {
+                    systemProperty 'teamecon.qaVideoEncoder', providers.gradleProperty('qaVideoEncoder').get()
+                }
+                programArguments.addAll '--width', '1280', '--height', '960'
+            }
+        }
+
+        data {
+            data()
+
+            // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
+            // gameDirectory = project.file('run-data')
+
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+
+        // applies to all the run configs above
+        configureEach {
+            // Recommended logging data for a userdev environment
+            // The markers can be added/remove as needed separated by commas.
+            // "SCAN": For mods scan.
+            // "REGISTRIES": For firing of registry events.
+            // "REGISTRYDUMP": For getting the contents of all registries.
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+
+            // Recommended logging level for the console
+            // You can set various levels here.
+            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        // define mod <-> source bindings
+        // these are used to tell the game which sources are for which mod
+        // mostly optional in a single mod project
+        // but multi mod projects should define one per mod
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+            if (visualQaEnabled || manualCaptureEnabled) sourceSet(sourceSets.visualQa)
+            if (teamQaEnabled) sourceSet(sourceSets.teamQa)
+            if (portQaEnabled) sourceSet(sourceSets.portQa)
+        }
+    }
+}
+
+// Include resources generated by data generators.
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+// Sets up a dependency configuration called 'localRuntime'.
+// This configuration should be used instead of 'runtimeOnly' to declare
+// a dependency that will be present for runtime testing but that is
+// "optional", meaning it will not be pulled by dependents of this mod.
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+dependencies {
+    compileOnly 'vazkii.patchouli:Patchouli:1.21.1-93-NEOFORGE'
+    if (providers.gradleProperty('withPatchouli').isPresent()) {
+        localRuntime 'vazkii.patchouli:Patchouli:1.21.1-93-NEOFORGE'
+    }
+    // Unit tests for economy math: market consistency and gambling expectations.
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testImplementation 'com.google.code.gson:gson:2.10.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // ModConfigSpec needs night-config on the classpath when tests touch config values.
+    testImplementation 'com.electronwill.night-config:core:3.8.3'
+    testImplementation 'com.electronwill.night-config:toml:3.8.3'
+    // ModDevGradle exposes Minecraft classes for compilation only; tests also need them at runtime.
+    testImplementation files("${layout.buildDirectory.get().asFile}/moddev/artifacts/neoforge-${project.neo_version}.jar")
+    // Use ModDevGradle's resolved Minecraft libraries; no private/local testlibs directory required.
+    testRuntimeOnly files(configurations.neoFormRuntimeDependenciesRuntimeClasspath)
+    // Pulls FML and the other runtime libraries that the merged jar does not bundle.
+    testRuntimeOnly "net.neoforged:neoforge:${neo_version}"
+    // FTB Teams: team identification, shared wallet scope and team stages (progression unlocks)
+    compileOnly "dev.ftb.mods:ftb-teams-neoforge:${ftb_teams_version}"
+    if (teamQaEnabled || providers.gradleProperty('withFtbTeams').isPresent()) {
+        localRuntime "dev.ftb.mods:ftb-teams-neoforge:${ftb_teams_version}"
+        localRuntime "dev.ftb.mods:ftb-library-neoforge:${ftb_library_version}"
+        localRuntime "dev.architectury:architectury-neoforge:${architectury_version}"
+    }
+    // JEI integration is added later, once a recipe viewer is actually needed.
+    // Example optional mod dependency with JEI
+    // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
+    // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
+    // compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
+    // We add the full version to localRuntime, not runtimeOnly, so that we do not publish a dependency on it
+    // localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
+
+    // Example mod dependency using a mod jar from ./libs with a flat dir repository
+    // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
+    // The group id is ignored when searching -- in this case, it is "blank"
+    // implementation "blank:coolmod-${mc_version}:${coolmod_version}"
+
+    // Example mod dependency using a file as dependency
+    // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
+
+    // Example project dependency using a sister or child project:
+    // implementation project(":myproject")
+
+    // For more info:
+    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
+    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+}
+
+// This block of code expands all declared replace properties in the specified resource targets.
+// A missing property will result in an error. Properties are expanded using ${} Groovy notation.
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/main/templates"
+    into layout.buildDirectory.dir('generated/sources/modMetadata')
+}
+// Include the output of "generateModMetadata" as an input directory for the build
+// this works with both building through Gradle and the IDE.
+sourceSets.main.resources.srcDir generateModMetadata
+// To avoid having to run "generateModMetadata" manually, make it run on every project reload
+neoForge.ideSyncTask generateModMetadata
+
+// Example configuration to allow publishing using the maven-publish plugin
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/repo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+// IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+tasks.named('jar') {
+    exclude 'com/evolt/teamecon/gametest/**'
+    from('LICENSE', 'NOTICE.md', 'CREDITS.md')
+}
+
+// Only deliver after compilation and all ordinary build checks succeed. No game is launched.
+tasks.register('releaseMod') {
+    group = 'build'
+    description = 'Build and test the mod, then copy its JAR and SHA-256 to dist/.'
+    dependsOn tasks.named('build')
+    def jarFile = tasks.named('jar', Jar).flatMap { it.archiveFile }
+    def deliveryDirectory = layout.projectDirectory.dir('dist').asFile
+    doLast {
+        def builtJar = jarFile.get().asFile
+        deliveryDirectory.mkdirs()
+        def deliveredJar = new File(deliveryDirectory, builtJar.name)
+        java.nio.file.Files.copy(builtJar.toPath(), deliveredJar.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+        def digest = java.security.MessageDigest.getInstance('SHA-256').digest(deliveredJar.bytes).encodeHex().toString()
+        new File(deliveryDirectory, builtJar.name + '.sha256').setText(digest + '  ' + builtJar.name + '\n', 'UTF-8')
+        logger.lifecycle('Mod ready: ' + deliveredJar.absolutePath)
+        logger.lifecycle('SHA-256: ' + digest)
+    }
+}
+
+tasks.register('prepareGameTests') {
+    def folder = layout.buildDirectory.dir((teamQaEnabled ? 'gametest-teams' : 'gametest') + '/gameteststructures')
+    outputs.dir(folder)
+    doLast {
+        def destination = folder.get().asFile
+        destination.mkdirs()
+        ['machineplacementtest', 'economyintegrationtest', 'ftbteamsintegrationtest', 'physicalgamestest', 'progressiontest', 'casinolevelstest', 'todoregressiontest', 'revisionregressiontest', 'concurrentmachinestest', 'adminunlocktest'].each { name ->
+            new File(destination, "${name}.empty.snbt").text = '{size:[42,8,16],palette:[{Name:"minecraft:air"}],entities:[],blocks:[],DataVersion:3955}'
+        }
+    }
+}
+tasks.matching { it.name == 'runGameTestServer' }.configureEach { dependsOn 'prepareGameTests' }
+
+if (visualQaEnabled) {
+    tasks.register('prepareVisualQa') {
+        def optionsFile = visualQaDirectory.file('options.txt')
+        outputs.file(optionsFile)
+        doLast {
+            def target = optionsFile.asFile
+            target.parentFile.mkdirs()
+            target.text = 'onboardAccessibility:false\nlang:zh_cn\nguiScale:2\nrenderDistance:8\nsimulationDistance:5\nmaxFps:60\npauseOnLostFocus:false\nenableVsync:false\nmusic:0.0\n'
+        }
+    }
+    tasks.matching { it.name == 'runVisualQaClient' }.configureEach { dependsOn 'prepareVisualQa' }
+}

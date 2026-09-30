@@ -1,0 +1,22 @@
+{
+  "name": "中階卡",
+  "icon": "teamecon:scratch_card_fruit",
+  "category": "teamecon:tickets",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "中階卡",
+      "images": [
+        "teamecon:textures/gui/guide/middle.png"
+      ],
+      "border": false,
+      "text": "水果連線、幸運七與寶石尋蹤。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "水果 50、幸運七 100（Lv.2）；寶石 250 點（Lv.3）。$(br2)購卡時可提高票面倍數，獎金同比提高。票面上限隨錢包等級增長；具體獎級見卡片。刮開後自動入賬。"
+    }
+  ]
+}

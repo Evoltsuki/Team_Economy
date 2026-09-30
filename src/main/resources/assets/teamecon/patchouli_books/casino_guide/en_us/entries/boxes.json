@@ -1,0 +1,42 @@
+{
+  "name": "Boxes and rare prizes",
+  "icon": "teamecon:blind_box_machine",
+  "category": "teamecon:basics",
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Boxes and rare prizes",
+      "images": [
+        "teamecon:textures/gui/guide/economy.png"
+      ],
+      "border": false,
+      "text": "Use the dedicated box machine: preview, then open."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Supply Boxes cost 64 points; Treasure Boxes cost 512. Contents shows possible items and quantities. Each box awards one random entry.$(br2)Open 1, 10 or 64 at once. Last opening shows the actual prizes delivered to your inventory."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Supply: 11 entries, including two diamonds (1.8%) and a netherite ingot (0.2%).$(br2)Treasure includes 16 diamonds (0.5%), an enchanted golden apple (0.5%) and a netherite ingot (1%). Friendly mob eggs total 10%, including villagers, allays, sniffers and animals. Neutral mobs can retaliate."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Drawing prizes",
+      "text": "Entry chance = entry weight / total weight. Each box draws independently; bulk opening does not improve individual odds. There is no pity guarantee.$(br2)Eggs are prize-only and cannot be traded. Valuable outcomes do not guarantee a profit on every box."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Boxes have no advancement or level gate. Leave space for all possible outcomes of the selected batch; insufficient space prevents charging.$(br2)Server owners can customize pools. The preview reflects the current server."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:blind_box_machine",
+      "text": "You can craft this item in survival using this recipe."
+    }
+  ]
+}

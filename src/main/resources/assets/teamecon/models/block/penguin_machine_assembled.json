@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "teamecon:block/penguin_machine_side"
+  },
+  "elements": []
+}

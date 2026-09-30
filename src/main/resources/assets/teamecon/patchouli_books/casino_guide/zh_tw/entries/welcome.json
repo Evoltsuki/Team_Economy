@@ -1,0 +1,37 @@
+{
+  "name": "第一天怎麼開始",
+  "icon": "teamecon:guide_book",
+  "category": "teamecon:basics",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "第一天怎麼開始",
+      "images": [
+        "teamecon:textures/gui/guide/welcome.png"
+      ],
+      "border": false,
+      "text": "一本書＋一塊鐵錠，也能合成這本指南。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "首次進入獲贈指南，安裝帕秋莉手冊後右鍵閱讀。全新個人開局領取 200 點，已有錢包不補發，換隊不會重複領取。$(br2)還沒造商店？輸入 $(thing)/teamecon shop$() 即可開啟商店。保留工具和食物，將餘料放入「出售」頁，核對報價後出售。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Lv.2 升級費為 1,200 點；史萊姆機器另需 1,500 點，也可按本書配方合成。全部用點數購買，至少先攢 2,700 點，並另留遊玩預算。$(br2)小遊戲會損失點數，升級不要求中獎。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "獎勵倍數包含本金：下注 100，獎勵 ×2，入賬 200，淨賺 100。沒有中獎則入賬 0。$(br2)書中列出預設規則；實際金額、許可權與上限以當前伺服器介面為準。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:guide_book",
+      "text": "也可以在生存模式按此配方合成。"
+    }
+  ]
+}

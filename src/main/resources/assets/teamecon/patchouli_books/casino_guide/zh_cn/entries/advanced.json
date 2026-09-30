@@ -1,0 +1,22 @@
+{
+  "name": "高阶卡",
+  "icon": "teamecon:scratch_card_vault",
+  "category": "teamecon:tickets",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "高阶卡",
+      "images": [
+        "teamecon:textures/gui/guide/advanced.png"
+      ],
+      "border": false,
+      "text": "金币宾果与密码宝库。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "宾果 500、密码宝库 1,000 点；Lv.4。$(br2)购卡时可提高票面倍数，奖金同比提高。票面上限随钱包等级增长；具体奖级见卡片。刮开后自动入账。"
+    }
+  ]
+}

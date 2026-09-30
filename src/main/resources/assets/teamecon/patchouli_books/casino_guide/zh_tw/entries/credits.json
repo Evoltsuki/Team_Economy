@@ -1,0 +1,27 @@
+{
+  "name": "製作與宣告",
+  "icon": "teamecon:guide_book",
+  "category": "teamecon:basics",
+  "sortnum": 9,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "製作與宣告",
+      "images": [
+        "teamecon:textures/gui/guide/welcome.png"
+      ],
+      "border": false,
+      "text": "Team Economy · 製作：洁柔厨"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "製作與玩法設計：洁柔厨。程式碼與素材製作使用了 AI 輔助工具。$(br2)本模組是非官方 Minecraft 專案，與 Mojang 或 Microsoft 無隸屬關係。原版素材及依賴歸各權利人所有。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "所有點數僅用於遊戲內玩法，沒有現實貨幣價值。本專案保留權利，具體使用範圍見釋出包 LICENSE。$(br2)感謝遊玩！歡迎反饋有趣的玩法片段、平衡體驗和問題。"
+    }
+  ]
+}

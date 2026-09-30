@@ -1,0 +1,17 @@
+# Keep source portable; the Windows launcher retains CRLF.
+* text=auto
+*.sh text eol=lf
+gradlew text eol=lf
+*.bat text eol=crlf
+*.java text eol=lf
+*.gradle text eol=lf
+*.properties text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.toml text eol=lf
+*.png binary
+*.jpg binary
+*.jar binary
+*.nbt binary

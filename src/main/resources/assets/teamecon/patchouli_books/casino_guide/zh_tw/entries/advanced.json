@@ -1,0 +1,22 @@
+{
+  "name": "高階卡",
+  "icon": "teamecon:scratch_card_vault",
+  "category": "teamecon:tickets",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "高階卡",
+      "images": [
+        "teamecon:textures/gui/guide/advanced.png"
+      ],
+      "border": false,
+      "text": "金幣賓果與密碼寶庫。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "賓果 500、密碼寶庫 1,000 點；Lv.4。$(br2)購卡時可提高票面倍數，獎金同比提高。票面上限隨錢包等級增長；具體獎級見卡片。刮開後自動入賬。"
+    }
+  ]
+}

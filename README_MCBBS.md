@@ -1,9 +1,5 @@
 # Team Economy · 团队经济/梭哈吧，史蒂夫
 
-[English README](README_EN.md)
-
-[下载 1.0.0](https://github.com/Evoltsuki/Team_Economy/releases/tag/v1.0.0) · [源码仓库](https://github.com/Evoltsuki/Team_Economy) · [问题反馈](https://github.com/Evoltsuki/Team_Economy/issues)
-
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1%20%7C%201.21%20%7C%201.21.1-5C913B) ![Loaders](https://img.shields.io/badge/Loaders-NeoForge%20%7C%20Forge-D97834) ![Version 1.0.0](https://img.shields.io/badge/Version-1.0.0-3979A8)
 
 **把仓库里的余料换成点数，在基地开一间小队游戏厅。**
@@ -97,7 +93,7 @@ Team Economy 为 Minecraft 生存加入物资回收、积分商店和六种实�
 | 1.20.1 | Forge 47.4.10 | 17 | `teamecon-forge-1.20.1-1.0.0.jar` |
 | 1.21.1 | Forge 52.1.0 | 21 | `teamecon-forge-1.21.1-1.0.0.jar` |
 
-进入世界后输入 `/teamecon shop`，即可打开积分商店。首次进入赠送指南书，也能用**书＋铁锭**无序合成；装有 Patchouli 时手持右键阅读。完整操作也可直接查看[网页版指南](docs/试玩指南.md)。更换模组文件前，请备份存档和配置，并移走原 JAR。
+进入世界后输入 `/teamecon shop`，即可打开积分商店。首次进入赠送指南书，也能用**书＋铁锭**无序合成；装有 Patchouli 时手持右键阅读。
 
 ## 第一局，从 300 点的小目标开始
 
@@ -181,8 +177,6 @@ Team Economy 为 Minecraft 生存加入物资回收、积分商店和六种实�
 |---|---|
 | 安装、第一局、组队、全部配方 | [图文试玩指南](docs/试玩指南.md) |
 | 服主调价、进度规则与配置 | [平衡配置指南](docs/平衡配置指南.md) |
-| 自行构建 JAR 和准备发布附件 | [手动打包指南](docs/手动打包指南.md) |
-| 论坛介绍与试玩教程 | [MCBBS 发布文本](README_MCBBS.md) |
 
 发现问题请在仓库 **Issues** 按[反馈模板](.github/ISSUE_TEMPLATE/bug_report.md)提供游戏、加载器与模组版本，单人／服务端环境，复现步骤，预期与实际结果，并附相关日志或截图。整合包反馈请一并说明模组列表。
 
@@ -193,62 +187,3 @@ Team Economy 为 Minecraft 生存加入物资回收、积分商店和六种实�
 本项目采用 **[MIT 开源许可](LICENSE)**，允许使用、修改、商业使用和再分发，须保留版权及许可声明。第三方材料仍遵循各自许可，见 [NOTICE.md](NOTICE.md)。点数仅用于游戏内玩法，没有现实货币价值。
 
 非官方 Minecraft 项目，与 Mojang、Microsoft 无隶属关系。
-
-<details>
-<summary><strong>从源码构建</strong></summary>
-
-默认构建 **NeoForge 1.21.1**，需要 **JDK 21**。Windows 双击 `build-mod.bat`，或在项目根目录运行：
-
-```powershell
-.\build-mod.bat
-```
-
-Linux／macOS：
-
-```bash
-bash ./gradlew releaseMod
-```
-
-首次构建需要联网；已有完整依赖缓存时可加 `--offline`。通过检查后，JAR 和校验值输出到 **`dist/`**；普通 Gradle `build` 输出到 `build/libs/`。资源已随源码提供，NeoForge 单独构建无需 Python，也不会启动游戏。
-
-准备 GitHub Release 附件：
-
-```powershell
-py -3.12 tools/package_release.py --offline
-```
-
-根目录 `README.md` 为 GitHub 中文首页，`README_EN.md` 为独立英文版，`README_MCBBS.md` 为论坛发布稿；三份文件分别维护，并全部包含在公开源码 ZIP 中。
-
-Python 依赖及联网打包方法见[手动打包指南](docs/手动打包指南.md)。完整打包另需 JDK 17（Forge 1.20.1）及 Python 3.11+；四个目标的命令见打包指南。`release/1.0.0/` 只包含四份玩家 JAR、一份公开源码 ZIP 和 `SHA256SUMS.txt`。
-
-**版本固定为 1.0.0。后续仅在作者明确要求时修改 `gradle.properties`；构建与打包不自动递增版本。**
-
-</details>
-
-<details>
-<summary><strong>项目目录与文件用途</strong></summary>
-
-| 文件夹 | 作用 |
-|---|---|
-| `src/main/java/` | 模组逻辑、界面、网络与服务端实现 |
-| `src/main/resources/` | 纹理、模型、语言、配方及游戏内图文指南 |
-| `src/main/templates/` | 构建时填入版本和作者信息的模组元数据模板 |
-| `versions/forge/` | Forge 构建入口，共享业务源码转换及 1.20.1 / 1.21.1 平台适配层 |
-| `src/generated/` | 按需生成的数据文件 |
-| `docs/` | 玩家指南、服主配置、打包说明和论坛发布稿 |
-| `docs/images/`、`docs/images/screenshots/` | 截图来源清单与 1.0.0 实机原图 |
-| `tools/` | 资源生成、校验和打包脚本；逐项用途见 [tools/README.md](tools/README.md) |
-| `gradle/`、`gradle/wrapper/` | 固定 Gradle 版本的启动器，源码构建必需 |
-| `.github/` | 自动构建工作流和问题反馈模板 |
-| `dist/` | 本地构建得到的玩家 JAR 与校验值 |
-| `release/`、`release/1.0.0/` | 按版本存放准备上传 GitHub Release 的六个公开附件 |
-| `build/` | 本地构建输出与临时文件 |
-| `.gradle/` | Gradle 构建缓存 |
-| `logs/` | 本地运行日志 |
-| `run/` | 本地开发游戏的配置与存档，清理工作区时保留 |
-
-根目录的 Gradle 文件、Wrapper 和 `build-mod.bat` 用于构建；`requirements.txt` 列出 Python 工具依赖。`README.md`、`README_EN.md`、`README_MCBBS.md`、许可及署名文件为公开项目说明。
-
-`dist/`、`release/`、`build/`、`.gradle/`、`logs/`、`run/`、`internal/` 以及本地任务文件 `PROGRESS.md`、`待办事项.txt` 不提交仓库，也不进入公开源码 ZIP。下载的干净源码中可能没有这些本地目录。
-
-</details>

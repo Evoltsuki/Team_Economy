@@ -1,0 +1,42 @@
+{
+  "name": "盲盒與珍稀獎品",
+  "icon": "teamecon:blind_box_machine",
+  "category": "teamecon:basics",
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "盲盒與珍稀獎品",
+      "images": [
+        "teamecon:textures/gui/guide/economy.png"
+      ],
+      "border": false,
+      "text": "獨立盲盒機：先預覽，再開啟。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "物資盲盒 64 點，珍藏盲盒 512 點。選中盲盒後，「獎池預覽」顯示可開出的物品和數量；每盒只隨機獲得其中一項。$(br2)一次開 1、10 或 64 盒。開啟後切換到「本次獎品」，檢視已經放入揹包的實際獎勵。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "物資盒有 11 種獎項，鑽石兩顆機率 1.8%，下界合金錠機率 0.2%。$(br2)珍藏盒包含更多礦物、16 顆鑽石（0.5%）、附魔金蘋果（0.5%）和下界合金錠（1%）。友好生物刷怪蛋合計 10%，包含村民、悅靈、嗅探獸及動物等；部分中立生物受攻擊會反擊。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "抽取說明",
+      "text": "每項機率 = 該項權重 ÷ 獎池總權重。每盒獨立抽一次，批次開啟不會提高單盒中獎機率。無保底機制。$(br2)刷怪蛋只作盲盒獎品，不能購買或回收。其他獎勵可有很高單次價值，但並不保證每盒都賺。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "盲盒沒有進度或等級門檻。批次開啟前須為所有可能獎品留足空間；空間不足不會扣費。$(br2)服主可修改獎池，介面預覽以當前伺服器為準。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:blind_box_machine",
+      "text": "也可以在生存模式按此配方合成。"
+    }
+  ]
+}

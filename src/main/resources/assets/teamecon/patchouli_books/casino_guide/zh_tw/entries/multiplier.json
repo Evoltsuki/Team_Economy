@@ -1,0 +1,37 @@
+{
+  "name": "倍率競猜機",
+  "icon": "teamecon:multiplier_machine",
+  "category": "teamecon:machines",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "倍率競猜機",
+      "images": [
+        "teamecon:textures/gui/guide/multiplier.png"
+      ],
+      "border": false,
+      "text": "曲線為玩法示意，崩盤時間每局不同。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "操作與結算",
+      "text": "下注後從 ×1 持續上漲，越往後增長越快。崩盤前點選提取，按伺服器收到操作時的倍率結算。$(br2)崩盤後本金及未提取收益全部歸零。走勢圖只顯示已經發生的變化，不能預測結果。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "事件機率",
+      "text": "預設約 20.32% 的開局立即崩盤。存活到 ×2 約 39.8%，×10 約 7.97%，×100 約 0.159%。$(br2)高倍率越難遇到；這些是從開局到目標倍率的機率，實際按伺服器遊戲刻結算。每局獨立，沒有安全提取時刻或保底。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "使用條件",
+      "text": "預設 Lv.5，初始單註上限 200,000 點。錢包升級可提高上限。$(br2)關閉介面、離開機器或斷線不會暫停或自動提取。存活到 ×1,000 自動提取。$(br2)倍率包含本金。服主可修改規則，以當前介面為準。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:multiplier_machine",
+      "text": "合成後右鍵使用。遊戲機仍需對應錢包等級。"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "name": "Slots",
+  "icon": "teamecon:slot_machine",
+  "category": "teamecon:machines",
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Slots",
+      "images": [
+        "teamecon:textures/gui/guide/slots.png"
+      ],
+      "border": false,
+      "text": "Any pair ×1.2; triple diamonds ×200."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Play and odds",
+      "text": "Each reel draws independently: cherry 25%, lemon 25%, orange 20%, bell 15%, star 10%, diamond 5%.$(br2)Any matching pair pays ×1.2. Triples use the higher triple prize; prizes do not stack."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Winning combinations",
+      "text": "Triples:$(br)Cherry ×3; lemon ×4; orange ×7$(br)Bell ×16; star ×40; diamond ×200$(br2)Total winning chance: 51.25%. Triple diamonds: 0.0125% (1/8,000). Spins are independent."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Requirements",
+      "text": "Default Lv.5; initial stake cap 200,000. Wallet upgrades can raise it.$(br2)The result settles automatically once.$(br2)Payouts include the stake. Server rules may differ; check the live interface."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:slot_machine",
+      "text": "Craft, then right-click to use. Machines still require the matching wallet level."
+    }
+  ]
+}

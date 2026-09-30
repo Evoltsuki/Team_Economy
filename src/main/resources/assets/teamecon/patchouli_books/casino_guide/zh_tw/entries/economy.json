@@ -1,0 +1,37 @@
+{
+  "name": "商店與批次回收",
+  "icon": "teamecon:shop_machine",
+  "category": "teamecon:basics",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "商店與批次回收",
+      "images": [
+        "teamecon:textures/gui/guide/economy.png"
+      ],
+      "border": false,
+      "text": "把多餘物資轉化為點數。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "商店分為物品、出售、機器、刮卡、升級五頁。按型別圖示篩選，輸入名稱、ID 或 #標籤搜尋，滾輪或箭頭翻頁。$(br2)購買後直接進入揹包。揹包放不下時不會扣費。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "出售頁有 27 格待售區，Shift 點選快速放入。核對總報價後點「出售全部」。關閉時，未售物品退回。$(br2)相同材料共享需求，反覆出售會降價。拆成小堆或壓成方塊不會增加收入，小數結餘會保留。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "只交易原版物品及專用目錄中的本模組裝置。附魔以實體附魔書交付。$(br2)關鍵戰利品保留探索獲取，其他高階商品需要進度條件。購買價高於回收價，適合補缺和建造，不適合倒賣。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:shop_machine",
+      "text": "也可以在生存模式按此配方合成。"
+    }
+  ]
+}

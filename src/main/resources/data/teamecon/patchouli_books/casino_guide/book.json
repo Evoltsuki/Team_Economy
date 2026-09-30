@@ -1,0 +1,16 @@
+{
+  "name": "book.teamecon.title",
+  "landing_text": "book.teamecon.landing",
+  "version": "1.0.0",
+  "use_resource_pack": true,
+  "i18n": false,
+  "custom_book_item": "teamecon:guide_book",
+  "show_progress": false,
+  "pause_game": false,
+  "book_texture": "patchouli:textures/gui/book_green.png",
+  "model": "patchouli:book_green",
+  "text_color": "263a30",
+  "header_color": "21493a",
+  "nameplate_color": "e7c57a",
+  "link_color": "306a51"
+}

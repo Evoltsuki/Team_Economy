@@ -1,0 +1,37 @@
+{
+  "name": "老虎機",
+  "icon": "teamecon:slot_machine",
+  "category": "teamecon:machines",
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "老虎機",
+      "images": [
+        "teamecon:textures/gui/guide/slots.png"
+      ],
+      "border": false,
+      "text": "任意對子 ×1.2；三鑽石 ×200。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "操作與機率",
+      "text": "每個轉軸獨立抽取：櫻桃 25%、檸檬 25%、橙子 20%、鈴鐺 15%、星星 10%、鑽石 5%。$(br2)任意位置兩個相同圖案均獎勵 ×1.2。三個相同時按三連獎勵，僅支付最高一項。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "中獎組合",
+      "text": "三連獎勵：$(br)櫻桃 ×3；檸檬 ×4；橙子 ×7$(br)鈴鐺 ×16；星星 ×40；鑽石 ×200$(br2)預設中獎機率合計 51.25%。三鑽石機率 0.0125%（約八千分之一）。每局獨立，連輸不會提高下次機率。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "使用條件",
+      "text": "預設 Lv.5，初始單註上限 200,000 點。錢包升級可提高上限。$(br2)結果確定後自動結算一次。$(br2)倍率包含本金。服主可修改規則，以當前介面為準。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:slot_machine",
+      "text": "合成後右鍵使用。遊戲機仍需對應錢包等級。"
+    }
+  ]
+}

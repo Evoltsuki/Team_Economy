@@ -1,0 +1,27 @@
+{
+  "name": "Credits and notice",
+  "icon": "teamecon:guide_book",
+  "category": "teamecon:basics",
+  "sortnum": 9,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Credits and notice",
+      "images": [
+        "teamecon:textures/gui/guide/welcome.png"
+      ],
+      "border": false,
+      "text": "Team Economy · Created by 洁柔厨"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Created and designed by 洁柔厨, with AI-assisted code and asset production.$(br2)An unofficial Minecraft project, not affiliated with Mojang or Microsoft. Minecraft resources and dependencies belong to their respective owners."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Points are only for in-game play and have no real-money value. Rights are reserved; see the release LICENSE for permitted uses.$(br2)Thanks for playing. Share gameplay clips, balance feedback and reproducible bug reports."
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "How to scratch",
+  "icon": "teamecon:scratch_card_match",
+  "category": "teamecon:tickets",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "How to scratch",
+      "images": [
+        "teamecon:textures/gui/guide/tickets.png"
+      ],
+      "border": false,
+      "text": "Hold a bought ticket, left-click, then drag to scratch."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Buy a physical card, hold it and $(bold)left-click$() to open. Drag to scratch all foil; payment is automatic.$(br2)The prize is fixed at purchase. Reopening does not reroll. Cards may be transferred; the holder receives the prize once.$(br2)Stake factors multiply both price and prize, with unchanged odds. Lv.1–5 ticket stake caps: 100 / 1,000 / 10,000 / 100,000 / 250,000."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Numbers: match the target. Dice: a pair totals 7. Fruit: three matching fruit in a row. Sevens: find 7.$(br2)Gems: 3+ diamonds. Bingo: a gold line. Vault: match the three-digit code. Crown: 3+ crowns; seven crowns pay ×500."
+    }
+  ]
+}

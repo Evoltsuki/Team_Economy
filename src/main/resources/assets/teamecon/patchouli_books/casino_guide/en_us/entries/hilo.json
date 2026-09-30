@@ -1,0 +1,37 @@
+{
+  "name": "High / Low Machine",
+  "icon": "teamecon:hilo_table",
+  "category": "teamecon:machines",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "High / Low",
+      "images": [
+        "teamecon:textures/gui/guide/hilo.png"
+      ],
+      "border": false,
+      "text": "Low: 1–5. High: 6–10."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "How to play",
+      "text": "Choose Low (1–5) or High (6–10), adjust your stake with the buttons, then Start. Settlement is automatic when the number stops."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Event probabilities",
+      "text": "Each round independently draws 1–10; each number has a 10% chance. High and Low each win 50%.$(br2)Correct: ×1.8. Wrong: ×0. Losing streaks do not improve the next chance."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Requirements",
+      "text": "Default Lv.1; initial stake cap 2,000. Wallet upgrades can raise it.$(br2)The result settles automatically once.$(br2)Payouts include the stake. Server rules may differ; check the live interface."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:hilo_table",
+      "text": "Craft, then right-click to use. Machines still require the matching wallet level."
+    }
+  ]
+}

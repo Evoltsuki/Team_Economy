@@ -1,0 +1,36 @@
+{
+  "variants": {
+    "facing=north,half=bottom": {
+      "model": "teamecon:block/shop_machine_bottom",
+      "y": 180
+    },
+    "facing=north,half=top": {
+      "model": "teamecon:block/shop_machine_top",
+      "y": 180
+    },
+    "facing=east,half=bottom": {
+      "model": "teamecon:block/shop_machine_bottom",
+      "y": 270
+    },
+    "facing=east,half=top": {
+      "model": "teamecon:block/shop_machine_top",
+      "y": 270
+    },
+    "facing=south,half=bottom": {
+      "model": "teamecon:block/shop_machine_bottom",
+      "y": 0
+    },
+    "facing=south,half=top": {
+      "model": "teamecon:block/shop_machine_top",
+      "y": 0
+    },
+    "facing=west,half=bottom": {
+      "model": "teamecon:block/shop_machine_bottom",
+      "y": 90
+    },
+    "facing=west,half=top": {
+      "model": "teamecon:block/shop_machine_top",
+      "y": 90
+    }
+  }
+}

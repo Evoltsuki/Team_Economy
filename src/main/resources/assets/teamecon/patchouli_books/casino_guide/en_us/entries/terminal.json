@@ -1,0 +1,27 @@
+{
+  "name": "Wireless terminal",
+  "icon": "teamecon:terminal",
+  "category": "teamecon:basics",
+  "sortnum": 7,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Wireless terminal",
+      "images": [
+        "teamecon:textures/gui/guide/controls.png"
+      ],
+      "border": false,
+      "text": "Carry the main services into the late game."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Requires Lv.5, Free the End, and a 100,000-point purchase by default. The terminal has no crafting recipe.$(br2)Right-click for shopping, recycling, upgrades and remote games. Boxes remain exclusive to their dedicated machine."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Passing a terminal to another player does not bypass their requirements. Remote games also spend wallet points.$(br2)Closing Crash does not pause it. Cash out before the crash to collect the current payout."
+    }
+  ]
+}

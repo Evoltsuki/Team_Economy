@@ -1,0 +1,37 @@
+{
+  "name": "Your first day",
+  "icon": "teamecon:guide_book",
+  "category": "teamecon:basics",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Your first day",
+      "images": [
+        "teamecon:textures/gui/guide/welcome.png"
+      ],
+      "border": false,
+      "text": "You can also craft this guide with a book and an iron ingot."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Your first guide is free; install Patchouli to read it. A new personal start grants 200 points once. Existing wallets and team changes do not grant it again.$(br2)Use $(thing)/teamecon shop$() to open the shop. Keep tools and food; deposit spare materials in Sell, check the quote, then sell."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Lv.2 costs 1,200 points. A Slime Hop machine costs another 1,500, or you can craft it. Budget at least 2,700 to buy both, plus a small stake.$(br2)Games can lose points. Winning is never required to upgrade."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Payouts include the stake. Bet 100 at ×2: receive 200, a net gain of 100. A loss pays zero.$(br2)This guide lists defaults. Your server’s prices, permissions and limits appear in its interfaces."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:guide_book",
+      "text": "You can craft this item in survival using this recipe."
+    }
+  ]
+}

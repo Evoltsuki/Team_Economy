@@ -1,0 +1,37 @@
+{
+  "name": "猜大小機",
+  "icon": "teamecon:hilo_table",
+  "category": "teamecon:machines",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "猜大小",
+      "images": [
+        "teamecon:textures/gui/guide/hilo.png"
+      ],
+      "border": false,
+      "text": "小：1–5；大：6–10。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "操作與結算",
+      "text": "選擇小（1–5）或大（6–10），用減／加按鈕設定本金，再點選開始。數字停下後自動結算。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "事件機率",
+      "text": "每局獨立等機率抽取 1–10，各數字機率 10%。大小各佔 5 個數字，猜中機率均為 50%。$(br2)猜中預設 ×1.8，猜錯 ×0。連續猜錯不會提高下一局機率。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "使用條件",
+      "text": "預設 Lv.1，初始單註上限 2,000 點。錢包升級可提高上限。$(br2)結果確定後自動結算一次。$(br2)倍率包含本金。服主可修改規則，以當前介面為準。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:hilo_table",
+      "text": "合成後右鍵使用。遊戲機仍需對應錢包等級。"
+    }
+  ]
+}

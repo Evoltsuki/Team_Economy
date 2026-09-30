@@ -1,0 +1,83 @@
+plugins {
+    id 'java'
+    id 'net.minecraftforge.gradle' version '6.0.54'
+}
+def root = file('../..')
+def shared = new Properties()
+file('../../gradle.properties').withInputStream { shared.load(it) }
+def mc = providers.gradleProperty('mc').getOrElse('1.20.1')
+def portQa = providers.gradleProperty('portQa').isPresent()
+def targets = ['1.20.1': '47.4.10', '1.21.1': '52.1.0']
+if (!targets.containsKey(mc)) throw new GradleException('Supported Forge targets: ' + targets.keySet())
+version = shared.mod_version
+group = shared.mod_group_id
+base { archivesName = "teamecon-forge-${mc}" }
+layout.buildDirectory = file("../../build/forge-${mc}")
+java.toolchain.languageVersion = JavaLanguageVersion.of(mc == '1.20.1' ? 17 : 21)
+minecraft {
+    // Forge 52 uses official names at runtime; only 1.20.1 requires reobfuscation.
+    reobf = mc == '1.20.1'
+    mappings channel: 'official', version: mc
+    runs {
+        configureEach {
+            workingDirectory layout.buildDirectory.dir(portQa ? 'client-qa' : 'run').get().asFile
+            property 'forge.enabledGameTestNamespaces', 'teamecon'
+            if (portQa) property 'teamecon.portQa', 'true'
+            mods { teamecon { source sourceSets.main } }
+        }
+        client {}
+        server { args '--nogui' }
+        gameTestServer {}
+    }
+}
+repositories {
+    maven { url = 'https://maven.blamejared.com'; content { includeGroup 'vazkii.patchouli' } }
+}
+dependencies {
+    minecraft "net.minecraftforge:forge:${mc}-${targets[mc]}"
+    // Only the stable openBookGUI API is referenced; Patchouli remains optional.
+    compileOnly 'vazkii.patchouli:Patchouli:1.20.1-84.1-FORGE:api'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+def prepare = tasks.register('preparePort', Exec) {
+    inputs.dir(new File(root, 'src/main'))
+    inputs.dir('src')
+    inputs.file(new File(root, 'tools/prepare_forge.py'))
+    inputs.file(new File(root, 'gradle.properties'))
+    inputs.dir(new File(root, 'src/portqa'))
+    inputs.property('portQa',portQa)
+    outputs.dir(layout.buildDirectory.dir('generated'))
+    def python = providers.gradleProperty('python').getOrElse(System.getProperty('os.name').toLowerCase().contains('windows') ? 'py' : 'python3')
+    commandLine python, new File(root, 'tools/prepare_forge.py').absolutePath, '--mc', mc
+    if (portQa) args '--qa'
+}
+sourceSets.main {
+    java.setSrcDirs([layout.buildDirectory.dir('generated/java')])
+    resources.setSrcDirs([layout.buildDirectory.dir('generated/resources')])
+}
+// Forge 52 scans one physical mod root during development. Keep classes and
+// resources together so its annotation scanner sees the @Mod entry point.
+if (mc == '1.21.1') sourceSets.main.output.resourcesDir = layout.buildDirectory.dir('classes/java/main').get().asFile
+tasks.named('compileJava') { dependsOn prepare }
+tasks.named('processResources') { dependsOn prepare, tasks.named('compileJava') }
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+tasks.named('test') { useJUnitPlatform() }
+tasks.named('jar') {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    exclude 'com/evolt/teamecon/gametest/**', 'com/evolt/teamecon/qa/**'
+    exclude 'data/teamecon/structure/qa_empty.nbt', 'data/teamecon/structures/qa_empty.nbt'
+    from(new File(root, 'LICENSE'), new File(root, 'NOTICE.md'), new File(root, 'CREDITS.md'))
+    if (mc == '1.20.1') finalizedBy 'reobfJar'
+}
+tasks.register('prepareGameTests') {
+    def structures = layout.buildDirectory.dir('run/gameteststructures')
+    outputs.dir(structures)
+    doLast {
+        structures.get().asFile.mkdirs()
+        ['concurrentmachinestest', 'adminunlocktest', 'portsmoketest', 'teamecon'].each { name ->
+            new File(structures.get().asFile, "${name}.empty.snbt").text = '{size:[42,8,16],palette:[{Name:"minecraft:air"}],entities:[],blocks:[],DataVersion:3465}'
+        }
+    }
+}
+tasks.matching { it.name == 'runGameTestServer' }.configureEach { dependsOn 'prepareGameTests' }

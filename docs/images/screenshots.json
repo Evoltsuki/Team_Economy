@@ -1,0 +1,202 @@
+{
+  "version": "1.0.0",
+  "captured": "2026-09-28 / 2026-09-29 / 2026-09-30",
+  "source": "Minecraft gameplay screenshots.",
+  "shots": [
+    {
+      "file": "screenshots/boxes.png",
+      "sha256": "831622b284e0fa3100b7c52ba3c7fa1b3f23b16e7be856413ba3f1c26674b311",
+      "resolution": [
+        1600,
+        900
+      ]
+    },
+    {
+      "file": "screenshots/closing.png",
+      "sha256": "671cbbe340e97287e39804afd26bbf023edd56fc89fdaebffc6c6788c261297c",
+      "resolution": [
+        1600,
+        900
+      ]
+    },
+    {
+      "file": "screenshots/food.png",
+      "sha256": "209a6f6c88dd4d747d402af4b995a63cfa857bd62620718cde4a9ba5a84746b3",
+      "resolution": [
+        1600,
+        900
+      ]
+    },
+    {
+      "file": "screenshots/guide.png",
+      "sha256": "25e7fd528849fc72a973abf60541c140f8fa84568c01ff1bf54e05b8261d55f0",
+      "resolution": [
+        1600,
+        900
+      ]
+    },
+    {
+      "file": "screenshots/hilo.png",
+      "sha256": "180f1bb9e31c9ccb3137783d26cc5a8504ef8eab9c59cb2d8c0b6d148fb368c5",
+      "resolution": [
+        1600,
+        900
+      ]
+    },
+    {
+      "file": "screenshots/recycling.png",
+      "sha256": "5ae137d4f987e051e4464da8805a31a34397ed1bebd16948b2a710c313525f46",
+      "resolution": [
+        1600,
+        900
+      ]
+    },
+    {
+      "file": "screenshots/scratch.png",
+      "sha256": "410e39182ce71b64a276eb615d6b7d28a52bd9b863d002833b52a257311d0611",
+      "resolution": [
+        1600,
+        900
+      ]
+    },
+    {
+      "file": "screenshots/showroom.png",
+      "sha256": "ab7338617bd04a781d48b679308b4fada95136f15d44435777b2a1c3d15752ac",
+      "resolution": [
+        1600,
+        900
+      ]
+    },
+    {
+      "file": "screenshots/slime.png",
+      "sha256": "d8bb2287c6e5d5579691c60861cdc0e86d832384dced1a51ea23d29ab8839260",
+      "resolution": [
+        1600,
+        900
+      ]
+    },
+    {
+      "file": "screenshots/team.png",
+      "sha256": "4a3f873f8f4bf304e6cd87368edb6ffaa262dbdc751c389932e9c8bc61f06244",
+      "resolution": [
+        1600,
+        900
+      ]
+    },
+    {
+      "file": "screenshots/upgrade.png",
+      "sha256": "00df72c40df57221e558d24eb30ea9c6764f342c1a8f30d84978c804159399fe",
+      "resolution": [
+        1600,
+        900
+      ]
+    },
+    {
+      "file": "screenshots/probability-guide.png",
+      "sha256": "b50d65207c18365d2d1098d573221600345deb89ed2e60408989a136e8b973fb",
+      "resolution": [
+        1280,
+        960
+      ]
+    },
+    {
+      "file": "screenshots/photon-roulette.png",
+      "sha256": "d921c20095b63015eb7c7f8134fb7b266706a0b81b398141a65e72d60e55786d",
+      "resolution": [
+        1600,
+        900
+      ],
+      "captured": "2026-09-29"
+    },
+    {
+      "file": "screenshots/photon-boxes.png",
+      "sha256": "08acfe54d815cc1019eb1ad999f42186e83c95b26cbdb492c4a3c4b3e26eb533",
+      "resolution": [
+        1920,
+        1080
+      ],
+      "captured": "2026-09-29"
+    },
+    {
+      "file": "screenshots/photon-terminal.png",
+      "sha256": "78ad5c0c6e2e39e8567a7e2f9cc0eaf70404bb55868e8da34ee95fc1b31a8187",
+      "resolution": [
+        1920,
+        1080
+      ],
+      "captured": "2026-09-29"
+    },
+    {
+      "file": "screenshots/image-20260930001932113.png",
+      "sha256": "012c0efce5a0cd1cad822d6dea00a68410ec27df1e1600dcf0e7678d086bdd4b",
+      "resolution": [
+        1008,
+        1172
+      ]
+    },
+    {
+      "file": "screenshots/image-20260930001829218.png",
+      "sha256": "693905677c364fd9fafd2b80d3d873a9ed17d4e7f0f24a4726fa7f850eddefee",
+      "resolution": [
+        1313,
+        835
+      ]
+    },
+    {
+      "file": "screenshots/image-20260930002146387.png",
+      "sha256": "cd6acfa38b017d474373696fc0449352c38a4b28ca5b4ec3fe5f69603d43d5ed",
+      "resolution": [
+        1435,
+        961
+      ]
+    },
+    {
+      "file": "screenshots/image-20260930002114740.png",
+      "sha256": "23e3e16f4832c5dfaf9e3bc583254f6950b47082e05e3292f6fb64f90a992f4d",
+      "resolution": [
+        1344,
+        879
+      ]
+    },
+    {
+      "file": "screenshots/image-20260930001955386.png",
+      "sha256": "c7c0ee3b412b3be2842ecb11f766c7fb1a9111b8209d9bf73c11078c02e510ed",
+      "resolution": [
+        1219,
+        1161
+      ]
+    },
+    {
+      "file": "screenshots/image-20260930001256496.png",
+      "sha256": "192f1b57c19decb6a6cd2f96f5704dfca9f2e99050caa969330aab90262f151e",
+      "resolution": [
+        2554,
+        1083
+      ]
+    },
+    {
+      "file": "screenshots/image-20260930002043789.png",
+      "sha256": "a4e8521ba7b8c523d6503b3d1c02905b2899488c80dc94eb0a9bba2966342621",
+      "resolution": [
+        1506,
+        1005
+      ]
+    },
+    {
+      "file": "screenshots/image-20260930001906620.png",
+      "sha256": "da9da8a948b882ada0bdb9953c9d4f14b5b3e6988ba95d693d6456afbf238a11",
+      "resolution": [
+        1315,
+        828
+      ]
+    },
+    {
+      "file": "screenshots/image-20260930002025700.png",
+      "sha256": "d98e8715420a433c1c594f6fc1c63cfa699a59c9b863e239d7ad51579b6f29cc",
+      "resolution": [
+        1194,
+        759
+      ]
+    }
+  ]
+}

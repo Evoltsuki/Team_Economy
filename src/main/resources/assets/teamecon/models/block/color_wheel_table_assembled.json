@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "teamecon:block/color_wheel_table_side"
+  },
+  "elements": []
+}

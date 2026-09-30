@@ -1,0 +1,37 @@
+{
+  "name": "Lucky Wheel",
+  "icon": "teamecon:color_wheel_table",
+  "category": "teamecon:machines",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Lucky Wheel",
+      "images": [
+        "teamecon:textures/gui/guide/color_wheel.png"
+      ],
+      "border": false,
+      "text": "The fixed top pointer selects the prize colour."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "How to play",
+      "text": "Set a stake and Start; no colour prediction is needed. The wheel slows to a stop beneath the fixed top pointer.$(br2)A colour can occupy several sectors. Its probability combines all pockets of that colour."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Event probabilities",
+      "text": "40 equally likely pockets:$(br)Grey: 23, 57.5%, ×0$(br)Green: 9, 22.5%, ×1$(br)Blue: 5, 12.5%, ×2$(br)Purple: 2, 5%, ×4$(br)Gold: 1, 2.5%, ×10$(br2)Green returns the stake. Spins are independent; there is no pity system."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Requirements",
+      "text": "Default Lv.3; initial stake cap 50,000. Wallet upgrades can raise it.$(br2)The result settles automatically once.$(br2)Payouts include the stake. Server rules may differ; check the live interface."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "teamecon:color_wheel_table",
+      "text": "Craft, then right-click to use. Machines still require the matching wallet level."
+    }
+  ]
+}

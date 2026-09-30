@@ -1,0 +1,27 @@
+{
+  "name": "下注与实体操作",
+  "icon": "teamecon:multiplier_machine",
+  "category": "teamecon:basics",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "下注与实体操作",
+      "images": [
+        "teamecon:textures/gui/guide/controls.png"
+      ],
+      "border": false,
+      "text": "用“倍率”放大下注，再单独点击开始。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "一般机器需 2×2、高 3 格空间；跳冰宽 3 格，两种轮盘占地 3×3。$(br2)面板从上到下为：开始、下注金额、选项与金额调整按钮。右键 ± 按钮调整，蹲下为十倍步长。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "倍率基于固定基数。例如基数 100，设 ×10 是 1,000；重新设 ×2 是 200，设 ×1 回到 100。重新输入不会叠乘。使用 ± 按钮或直接输入金额会建立新的基数。$(br2)应用倍数不会自动下注。闯关只能由原玩家继续或提取，结算回原出资钱包。"
+    }
+  ]
+}

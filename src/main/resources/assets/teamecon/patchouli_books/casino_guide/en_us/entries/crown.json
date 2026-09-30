@@ -1,0 +1,22 @@
+{
+  "name": "Crown jackpot",
+  "icon": "teamecon:scratch_card_crown",
+  "category": "teamecon:tickets",
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:image",
+      "title": "Crown jackpot",
+      "images": [
+        "teamecon:textures/gui/guide/crown.png"
+      ],
+      "border": false,
+      "text": "More crowns reveal a higher prize tier."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "",
+      "text": "Crown 2,500; Lv.5. Seven crowns pay up to ×500.$(br2)A higher stake factor scales both price and prize. Face-value limits grow with wallet level. Prize tiers appear on each card; scratching settles automatically."
+    }
+  ]
+}
