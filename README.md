@@ -182,7 +182,6 @@ Team Economy 为 Minecraft 生存加入物资回收、积分商店和六种实�
 | 安装、第一局、组队、全部配方 | [图文试玩指南](docs/试玩指南.md) |
 | 服主调价、进度规则与配置 | [平衡配置指南](docs/平衡配置指南.md) |
 | 自行构建 JAR 和准备发布附件 | [手动打包指南](docs/手动打包指南.md) |
-| 论坛介绍与试玩教程 | [MCBBS 发布文本](README_MCBBS.md) |
 
 发现问题请在仓库 **Issues** 按[反馈模板](.github/ISSUE_TEMPLATE/bug_report.md)提供游戏、加载器与模组版本，单人／服务端环境，复现步骤，预期与实际结果，并附相关日志或截图。整合包反馈请一并说明模组列表。
 
@@ -217,7 +216,7 @@ bash ./gradlew releaseMod
 py -3.12 tools/package_release.py --offline
 ```
 
-根目录 `README.md` 为 GitHub 中文首页，`README_EN.md` 为独立英文版，`README_MCBBS.md` 为论坛发布稿；三份文件分别维护，并全部包含在公开源码 ZIP 中。
+根目录 `README.md` 为 GitHub 中文首页，`README_EN.md` 为独立英文版；两份文件分别维护，并包含在公开源码 ZIP 中。
 
 Python 依赖及联网打包方法见[手动打包指南](docs/手动打包指南.md)。完整打包另需 JDK 17（Forge 1.20.1）及 Python 3.11+；四个目标的命令见打包指南。`release/1.0.0/` 只包含四份玩家 JAR、一份公开源码 ZIP 和 `SHA256SUMS.txt`。
 
@@ -247,7 +246,7 @@ Python 依赖及联网打包方法见[手动打包指南](docs/手动打包指�
 | `logs/` | 本地运行日志 |
 | `run/` | 本地开发游戏的配置与存档，清理工作区时保留 |
 
-根目录的 Gradle 文件、Wrapper 和 `build-mod.bat` 用于构建；`requirements.txt` 列出 Python 工具依赖。`README.md`、`README_EN.md`、`README_MCBBS.md`、许可及署名文件为公开项目说明。
+根目录的 Gradle 文件、Wrapper 和 `build-mod.bat` 用于构建；`requirements.txt` 列出 Python 工具依赖。`README.md`、`README_EN.md`、许可及署名文件为公开项目说明。
 
 `dist/`、`release/`、`build/`、`.gradle/`、`logs/`、`run/`、`internal/` 以及本地任务文件 `PROGRESS.md`、`待办事项.txt` 不提交仓库，也不进入公开源码 ZIP。下载的干净源码中可能没有这些本地目录。
 

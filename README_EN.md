@@ -1,6 +1,6 @@
 # Team Economy
 
-[简体中文](README.md) · [Chinese forum edition](README_MCBBS.md)
+[简体中文](README.md)
 
 [Download 1.0.0](https://github.com/Evoltsuki/Team_Economy/releases/tag/v1.0.0) · [Source code](https://github.com/Evoltsuki/Team_Economy) · [Report an issue](https://github.com/Evoltsuki/Team_Economy/issues)
 
@@ -227,7 +227,7 @@ py -3.12 tools/package_release.py --offline
 
 Remove `--offline` if dependencies need downloading. See the [packaging guide (Chinese)](docs/手动打包指南.md) for target-specific commands and JDK selection.
 
-`release/1.0.0/` contains four player JARs, the public source ZIP and `SHA256SUMS.txt`. The source ZIP includes `README.md`, `README_EN.md` and `README_MCBBS.md`, each maintained separately. The version remains **1.0.0** until the author explicitly requests a change; build and packaging commands never increment it.
+`release/1.0.0/` contains four player JARs, the public source ZIP and `SHA256SUMS.txt`. The source ZIP includes `README.md` and `README_EN.md`, each maintained separately. The version remains **1.0.0** until the author explicitly requests a change; build and packaging commands never increment it.
 
 </details>
 
@@ -254,7 +254,7 @@ Remove `--offline` if dependencies need downloading. See the [packaging guide (C
 | `logs/` | Local runtime logs |
 | `run/` | Development game configuration and saved worlds |
 
-Root Gradle files, the Wrapper and `build-mod.bat` support builds. `requirements.txt` lists Python tool dependencies. `README.md`, `README_EN.md` and `README_MCBBS.md` are independently maintained project documentation, alongside the license and attribution files.
+Root Gradle files, the Wrapper and `build-mod.bat` support builds. `requirements.txt` lists Python tool dependencies. `README.md` and `README_EN.md` are independently maintained project documentation, alongside the license and attribution files.
 
 `dist/`, `release/`, `build/`, `.gradle/`, `logs/`, `run/`, `internal/`, `PROGRESS.md` and the local task file are excluded from the repository and public source ZIP. Local-only directories may be absent from a clean source download.
 

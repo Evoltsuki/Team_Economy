@@ -19,12 +19,12 @@ ROOT = Path(__file__).resolve().parents[1]
 VERSION = next(line.split('=', 1)[1].strip() for line in
                (ROOT / 'gradle.properties').read_text(encoding='utf-8').splitlines()
                if line.startswith('mod_version='))
-ROOT_FILES = ('README.md', 'README_EN.md', 'README_MCBBS.md', 'LICENSE', 'NOTICE.md', 'CREDITS.md',
+ROOT_FILES = ('README.md', 'README_EN.md', 'LICENSE', 'NOTICE.md', 'CREDITS.md',
               'TEMPLATE_LICENSE.txt', 'build.gradle', 'settings.gradle',
               'gradle.properties', 'gradlew', 'gradlew.bat', 'requirements.txt',
               '.gitignore', '.gitattributes', 'build-mod.bat')
 PUBLIC_DIRS = ('src', 'gradle', '.github', 'docs', 'tools', 'versions')
-PRIVATE_NAMES = {'PROGRESS.md', '待办事项.txt', '建模交付规范.md', 'modlist.txt'}
+PRIVATE_NAMES = {'README_MCBBS.md', 'PROGRESS.md', '待办事项.txt', '建模交付规范.md', 'modlist.txt'}
 
 
 def source_files():
@@ -88,7 +88,7 @@ def package(offline=False, java17=None):
     dest = ROOT / 'release' / VERSION
     source_name = f'teamecon-{VERSION}-github-source.zip'
     expected = {jar.name for jar in jars} | {source_name, 'SHA256SUMS.txt'}
-    # The Chinese GitHub/forum READMEs and independent English README enter the source ZIP.
+    # Only the public Chinese and English READMEs enter the source ZIP.
     if dest.exists() and any(p.name not in expected or not p.is_file() for p in dest.iterdir()):
         raise ValueError(f'Archive old/unexpected contents of {dest} before packaging')
     with tempfile.TemporaryDirectory(prefix='public-release-', dir=ROOT / 'build') as temp:
