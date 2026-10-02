@@ -232,7 +232,7 @@ public final class BlindBoxPools {
             }
             JsonObject root = new JsonObject();
             root.addProperty("version", 1);
-            root.addProperty("_comment", "Each opening draws one entry. Chance = weight / total weight. See docs/server-configuration.md. Reload with /teamecon admin reload.");
+            root.addProperty("_comment", "Each opening draws one entry. Use chance percentages totaling 100, or relative weight entries; do not mix formats within a pool. See docs/server-configuration.md. Reload with /teamecon admin reload.");
             root.add("pools", array);
             Files.writeString(file, new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(root) + "\n");
             ModLogger.info("Wrote default blind box file to {}", file);

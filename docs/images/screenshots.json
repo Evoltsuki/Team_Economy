@@ -1,6 +1,6 @@
 {
   "version": "1.0.1",
-  "captured": "2026-09-28 / 2026-09-29 / 2026-09-30 / 2026-10-02",
+  "captured": "2026-09-28 / 2026-09-29 / 2026-09-30 / 2026-10-02 / 2026-10-03",
   "source": "Minecraft gameplay screenshots.",
   "shots": [
     {
@@ -227,30 +227,30 @@
     },
     {
       "file": "screenshots/box-admin.png",
-      "sha256": "220c5099d6f0b57e5e4e6000dce5d217d410f77ab1ab65751c48f0cef873fc2b",
+      "sha256": "f19f4a78eec386951cd8ea4d7ca48d3324f6c799ea127ad11d1decdced1fce34",
       "resolution": [
         936,
         688
       ],
-      "captured": "2026-10-02"
+      "captured": "2026-10-03"
     },
     {
       "file": "screenshots/box-admin-picker.png",
-      "sha256": "3bf1bd6cc4c2382f87c5fd32204acc31a510ae778c8723f9ecdbde838760a1dc",
+      "sha256": "5042572fc817fb76c0d36df67f86473a02870c32e8607279b597746ee2a7c3d2",
       "resolution": [
         936,
         688
       ],
-      "captured": "2026-10-02"
+      "captured": "2026-10-03"
     },
     {
       "file": "screenshots/box-admin-en.png",
-      "sha256": "fc2676627b4ad7623c39635288a67aec12a48346b006e7ce927daa97a33564ad",
+      "sha256": "d0e6a318d1072ab6d7e4ae43e994f7029c3f0da8153925e5fc5caa4bddc8637c",
       "resolution": [
         936,
         688
       ],
-      "captured": "2026-10-02"
+      "captured": "2026-10-03"
     },
     {
       "file": "screenshots/terminal-home.png",

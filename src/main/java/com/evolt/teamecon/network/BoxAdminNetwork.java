@@ -12,7 +12,7 @@ import java.util.ConcurrentModificationException;
 public final class BoxAdminNetwork {
     private BoxAdminNetwork(){}
     public static void register(RegisterPayloadHandlersEvent event){
-        event.registrar("2").playToServer(BoxAdminActionPayload.TYPE,BoxAdminActionPayload.STREAM_CODEC,(p,c)->c.enqueueWork(()->{
+        event.registrar("3").playToServer(BoxAdminActionPayload.TYPE,BoxAdminActionPayload.STREAM_CODEC,(p,c)->c.enqueueWork(()->{
             if(c.player() instanceof ServerPlayer player)handle(player,p);
         })).playToClient(BoxAdminSyncPayload.TYPE,BoxAdminSyncPayload.STREAM_CODEC,(p,c)->c.enqueueWork(()->com.evolt.teamecon.client.BoxAdminScreen.receive(p)));
     }

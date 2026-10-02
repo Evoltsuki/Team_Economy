@@ -125,13 +125,14 @@ public final class ShopPool {
         if (array == null || array.isEmpty() || array.size() > 128)
             throw new IllegalArgumentException("Pool " + id + " needs 1 to 128 entries");
         new BoxPrizeGrid(array); // Validate optional editor layout without changing prize weights.
+        int[] weights = BoxChances.weights(array);
         List<Entry> parsed = new ArrayList<>();
         for (int i = 0; i < array.size(); i++) {
             JsonObject entry = array.get(i).getAsJsonObject();
             String key = ConfigJson.text(entry, "item", "");
             if (!ShopCatalog.id(key)) throw new IllegalArgumentException("Invalid item in " + id + " entry " + i);
             int count = (int) ConfigJson.integer(entry, "count", 1, 1, com.evolt.teamecon.economy.MoneyMath.MAX_PURCHASE);
-            int weight = (int) ConfigJson.integer(entry, "weight", 1, 1, 1_000_000);
+            int weight = weights[i];
             String potion = ConfigJson.text(entry, "potion", "");
             new BoxReward(key, potion, count);
             parsed.add(new Entry(key, count, weight, potion));

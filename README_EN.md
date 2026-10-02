@@ -136,7 +136,7 @@ These require **operator permission level 2 or higher**. Enable cheats to use th
 | `/teamecon admin level <level> [player]` | Set the target's current wallet level to 1–5, retaining their personal bypass setting |
 | `/teamecon admin bypass <true/false> [player]` | Enable or disable the personal advancement bypass without changing wallet level |
 | `/teamecon admin status [player]` | Show the target's wallet level, balance and personal bypass status |
-| `/teamecon admin boxes` | Manage box types, names, prices, prizes, quantities and weights |
+| `/teamecon admin boxes` | Manage box types, names, prices, prizes, quantities and percentages |
 | `/teamecon admin prices` | Open the item pricing panel, selecting the held item when present |
 | `/teamecon reward <reward_id> <points> [player]` | Add a one-time quest reward to the target's current wallet |
 | `/teamecon_quest_reward <FTB_reward_id> <points> [player]` | Grant team points using an FTB reward ID |
@@ -179,7 +179,7 @@ Server owners can customize prices, market demand, progression, equipment access
 | `config/teamecon_slots.json` | Slot reel weights and payouts |
 | `config/teamecon_risk_tiers.json` | Risk tier settings |
 
-Server owners can replace the default item catalogue, hide items, set purchase prices and explicitly add installed mod items. Mystery box pools support custom rewards, quantities, weights and per-pool switches. File changes apply with `/teamecon admin reload`; panel saves apply immediately. Modded items require an explicit recycling price in the pricing panel to enable recycling. See the [shop and mystery box examples](docs/server-configuration.md) and the [balance guide (Chinese)](docs/平衡配置指南.md).
+Server owners can replace the default item catalogue, hide items, set purchase prices and explicitly add installed mod items. Mystery box pools support custom rewards, quantities, percentages and per-pool switches. File changes apply with `/teamecon admin reload`; panel saves apply immediately. Modded items require an explicit recycling price in the pricing panel to enable recycling. See the [shop and mystery box examples](docs/server-configuration.md) and the [balance guide (Chinese)](docs/平衡配置指南.md).
 
 ## In-game pricing, mystery boxes and quest rewards
 
@@ -193,7 +193,7 @@ Purchase and base recycling prices independently support **Inherit**, **Disabled
 
 ### Mystery box editor
 
-Use `/teamecon admin boxes` (OP level 2) to open a chest-style prize template grid above your inventory. Drag an inventory stack into the grid or Shift-click it to add a sample, drag templates to rearrange them, and right-click to remove them. Samples never consume the original items, and blank cells are not draws. Select a template to edit its quantity and weight; the side panel shows its chance. **Box settings** provides names, prices, availability and optional stages.
+Use `/teamecon admin boxes` (OP level 2) to open a chest-style prize template grid above your inventory. Drag an inventory stack into the grid or Shift-click it to add a sample, drag templates to rearrange them, and right-click to remove them. Samples never consume the original items, and blank cells are not draws. Select a template to edit its quantity and enter its chance directly as a percentage, such as `12.5`. Values range from `0–100`, with up to six decimal places. Allocated and remaining percentages are shown, and the total must be `100%` to save. New prizes start at `0%`; other chances stay unchanged. **Box settings** provides names, prices, availability and optional stages.
 
 **Add prize** keeps name, ID, Chinese pinyin and initials search, including individual potion effects. Inventory samples support ordinary items and potion variants; renamed, enchanted or filled items with extra data are rejected with a message.
 

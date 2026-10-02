@@ -20,7 +20,7 @@ public final class BoxFeaturesTest {
         Path dir=Files.createTempDirectory("teamecon-box-potions-");
         try{
             Files.writeString(dir.resolve("teamecon_blindbox.json"),"""
-                [{"id":"healing","price":10,"enforceValueCap":false,"entries":[{"item":"minecraft:potion","potion":"minecraft:healing","count":1,"weight":1}]}]
+                [{"id":"healing","price":10,"enforceValueCap":false,"entries":[{"item":"minecraft:potion","potion":"minecraft:healing","count":1,"chance":100}]}]
                 """);
             var shop=new ShopService(p.getServer(),manager,TeamEconomyMod.get().prices());shop.loadConfigs(dir);
             var result=shop.buyBlindBox(p,"healing",64);

@@ -398,9 +398,22 @@ public final class VisualQa {
             require(hasButton("item.minecraft.potion.effect.healing"),"Pinyin search did not find a healing potion");
         });snapshot("box-admin-potion-search");
         action("choose healing potion",()->{
-            click("item.minecraft.potion.effect.healing");field("gui.teamecon.box_admin.weight").setValue("3");click("gui.teamecon.box_admin.apply");
+            click("item.minecraft.potion.effect.healing");field("gui.teamecon.box_admin.percent").setValue("12.5%");click("gui.teamecon.box_admin.apply");
             click("gui.teamecon.box_admin.add");field("gui.teamecon.box_admin.search").setValue("minecraft:swiftness");
-            click("item.minecraft.potion.effect.swiftness");click("gui.teamecon.box_admin.apply");
+            click("item.minecraft.potion.effect.swiftness");field("gui.teamecon.box_admin.percent").setValue("25");click("gui.teamecon.box_admin.apply");
+        });snapshot("box-admin-under-100");
+        action("incomplete percentages cannot save",()->{
+            click("gui.teamecon.box_admin.save");
+            require(((BoxAdminScreen)mc().screen).ready(),"Incomplete draft was sent to server");
+            require(com.evolt.teamecon.shop.BoxChances.totalUnits(((BoxAdminScreen)mc().screen).currentPool().getAsJsonArray("entries"))==37_500_000,"Draft percentages were silently normalized");
+            require(TeamEconomyMod.get().shop().boxAdmin().pool("alchemy")==null,"Incomplete pool persisted");
+            field("gui.teamecon.box_admin.percent").setValue("100");click("gui.teamecon.box_admin.apply");
+        });snapshot("box-admin-over-100");
+        action("excess percentages cannot save",()->{
+            click("gui.teamecon.box_admin.save");require(((BoxAdminScreen)mc().screen).ready(),"Excess draft was sent to server");
+            require(TeamEconomyMod.get().shop().boxAdmin().pool("alchemy")==null,"Excess pool persisted");
+            field("gui.teamecon.box_admin.percent").setValue("87.5");click("gui.teamecon.box_admin.apply");
+            require(com.evolt.teamecon.shop.BoxChances.totalUnits(((BoxAdminScreen)mc().screen).currentPool().getAsJsonArray("entries"))==100_000_000,"Decimal percentages did not total 100");
         });snapshot("box-admin-edit-pool");
         action("shift copy inventory stack into prize template",()->{
             shiftBoxInventory(0);require(mc().player.getInventory().countItem(Items.IRON_INGOT)==16,"Shift sample consumed inventory");
@@ -420,6 +433,7 @@ public final class VisualQa {
             require(((BoxAdminScreen)mc().screen).currentPool().getAsJsonArray("entries").size()==2,"Right click did not remove samples");
             require(mc().player.getInventory().countItem(Items.DIAMOND)==8&&mc().player.getInventory().countItem(Items.IRON_INGOT)==16,"Template movement changed real inventory");
         });
+        action("show exact percentage before saving",()->boxClick(120,74,0));snapshot("box-admin-percentages");
         action("save custom pool",()->click("gui.teamecon.box_admin.save"));boxAdminReady();
         action("custom pool saved without spawning items",()->{
             require(((BoxAdminScreen)mc().screen).currentPool().get("id").getAsString().equals("alchemy"),"Custom box not saved");
@@ -461,6 +475,7 @@ public final class VisualQa {
             until("box editor language ready",()->languageReload.isDone()&&mc().getOverlay()==null);
             action("open translated box editor",()->server(com.evolt.teamecon.shop.BoxAdminMenu::open));boxAdminReady();
             action("select translated custom pool",()->click("alchemy"));boxAdminReady();
+            action("show translated prize percentages",()->boxClick(120,74,0));
             if(language.equals("en_us"))snapshot("box-admin-en");
         }
         action("close box editor",VisualQa::closeScreen);delay(5);
@@ -471,7 +486,13 @@ public final class VisualQa {
             com.evolt.teamecon.shop.ShopMenu.open(p,SHOP.east(3),false,"boxes");
         }));
         until("custom pool appears",()->mc().screen instanceof BlindBoxScreen box&&ClientShopCache.containerId()==box.getMenu().containerId&&ClientShopCache.boxes().stream().anyMatch(p->p.poolId().equals("alchemy")));
-        action("select custom potion pool",()->click("炼金盲盒"));snapshot("boxes-potion-probabilities");
+        action("select custom potion pool",()->{
+            click("炼金盲盒");
+            var pool=ClientShopCache.boxes().stream().filter(p->p.poolId().equals("alchemy")).findFirst().orElseThrow();
+            long total=pool.prizes().stream().mapToLong(ClientShopCache.BoxPrize::weight).sum();
+            var healing=pool.prizes().stream().filter(p->p.potion().equals("minecraft:healing")).findFirst().orElseThrow();
+            require(healing.weight()*8L==total,"Player preview differs from entered 12.5%");
+        });snapshot("boxes-potion-probabilities");
         action("open sixty four unstackable rewards",()->{balanceBefore=ClientShopCache.balance();click("×64");click("gui.teamecon.boxes.open");});
         until("overflow saved on server",()->ClientShopCache.balance()==balanceBefore-7680&&ClientShopCache.pending().stream().mapToInt(ClientShopCache.PrizeRow::count).sum()==28);
         action("view pending prizes",()->click("gui.teamecon.boxes.pending"));snapshot("boxes-pending-64");

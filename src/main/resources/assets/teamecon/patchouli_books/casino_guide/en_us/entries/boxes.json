@@ -26,7 +26,7 @@
     {
       "type": "patchouli:text",
       "title": "Drawing prizes",
-      "text": "Entry chance = entry weight / total weight. Each box draws independently; bulk opening does not improve individual odds. There is no pity guarantee.$(br2)Eggs are prize-only and cannot be traded. Valuable outcomes do not guarantee a profit on every box."
+      "text": "Prize chances are shown in the pool preview. Each box draws independently; bulk opening does not improve individual odds. There is no pity guarantee.$(br2)Eggs are prize-only and cannot be traded. Valuable outcomes do not guarantee a profit on every box."
     },
     {
       "type": "patchouli:text",
@@ -36,7 +36,7 @@
     {
       "type": "patchouli:text",
       "title": "Potions and custom pools",
-      "text": "Each default pool has five potion entries, including splash and lingering variants.$(br2)Operators: /teamecon admin boxes opens a prize template grid. Drag or Shift-click inventory items to add samples without consuming them. Select a template to edit quantity and weight. Box settings controls names and prices."
+      "text": "Each default pool has five potion entries, including splash and lingering variants.$(br2)Operators: /teamecon admin boxes opens a prize template grid. Drag or Shift-click inventory items to add samples without consuming them. Select a template to edit quantity and percentage. Chances must total 100% to save. Box settings controls names and prices."
     },
     {
       "type": "patchouli:crafting",
