@@ -18,3 +18,19 @@
 
 
 根目录 `README.md` 为 GitHub 中文首页，`README_EN.md` 为英文版；两份文档独立维护，并一同保留在仓库中。完整构建方法见[手动打包指南](../docs/手动打包指南.md)。
+
+## 发布凭据与提交检查
+
+作者 API 凭据使用 `publish_credentials.py` 保存到当前 Windows 用户的 `%LOCALAPPDATA%/TeamEconomy/credentials/`，位于仓库外，以 Windows DPAPI 加密。只有原 Windows 用户环境可解密；不提供打印令牌的命令。令牌须先从对应平台的作者设置中创建，勿写入聊天、源码或配置示例。
+
+```powershell
+py tools/publish_credentials.py set modrinth
+py tools/publish_credentials.py set curseforge
+py tools/publish_credentials.py status
+git config core.hooksPath .githooks
+py tools/check_secrets.py
+```
+
+`set` 通过隐藏输入读取令牌。发布脚本可导入 `publish_credentials.load(provider)`，仅在内存中使用。GitHub 身份认证继续由 Git Credential Manager 管理。
+
+`.gitignore` 排除凭据文件，提交钩子检查暂存区；GitHub Actions 在推送和 PR 中检查已跟踪文件，公开源码导出也会扫描。扫描只报告位置与类型，不打印匹配值。可检测已知令牌格式、明文 API 凭据赋值和敏感文件名；不能保证识别任意无特征字符串。新克隆需执行上述 `core.hooksPath` 命令，仓库管理员应在 GitHub 设置中启用 Secret scanning 和 Push protection。

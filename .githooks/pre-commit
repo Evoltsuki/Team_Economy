@@ -1,0 +1,9 @@
+#!/bin/sh
+if command -v py >/dev/null 2>&1; then
+    exec py -3 tools/check_secrets.py --staged
+elif command -v python3 >/dev/null 2>&1; then
+    exec python3 tools/check_secrets.py --staged
+else
+    echo 'Python 3 is required for the credential check.' >&2
+    exit 1
+fi

@@ -1,6 +1,7 @@
 # Keep source portable; the Windows launcher retains CRLF.
 * text=auto
 *.sh text eol=lf
+.githooks/* text eol=lf
 gradlew text eol=lf
 *.bat text eol=crlf
 *.java text eol=lf

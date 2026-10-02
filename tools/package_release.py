@@ -13,6 +13,7 @@ import sys
 import tempfile
 import xml.etree.ElementTree as ET
 from verify_release import TARGETS, verify
+from check_secrets import findings
 
 ROOT = Path(__file__).resolve().parents[1]
 VERSION = next(line.split('=', 1)[1].strip() for line in
@@ -22,7 +23,7 @@ ROOT_FILES = ('README.md', 'README_EN.md', 'LICENSE', 'NOTICE.md', 'CREDITS.md',
               'TEMPLATE_LICENSE.txt', 'build.gradle', 'settings.gradle',
               'gradle.properties', 'gradlew', 'gradlew.bat', 'requirements.txt',
               '.gitignore', '.gitattributes', 'build-mod.bat')
-PUBLIC_DIRS = ('src', 'gradle', '.github', 'docs', 'tools', 'versions')
+PUBLIC_DIRS = ('src', 'gradle', '.github', '.githooks', 'docs', 'tools', 'versions')
 PRIVATE_NAMES = {'README_MCBBS.md', 'PROGRESS.md', '待办事项.txt', '建模交付规范.md', 'modlist.txt'}
 
 
@@ -39,6 +40,8 @@ def source_files():
             raise ValueError(f'Missing or linked public source: {path}')
         if path.name in PRIVATE_NAMES:
             raise ValueError(f'Private document in public source: {path}')
+        if any(findings(path.relative_to(ROOT).as_posix(), path.read_bytes())):
+            raise ValueError(f'Credential detected in public source: {path}; value withheld')
     return sorted(set(paths))
 
 
