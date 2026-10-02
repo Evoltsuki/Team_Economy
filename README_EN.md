@@ -83,10 +83,12 @@ Choose **one** JAR matching your Minecraft version and loader. Place it in your 
 
 | Minecraft | Loader version | Java | File |
 |---|---|---|---|
-| 1.21.1 | NeoForge 21.1.250 | 21 | `teamecon-neoforge-1.21.1-1.0.0.jar` |
-| 1.21 | NeoForge 21.0.167 | 21 | `teamecon-neoforge-1.21-1.0.0.jar` |
+| 1.21.1 | NeoForge 21.1.1+ | 21 | `teamecon-neoforge-1.21.1-1.0.0.jar` |
+| 1.21 | NeoForge 21.0.143+ | 21 | `teamecon-neoforge-1.21-1.0.0.jar` |
 | 1.20.1 | Forge 47.4.10 | 17 | `teamecon-forge-1.20.1-1.0.0.jar` |
 | 1.21.1 | Forge 52.1.0 | 21 | `teamecon-forge-1.21.1-1.0.0.jar` |
+
+The NeoForge versions are the minimum supported stable releases for each Minecraft branch. Optional integrations must also meet their own dependency requirements.
 
 **Optional integrations:** FTB Teams enables shared wallets; Patchouli enables the in-game handbook. When installing either, also install the dependencies required by that mod's matching release. For NeoForge 1.21.1, the documented combination is FTB Teams 2101.1.11, FTB Library 2101.1.30, Architectury API 13.0.8 and Patchouli 1.21.1-93-NEOFORGE. Other targets require their own matching releases.
 
@@ -168,17 +170,18 @@ Server owners can customize prices, market demand, progression, equipment access
 | `config/teamecon_progression.json` | Advancement requirements and items that can be recycled but not purchased |
 | `config/teamecon_casino_levels.json` | Level costs, machine limits, terminal access and ticket levels |
 | `config/teamecon_enchants.json` | Enchanted book catalog and prices |
+| `config/teamecon_shop_catalog.json` | Custom shop items, exclusions and purchase prices |
 | `config/teamecon_blindbox.json` | Mystery box prices and prize pools |
 | `config/teamecon_slots.json` | Slot reel weights and payouts |
 | `config/teamecon_risk_tiers.json` | Risk tier settings |
 
-See the [configuration guide (Chinese)](docs/平衡配置指南.md) for detailed settings.
+Server owners can replace the default item catalogue, hide items, set purchase prices and explicitly add installed mod items. Mystery box pools support custom rewards, quantities, weights and per-pool switches. Changes apply with `/teamecon admin reload`. Modded items are not recyclable. See the [shop and mystery box examples](docs/server-configuration.md) and the [balance guide (Chinese)](docs/平衡配置指南.md).
 
 ## Common questions
 
 **What kind of economy is this?** Points are stored in personal or FTB team wallets and used for the system shop and games. The shop follows server rules; it does not provide player-managed listings, prices or stock.
 
-**Can I trade modded items?** The general trading catalog supports vanilla items and vanilla enchantments. Third-party items and enchantments are excluded. Team Economy equipment, terminals and tickets use their own acquisition menus and cannot be recycled.
+**Can I trade modded items?** The default catalog supports vanilla items and enchantments. Server owners can explicitly add installed mod items to the shop or mystery boxes through JSON configuration. Third-party items are not recyclable, and third-party enchantments are not sold. Team Economy equipment, terminals and tickets use their own acquisition menus and cannot be recycled.
 
 **Can points buy every item?** Some purchases require the player's vanilla advancements. Key loot such as elytra and nether stars is unavailable for purchase by default. Mystery boxes use their own displayed prize pools.
 

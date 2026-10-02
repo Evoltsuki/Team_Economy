@@ -134,13 +134,13 @@ public final class RevisionRegressionTest {
     }
 
     @GameTest(template="empty")
-    public static void blindBatchesIgnoreStagesChargeExactlyAndDeliverEveryPrize(GameTestHelper h) throws Exception {
+    public static void unrestrictedBlindBatchesChargeExactlyAndDeliverEveryPrize(GameTestHelper h) throws Exception {
         var p=ProgressionTest.player(h,"batch-box");var manager=new TeamEconomyManager();
         var wallet=TeamUtil.walletKey(p.getServer(),p.getUUID());manager.setBalance(wallet,100_000);
         Path dir=Files.createTempDirectory("teamecon-batch-box-");
         try {
             Files.writeString(dir.resolve("teamecon_blindbox.json"),"""
-                [{"id":"diamond","price":1000,"stage":"never_unlocked","entries":[{"item":"minecraft:diamond","count":1,"weight":1}]}]
+                [{"id":"diamond","price":1000,"stage":"","entries":[{"item":"minecraft:diamond","count":1,"weight":1}]}]
                 """);
             var shop=new ShopService(p.getServer(),manager,TeamEconomyMod.get().prices());shop.loadConfigs(dir);
             var first=shop.buyBlindBox(p,"diamond",64);

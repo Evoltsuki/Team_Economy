@@ -137,8 +137,8 @@ public class TeConfig {
             progressionEnabled = BUILDER.comment("Enforce teamecon_progression.json for shops, buy commands and books. Blind boxes use independent prize pools without advancement locks.",
                             "Advancement unlocks are personal; sharing a wallet does not grant another player's progress.")
                     .define("progressionEnabled", true);
-            allowUnruledModdedPurchases = BUILDER.comment("Legacy option, ignored since 0.4.1. All third-party mod item purchases and sales are disabled.",
-                            "Team Economy's dedicated machine and ticket catalogues remain available.")
+            allowUnruledModdedPurchases = BUILDER.comment("Legacy progression option. Third-party purchases require explicit entries in teamecon_shop_catalog.json.",
+                            "Third-party items are not recyclable. Team Economy tickets use their dedicated catalogue.")
                     .define("allowUnruledModdedPurchases", false);
         }
     }

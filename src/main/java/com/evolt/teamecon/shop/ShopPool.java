@@ -1,6 +1,7 @@
 package com.evolt.teamecon.shop;
 
 import com.evolt.teamecon.util.ModLogger;
+import com.evolt.teamecon.config.ConfigJson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -27,6 +28,7 @@ public final class ShopPool {
     private String id = "";
     private long price = 0L;
     private String stage = "";
+    private boolean enabled = true, allowModdedItems, enforceValueCap = true;
     private final List<Entry> entries = new ArrayList<>();
 
     public String id() {
@@ -88,31 +90,44 @@ public final class ShopPool {
         return entries.get(entries.size() - 1);
     }
 
-    /** Parses one pool from a JSON object; returns false when the entry list is unusable. */
+    public boolean enabled() { return enabled; }
+    public boolean enforceValueCap() { return enforceValueCap; }
+    public boolean allows(String key) {
+        return BoxPrizePolicy.allowed(key) || allowModdedItems && ShopCatalog.id(key)
+                && !key.startsWith("minecraft:") && !key.startsWith("teamecon:");
+    }
+    public net.minecraft.world.item.Item item(String key) {
+        var id = net.minecraft.resources.ResourceLocation.tryParse(key);
+        return allows(key) && id != null && net.minecraft.core.registries.BuiltInRegistries.ITEM.containsKey(id)
+                ? net.minecraft.core.registries.BuiltInRegistries.ITEM.get(id) : null;
+    }
+
+    /** Reject an entire malformed pool; skipping a reward would change the configured odds. */
     boolean read(JsonObject obj) {
-        id = obj.has("id") ? obj.get("id").getAsString() : "";
-        price = obj.has("price") ? obj.get("price").getAsLong() : 0L;
-        stage = obj.has("stage") ? obj.get("stage").getAsString() : "";
         entries.clear();
-        if (obj.has("entries") && obj.get("entries") instanceof JsonArray array) {
-            for (JsonElement element : array) {
-                if (!(element instanceof JsonObject entryObj)) {
-                    continue;
-                }
-                String item = entryObj.has("item") ? entryObj.get("item").getAsString() : "";
-                int count = entryObj.has("count") ? entryObj.get("count").getAsInt() : 1;
-                int weight = entryObj.has("weight") ? entryObj.get("weight").getAsInt() : 1;
-                if (item.isEmpty() || weight <= 0 || weight > 1_000_000 || count < 1
-                        || count > com.evolt.teamecon.economy.MoneyMath.MAX_PURCHASE || entries.size() >= 128) {
-                    ModLogger.warn("Shop pool '{}' skipped an entry without item or weight", id);
-                    continue;
-                }
-                entries.add(new Entry(item, count, weight));
-            }
+        id = ConfigJson.text(obj, "id", "");
+        enabled = ConfigJson.bool(obj, "enabled", true);
+        allowModdedItems = ConfigJson.bool(obj, "allowModdedItems", false);
+        enforceValueCap = ConfigJson.bool(obj, "enforceValueCap", true);
+        price = ConfigJson.integer(obj, "price", 0, 1, com.evolt.teamecon.economy.MoneyMath.MAX_PRICE);
+        stage = ConfigJson.text(obj, "stage", "");
+        if (!id.matches("[a-z0-9_]{1,32}") || price <= 0 || stage.length() > 128
+                || stage.contains(",") || stage.contains(";"))
+            throw new IllegalArgumentException("Invalid blind box header: " + id);
+        JsonArray array = obj.getAsJsonArray("entries");
+        if (array == null || array.isEmpty() || array.size() > 128)
+            throw new IllegalArgumentException("Pool " + id + " needs 1 to 128 entries");
+        List<Entry> parsed = new ArrayList<>();
+        for (int i = 0; i < array.size(); i++) {
+            JsonObject entry = array.get(i).getAsJsonObject();
+            String key = ConfigJson.text(entry, "item", "");
+            if (!ShopCatalog.id(key)) throw new IllegalArgumentException("Invalid item in " + id + " entry " + i);
+            int count = (int) ConfigJson.integer(entry, "count", 1, 1, com.evolt.teamecon.economy.MoneyMath.MAX_PURCHASE);
+            int weight = (int) ConfigJson.integer(entry, "weight", 1, 1, 1_000_000);
+            parsed.add(new Entry(key, count, weight));
         }
-        return ready() && id.matches("[a-z0-9_]{1,32}")
-                && price <= com.evolt.teamecon.economy.MoneyMath.MAX_PRICE
-                && stage.length() <= 128 && !stage.contains(",") && !stage.contains(";");
+        entries.addAll(parsed);
+        return ready();
     }
 
     public static ShopPool fromFile(Path file) {

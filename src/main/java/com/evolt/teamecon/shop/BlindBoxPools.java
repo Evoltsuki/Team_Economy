@@ -50,7 +50,20 @@ public final class BlindBoxPools {
                 pools.clear();
                 return;
             }
+            try {
+                if (element instanceof JsonObject root) {
+                    if (com.evolt.teamecon.config.ConfigJson.integer(root, "version", -1, 1, 1) != 1)
+                        throw new IllegalArgumentException("Expected blind box version 1");
+                    element = root.get("pools");
+                }
+                if (!(element instanceof JsonArray)) throw new IllegalArgumentException("Expected pools array");
+            } catch (RuntimeException ex) {
+                ModLogger.error("Invalid blind box root in {}; pools disabled", file, ex);
+                return;
+            }
             if (element instanceof JsonArray array) {
+                if (array.size() > 64) { ModLogger.warn("Too many blind boxes in {}; maximum 64", file); return; }
+                java.util.Set<String> ids = new java.util.HashSet<>();
                 // Only replace the exact shipped legacy pools. Edited pools remain the owner's choice.
                 if (array.equals(legacyDefaults()) || array.equals(previousDefaults())) {
                     try {
@@ -66,11 +79,19 @@ public final class BlindBoxPools {
                 }
                 for (com.google.gson.JsonElement item : array) {
                     if (!(item instanceof JsonObject obj)) {
+                        ModLogger.warn("Ignored non-object blind box in {}", file);
                         continue;
                     }
                     ShopPool pool = new ShopPool();
                     try {
-                        if (pool.read(obj) && pools.size() < 64) pools.put(pool.id(), pool);
+                        if (pool.read(obj)) {
+                            if (!ids.add(pool.id())) {
+                                pools.clear();
+                                ModLogger.warn("Duplicate blind box ID '{}' in {}; pools disabled", pool.id(), file);
+                                return;
+                            }
+                            if (pool.enabled()) pools.put(pool.id(), pool);
+                        }
                     } catch (RuntimeException ex) {
                         ModLogger.warn("Ignored invalid blind box: {}", ex.toString());
                     }
@@ -167,6 +188,9 @@ public final class BlindBoxPools {
                 obj.addProperty("id", pool.id());
                 obj.addProperty("price", pool.price());
                 obj.addProperty("stage", pool.stage());
+                obj.addProperty("enabled", true);
+                obj.addProperty("allowModdedItems", false);
+                obj.addProperty("enforceValueCap", true);
                 JsonArray entries = new JsonArray();
                 for (ShopPool.Entry entry : pool.entries()) {
                     JsonObject e = new JsonObject();
@@ -178,8 +202,11 @@ public final class BlindBoxPools {
                 obj.add("entries", entries);
                 array.add(obj);
             }
-            Files.writeString(file, com.google.gson.GsonBuilder.class.getName().isEmpty()
-                    ? array.toString() : new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(array));
+            JsonObject root = new JsonObject();
+            root.addProperty("version", 1);
+            root.addProperty("_comment", "Each opening draws one entry. Chance = weight / total weight. See docs/server-configuration.md. Reload with /teamecon admin reload.");
+            root.add("pools", array);
+            Files.writeString(file, new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(root) + "\n");
             ModLogger.info("Wrote default blind box file to {}", file);
         } catch (IOException e) {
             ModLogger.error("Could not write default blind box file", e);
@@ -197,12 +224,14 @@ public final class BlindBoxPools {
             boolean valid = pool.ready() && pool.entries().stream().allMatch(entry -> {
                 if (entry.itemKey().equals("minecraft:air")) return true;
                 net.minecraft.resources.ResourceLocation id = net.minecraft.resources.ResourceLocation.tryParse(entry.itemKey());
-                return BoxPrizePolicy.allowed(entry.itemKey()) && id != null && net.minecraft.core.registries.BuiltInRegistries.ITEM.containsKey(id)
-                        && (BoxPrizePolicy.exclusive(entry.itemKey()) || prices.resolve(entry.itemKey()).known());
+                boolean validItem = pool.allows(entry.itemKey()) && id != null
+                        && net.minecraft.core.registries.BuiltInRegistries.ITEM.containsKey(id);
+                if (!validItem) ModLogger.warn("Blind box '{}' rejected: unavailable/unsupported item {}", pool.id(), entry.itemKey());
+                return validItem;
             });
             if (!valid) continue;
             double expected = expectedValue(pool, prices);
-            if (expected > pool.price() * cap + 1e-9) {
+            if (pool.enforceValueCap() && expected > pool.price() * cap + 1e-9) {
                 ModLogger.warn("Blind box '{}' rejected: expected value {} exceeds price {} x cap {}",
                         pool.id(), expected, pool.price(), cap);
                 continue;

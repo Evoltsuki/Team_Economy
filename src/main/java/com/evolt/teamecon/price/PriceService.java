@@ -32,6 +32,7 @@ public final class PriceService {
     }
 
     private final BasePrices basePrices = new BasePrices();
+    private final com.evolt.teamecon.shop.ShopCatalog catalog = new com.evolt.teamecon.shop.ShopCatalog();
     private final com.evolt.teamecon.shop.ShopPricing shopPrices = new com.evolt.teamecon.shop.ShopPricing();
     private final MaterialGroups groups = new MaterialGroups();
     private final Map<String, Long> derived = new HashMap<>();
@@ -64,6 +65,16 @@ public final class PriceService {
 
     public BasePrices basePrices() {
         return basePrices;
+    }
+    public com.evolt.teamecon.shop.ShopCatalog catalog() { return catalog; }
+    public boolean purchasable(String key) {
+        ResourceLocation id = ResourceLocation.tryParse(key);
+        return catalog.allows(key) && id != null && BuiltInRegistries.ITEM.containsKey(id)
+                && (catalog.custom(key) || resolve(key).known());
+    }
+    public long purchasePrice(String key, double markup) {
+        long floor = com.evolt.teamecon.economy.MoneyMath.buyPrice(resolve(key).unitPrice(), markup);
+        return catalog.price(key, retailPrice(key, floor), floor);
     }
     public com.evolt.teamecon.shop.ShopPricing shopPrices() { return shopPrices; }
     public long retailPrice(String key, long ordinary) {

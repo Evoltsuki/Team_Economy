@@ -414,5 +414,6 @@
   "shop.teamecon.repaired": "%s 已修复，花费 %s 点数",
   "shop.teamecon.requires_advancement": "需先完成进度：%s",
   "shop.teamecon.requires_stage": "需先解锁阶段：%s",
-  "tooltip.teamecon.sell_value": "回收价: %s"
+  "tooltip.teamecon.sell_value": "回收价: %s",
+  "shop.teamecon.lock.catalog": "此商品未在服务器商店上架"
 }

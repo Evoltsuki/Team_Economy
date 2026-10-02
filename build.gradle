@@ -11,9 +11,14 @@ if (!(adjacentTarget in ['1.21', '1.21.1'])) throw new GradleException('Supporte
 if (adjacentTarget == '1.21') {
     ext.minecraft_version = '1.21'
     ext.minecraft_version_range = '[1.21]'
-    ext.neo_version = '21.0.167'
-    ext.neo_version_range = '[21.0.167,21.1)'
+    ext.neo_version = providers.gradleProperty('neo_version_1_21').get()
+    ext.neo_version_range = providers.gradleProperty('neo_version_range_1_21').get()
     layout.buildDirectory = file('build/neoforge-1.21')
+}
+
+// Compile against the supported minimum by default; allow compatibility checks on newer releases.
+if (providers.gradleProperty('neoForgeVersion').isPresent()) {
+    ext.neo_version = providers.gradleProperty('neoForgeVersion').get()
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -353,7 +358,7 @@ tasks.register('prepareGameTests') {
     doLast {
         def destination = folder.get().asFile
         destination.mkdirs()
-        ['machineplacementtest', 'economyintegrationtest', 'ftbteamsintegrationtest', 'physicalgamestest', 'progressiontest', 'casinolevelstest', 'todoregressiontest', 'revisionregressiontest', 'concurrentmachinestest', 'adminunlocktest'].each { name ->
+        ['machineplacementtest', 'economyintegrationtest', 'ftbteamsintegrationtest', 'physicalgamestest', 'progressiontest', 'casinolevelstest', 'todoregressiontest', 'revisionregressiontest', 'concurrentmachinestest', 'adminunlocktest', 'serverconfigurationtest'].each { name ->
             new File(destination, "${name}.empty.snbt").text = '{size:[42,8,16],palette:[{Name:"minecraft:air"}],entities:[],blocks:[],DataVersion:3955}'
         }
     }

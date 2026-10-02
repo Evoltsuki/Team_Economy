@@ -61,6 +61,7 @@ public final class ShopService {
     }
 
     public void loadConfigs(java.nio.file.Path configDir) {
+        prices.catalog().load(configDir);
         progression.load(configDir);
         blindBoxes.load(configDir, prices);
         enchants.load(configDir);
@@ -82,9 +83,8 @@ public final class ShopService {
     public PurchaseRules progression() { return progression; }
     public com.evolt.teamecon.scratch.ScratchCardService cards() { return cards; }
     public PurchaseRules.Access itemAccess(ServerPlayer player, String key) {
-        if (!com.evolt.teamecon.price.TradePolicy.canTrade(key)) return PurchaseRules.Access.locked("mod_disabled");
         var access = casino.itemAccess(player, manager, key);
-        return access.unlocked() ? progression.item(player, key) : access;
+        return access.unlocked() ? progression.item(player, key, prices.catalog()) : access;
     }
 
     public Result upgradeLevel(ServerPlayer player, int expectedNextLevel) {
@@ -113,10 +113,10 @@ public final class ShopService {
     }
 
     public PurchaseRules.Access boxAccess(ServerPlayer player, ShopPool pool) {
-        // Boxes have their own bounded prize pools and do not require advancements or stages.
+        if (!unlocked(player, pool.stage())) return PurchaseRules.Access.locked("stage:" + pool.stage());
         for (ShopPool.Entry entry : pool.entries()) {
             if (entry.itemKey().equals("minecraft:air")) continue;
-            if (!BoxPrizePolicy.allowed(entry.itemKey())) return PurchaseRules.Access.locked("mod_disabled");
+            if (!pool.allows(entry.itemKey())) return PurchaseRules.Access.locked("mod_disabled");
         }
         return PurchaseRules.Access.OPEN;
     }
@@ -132,17 +132,18 @@ public final class ShopService {
     }
 
     public List<String> itemCatalog() {
-        return prices.snapshot().keySet().stream().filter(key -> !key.equals("minecraft:enchanted_book"))
+        return java.util.stream.Stream.concat(prices.snapshot().keySet().stream(), prices.catalog().customItems().stream())
+                .distinct().filter(key -> !key.equals("minecraft:enchanted_book"))
                 .filter(key -> pricesItem(key) != null).sorted().toList();
     }
 
     public long unitBuyPrice(String key) {
-        return Math.max(casino.itemPrice(key), prices.retailPrice(key, MoneyMath.buyPrice(prices.resolve(key).unitPrice(), TeConfig.SHOP.buyMarkup.get())));
+        return Math.max(casino.itemPrice(key), prices.purchasePrice(key, TeConfig.SHOP.buyMarkup.get()));
     }
 
     public Item pricesItem(String key) {
         ResourceLocation id = ResourceLocation.tryParse(key);
-        if (id == null || !BuiltInRegistries.ITEM.containsKey(id) || !prices.resolve(key).known()) return null;
+        if (id == null || !prices.purchasable(key)) return null;
         Item item = BuiltInRegistries.ITEM.get(id);
         return item == Items.AIR ? null : item;
     }
@@ -194,7 +195,7 @@ public final class ShopService {
         var outcomes = new java.util.ArrayList<ItemStack>();
         for (ShopPool.Entry entry : pool.entries()) {
             if (entry.itemKey().equals("minecraft:air")) continue;
-            Item item = BoxPrizePolicy.item(entry.itemKey());
+            Item item = pool.item(entry.itemKey());
             if (item == null) return Result.fail(Outcome.BAD_ITEM);
             outcomes.add(new ItemStack(item, entry.count()));
         }
@@ -206,7 +207,7 @@ public final class ShopService {
         }
         charge(player, wallet, total, TxType.BLINDBOX, pool.id(), count);
         prizes.forEach((key, amount) -> {
-            if (!key.equals("minecraft:air")) ItemDelivery.give(player.getInventory(), new ItemStack(BoxPrizePolicy.item(key), amount));
+            if (!key.equals("minecraft:air")) ItemDelivery.give(player.getInventory(), new ItemStack(pool.item(key), amount));
         });
         String receipt = prizes.entrySet().stream().map(e -> e.getKey() + "," + e.getValue()).collect(java.util.stream.Collectors.joining(";"));
         return new Result(Outcome.OK, total, "shop.teamecon.box_batch", count + "," + total, receipt);

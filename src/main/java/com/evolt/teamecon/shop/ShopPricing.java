@@ -14,6 +14,10 @@ public final class ShopPricing {
     private boolean enabled = true;
 
     public ShopPricing() {
+        defaults();
+    }
+    private void defaults() {
+        items.clear(); enchants.clear(); enabled = true;
         // Retail convenience has a cost; keep the underlying farm resale anchors unchanged.
         put(8, "potato", "beetroot", "sweet_berries", "glow_berries", "dried_kelp", "cookie");
         put(8, "rotten_flesh", "spider_eye", "poisonous_potato", "pufferfish", "tropical_fish");
@@ -76,6 +80,7 @@ public final class ShopPricing {
         return Math.max(configured, anchored(enchants.getOrDefault(id, 4096L * Math.max(1, level)), diamond));
     }
     public void load(Path directory) {
+        defaults();
         Path file = directory.resolve(FILE_NAME);
         try {
             if (Files.exists(file)) {
@@ -101,7 +106,9 @@ public final class ShopPricing {
         if (object == null || object.size() > 4096) throw new IllegalArgumentException("Missing or excessive retail prices");
         Map<String, Long> result = new LinkedHashMap<>();
         for (var entry : object.entrySet()) {
-            long value = entry.getValue().getAsLong();
+            if (!entry.getValue().isJsonPrimitive() || !entry.getValue().getAsJsonPrimitive().isNumber())
+                throw new IllegalArgumentException("Retail price must be an integer: " + entry.getKey());
+            long value = entry.getValue().getAsBigDecimal().longValueExact();
             if (!entry.getKey().matches("[a-z0-9_.-]+:[a-z0-9_./-]+") || value < 0 || value > MoneyMath.MAX_PRICE)
                 throw new IllegalArgumentException("Invalid retail price " + entry.getKey());
             result.put(entry.getKey(), value);

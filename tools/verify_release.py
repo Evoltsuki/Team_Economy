@@ -30,6 +30,12 @@ def verify(jar, loader, mc, version):
         assert (mod['modId'], mod['version'], mod['authors']) == ('teamecon', version, '洁柔厨')
         deps = {d['modId']: d for d in meta['dependencies']['teamecon']}
         assert loader in deps and deps['minecraft']['versionRange'].startswith('[' + mc)
+        if loader == 'neoforge':
+            properties = dict(line.split('=', 1) for line in
+                              (ROOT / 'gradle.properties').read_text(encoding='utf-8').splitlines()
+                              if '=' in line and not line.lstrip().startswith('#'))
+            key = 'neo_version_range_1_21' if mc == '1.21' else 'neo_version_range'
+            assert deps[loader]['versionRange'] == properties[key], 'Stale NeoForge compatibility range'
         assert mod['logoFile'] in names
         assert {'LICENSE', 'NOTICE.md', 'CREDITS.md'} <= names
         assert not any('/gametest/' in n or '/qa/' in n or 'qa_empty' in n for n in names)

@@ -162,8 +162,7 @@ public final class EconomyService {
         if (item == null || item == net.minecraft.world.item.Items.ENCHANTED_BOOK || count <= 0 || count > MoneyMath.MAX_PURCHASE)
             return new BuyResult(Outcome.NOT_PRICED, 0, 0, 0);
         String itemKey = prices.itemKey(item);
-        PriceService.Result valued = prices.resolve(itemKey);
-        if (!valued.known()) {
+        if (!prices.purchasable(itemKey)) {
             return new BuyResult(Outcome.NOT_PRICED, 0, 0, 0);
         }
         if (!purchaseAccess(player, itemKey).unlocked())
@@ -193,13 +192,12 @@ public final class EconomyService {
     }
 
     public long unitBuyPrice(String itemKey) {
-        return Math.max(casino.itemPrice(itemKey), prices.retailPrice(itemKey, MoneyMath.buyPrice(prices.resolve(itemKey).unitPrice(), TeConfig.SHOP.buyMarkup.get())));
+        return Math.max(casino.itemPrice(itemKey), prices.purchasePrice(itemKey, TeConfig.SHOP.buyMarkup.get()));
     }
 
     public PurchaseRules.Access purchaseAccess(ServerPlayer player, String itemKey) {
-        if (!TradePolicy.canTrade(itemKey)) return PurchaseRules.Access.locked("mod_disabled");
         var access = casino.itemAccess(player, manager, itemKey);
-        return access.unlocked() ? progression.item(player, itemKey) : access;
+        return access.unlocked() ? progression.item(player, itemKey, prices.catalog()) : access;
     }
 
     public TeamEconomyManager manager() {

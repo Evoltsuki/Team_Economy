@@ -45,11 +45,23 @@ public final class PurchaseRules {
     public Access item(ServerPlayer player, String id) {
         return com.evolt.teamecon.price.TradePolicy.canTrade(id) ? check(player, id, items) : Access.locked("mod_disabled");
     }
+    public Access item(ServerPlayer player, String id, ShopCatalog catalog) {
+        if (!catalog.valid()) return Access.locked("config");
+        if (!catalog.allows(id)) return Access.locked("catalog");
+        String stage = catalog.stage(id);
+        if (!stage.isEmpty() && TeConfig.SHOP.useTeamStages.get()
+                && !com.evolt.teamecon.team.TeamUtil.hasStage(server, player.getUUID(), stage))
+            return Access.locked("stage:" + stage);
+        return check(player, id, items, catalog.custom(id));
+    }
     public Access enchantment(ServerPlayer player, String id) {
         return id != null && id.startsWith("minecraft:") ? check(player, id, enchantments) : Access.locked("mod_disabled");
     }
 
     private Access check(ServerPlayer player, String id, List<Rule> rules) {
+        return check(player, id, rules, false);
+    }
+    private Access check(ServerPlayer player, String id, List<Rule> rules, boolean explicitOffer) {
         if (!TeConfig.SHOP.progressionEnabled.get()) return Access.OPEN;
         if (invalidConfig) return Access.locked("config");
         boolean matched = false;
@@ -64,7 +76,7 @@ public final class PurchaseRules {
                 missing = rule.advancement();
         }
         if (!missing.isEmpty()) return Access.locked("advancement:" + missing);
-        if (!matched && !id.startsWith("minecraft:") && !TeConfig.SHOP.allowUnruledModdedPurchases.get())
+        if (!matched && !explicitOffer && !id.startsWith("minecraft:") && !TeConfig.SHOP.allowUnruledModdedPurchases.get())
             return Access.locked("modded");
         return Access.OPEN;
     }

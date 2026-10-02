@@ -414,5 +414,6 @@
   "shop.teamecon.repaired": "Repaired %s for %s points",
   "shop.teamecon.requires_advancement": "Complete advancement first: %s",
   "shop.teamecon.requires_stage": "Required stage: %s",
-  "tooltip.teamecon.sell_value": "Sell value: %s"
+  "tooltip.teamecon.sell_value": "Sell value: %s",
+  "shop.teamecon.lock.catalog": "This item is not listed in the server shop"
 }
