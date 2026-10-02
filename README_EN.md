@@ -2,41 +2,41 @@
 
 [简体中文](README.md)
 
-This source tree contains **1.0.1 changes awaiting release**. The public download is currently **1.0.0**.
+This document describes **1.0.1 (unreleased)**. The current public release is **1.0.0**.
 
 [Download 1.0.0](https://github.com/Evoltsuki/Team_Economy/releases/tag/v1.0.0) · [Source code](https://github.com/Evoltsuki/Team_Economy) · [Changelog](CHANGELOG.md) · [Report an issue](https://github.com/Evoltsuki/Team_Economy/issues)
 
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1%20%7C%201.21%20%7C%201.21.1-5C913B) ![Loaders](https://img.shields.io/badge/Loaders-NeoForge%20%7C%20Forge-D97834) ![Version](https://img.shields.io/badge/Version-1.0.1-3979A8)
 
-**Turn spare materials into points, and build an arcade at your survival base.**
-
-Team Economy adds material recycling, a points shop, shared team wallets and six playable game machines to Minecraft. Sell surplus supplies, buy what you need, unlock equipment and play directly on machines placed in your world. Install FTB Teams to share your wallet and equipment level with friends.
+Team Economy is a survival economy and minigame mod for Minecraft. It provides material recycling, a points shop and six physical game machines. Points earned from recycling can fund supplies, equipment upgrades and games. Optional FTB Teams integration adds shared wallets and equipment levels.
 
 [Installation](#installation) · [Gameplay guide (Chinese)](docs/试玩指南.md) · [Commands](#commands) · [Configuration](#configuration) · [Building from source](#building-from-source)
 
 ![Game machines in a white showroom](docs/images/screenshots/image-20260930001256496.png)
 
-## From your storage room to an arcade
+## Features
 
-### Recycle materials and shop for supplies
+### Recycling and the points shop
 
-Vending Machines and `/teamecon shop` remember each player's last tab and restore it when reopened, including after a game restart. The first visit opens **Items**. Preferences are saved per player on the local client. The **Sell** tab has a **27-slot staging area**. Add materials, review the quote for the entire batch, then confirm the sale. Points go directly into your wallet. Spend them on vanilla items and enchanted books, with category filters and searches by name, full pinyin, pinyin initials, item ID or `#tag`. For example, `jinding` or `jd` matches the Chinese name for a gold ingot.
+Vending Machines and `/teamecon shop` provide purchases, recycling and level upgrades. The **Sell** tab includes a **27-slot staging area** for batch quotes and confirmed sales. Income is credited to the current wallet. The catalogue supports category filters and searches by name, full Chinese pinyin, pinyin initials, item ID and `#tag`; `jinding` or `jd` matches 金锭 (gold ingot).
 
-Selling more of the same material lowers demand and its recycling value. Purchase prices are calculated separately. Default advancement requirements keep exploration and resource gathering part of survival progression.
+The shop saves each player’s last tab locally and restores it across game restarts. The first visit opens **Items**.
+
+Purchase and recycling prices are calculated separately. Repeated sales of the same material reduce market demand and its recycling value. Some purchases require specific vanilla advancements.
 
 ![The recycling inventory and batch quote](docs/images/screenshots/image-20260930001829218.png)
 
-### Save and unlock equipment together
+### Team wallets and equipment levels
 
 With **FTB Teams**, teammates share their points and **five equipment levels**. Recycling income, purchases, upgrades and games all use the team wallet. The sidebar shows the team balance and members' net contributions.
 
-Without FTB Teams, personal wallets and all six games remain available. Equipment access follows the wallet's level; vanilla advancement requirements for purchases are checked for the player making the purchase. Joining a team does not merge your personal balance into its wallet.
+Personal wallets and all six games are available without FTB Teams. Equipment access depends on wallet level; purchase advancements apply to the individual player. Personal and team balances are stored separately.
 
 ![Five equipment levels in the shop](docs/images/screenshots/image-20260930001906620.png)
 
-### Place the games in your world
+### Physical game machines
 
-Place a machine, stand in front of it, and right-click its buttons to choose a game option, adjust the stake and start a round.
+Each game operates through buttons on a placed machine. Right-click the controls to select an option, set the stake and start a round.
 
 | Game | Default unlock | How to play |
 |---|---|---|
@@ -47,9 +47,9 @@ Place a machine, stand in front of it, and right-click its buttons to choose a g
 | Slot Machine | Lv.5 | Match symbols on three reels to receive a payout |
 | Multiplier Machine | Lv.5 | Cash out while the multiplier rises; a crash ends the round with no payout |
 
-One player can run several physical machines at once. Each machine has its own timer, controls and settlement, and the Wireless Terminal has a separate round. A machine stays occupied by its current player until the round ends. Stakes are charged at the start; payouts return to the wallet that funded the round. Pending settlements are retained when players disconnect or machines unload.
+A player can operate several machines simultaneously, with independent rounds, controls and settlement. The Wireless Terminal uses a separate round. Each machine is reserved for its operator until the round ends. Stakes are charged at the start, payouts return to the funding wallet, and pending settlements are stored with the world.
 
-Upgrading unlocks permission to use equipment. Machines must still be crafted or purchased separately. Recycling can fund upgrades; game payouts depend on each round's outcome.
+Equipment levels determine access to machines, which are acquired through crafting or purchase. The [gameplay guide](docs/试玩指南.md) covers controls, probabilities and recipes.
 
 ![High / Low Machine and its buttons](docs/images/screenshots/image-20260930001932113.png)
 
@@ -57,31 +57,33 @@ Upgrading unlocks permission to use equipment. Machines must still be crafted or
 
 ![Red & Black Roulette with a low playing surface](docs/images/screenshots/image-20260930002025700.png)
 
-### Scratch tickets, mystery boxes and a portable shop
+### Scratch tickets and mystery boxes
 
-**Eight physical scratch tickets** unlock as you progress, from Lucky Numbers to Crown Jackpot. Hold a purchased ticket in your main hand, left-click to open it, and drag to scratch. A fully revealed ticket settles automatically.
+**Eight physical scratch-ticket types**, from Lucky Numbers to Crown Jackpot, are unlocked by equipment level. Hold a purchased ticket in your main hand, left-click to open it, and drag to scratch. A fully revealed ticket settles automatically.
 
 ![Scratch ticket purchase page with ticket types and face-value selection](docs/images/screenshots/scratch-purchase.png)
 
 ![Scratch off the coating to reveal numbers and prize multipliers](docs/images/screenshots/scratch-play.png)
 
-The separate **Mystery Box Machine** shows its prize pools before you buy. Open 1, 10 or 64 boxes at a time and review the rewards. Each prize tile shows its chance at the top right and a ×N item count below. Pools also include healing, fire resistance, water breathing and other potions, including splash and lingering variants. Pools include materials, valuable items and friendly or neutral mob spawn eggs available in your Minecraft version. Each draw uses the displayed pool; opening a batch does not increase an individual draw's odds.
+The **Mystery Box Machine** provides prize previews and batch openings of 1, 10 or 64 boxes. Each prize tile displays its probability at the top right and its ×N quantity below. Default pools include materials, valuable items, friendly or neutral mob spawn eggs, and potions such as healing, fire resistance and water breathing, including splash and lingering variants. Available items depend on the Minecraft version; batch size does not affect per-box probabilities.
 
 ![Mystery box purchase page with prize preview and batch selection](docs/images/screenshots/blind-box-purchase.png)
 
-Open 1, 10 or 64 boxes at once. Prizes that fit go into your inventory; overflow belongs to the buyer and is saved in **Pending**, including across logouts. Free some space, then click **Claim pending** or run `/teamecon claimboxes`. Finish claiming a batch before opening another.
+Batch purchases cost the unit price multiplied by the number of boxes. Drawn rewards are delivered to available inventory space; overflow is saved to the buyer’s **Pending** list across logouts. **Claim pending** and `/teamecon claimboxes` collect these prizes. A pending batch must be fully claimed before another can be opened.
 
-The late-game **Wireless Terminal** provides portable access to the shop, recycling, upgrades, games and ticket purchases. Mystery boxes are opened at their own machine. Shop and pricing panels use teal tones; mystery boxes and their editor use violet. Buttons, inputs, item slots and status text share a consistent style. Shop, box and terminal screens use compact, centered windows, including at automatic GUI scale.
+### Wireless Terminal
+
+The **Wireless Terminal** provides portable access to the shop, recycling, upgrades, games and ticket purchases. Access depends on equipment level. Mystery boxes are opened at their dedicated machine.
 
 ![Wireless Terminal services and games](docs/images/screenshots/terminal-home.png)
 
-### Keep the rules and recipes with you
+### In-game handbook
 
 Install **Patchouli** to read the Team Economy Handbook in-game. A handbook is given on first entry and can also be crafted shapelessly with **one book and one iron ingot**. Hold it and right-click to read.
 
-Entries cover getting started, the economy, equipment, mystery boxes and teams. Machine entries explain acquisition, controls, rewards, event probabilities and crafting recipes. The interface and handbook support **English, Simplified Chinese and Traditional Chinese**. Screenshots here show the author's Chinese-language game.
+The handbook covers progression, economy, equipment, mystery boxes and teams. Machine entries include acquisition, controls, rewards, probabilities and crafting recipes. The interface and handbook support **English, Simplified Chinese and Traditional Chinese**.
 
-If Patchouli is absent, use the [web gameplay guide (Chinese)](docs/试玩指南.md). The documented Forge 1.21.1 setup uses the web guide because a matching Patchouli release is not listed for that target.
+The [web gameplay guide (Chinese)](docs/试玩指南.md) is available without Patchouli. Forge 1.21.1 currently has no corresponding Patchouli release.
 
 ![Handbook contents](docs/images/screenshots/image-20260930002043789.png)
 
@@ -91,7 +93,9 @@ If Patchouli is absent, use the [web gameplay guide (Chinese)](docs/试玩指南
 
 ## Installation
 
-Choose **one** JAR matching your Minecraft version and loader. Place it in your instance's `mods/` folder. Multiplayer requires the same Minecraft version, loader and Team Economy JAR on both the client and server.
+Download the JAR matching the Minecraft version and loader from [Releases](https://github.com/Evoltsuki/Team_Economy/releases), and place it in the instance’s `mods/` folder. Install one matching JAR per instance. Multiplayer requires the same Minecraft version, loader and mod file on the client and server.
+
+The table lists **1.0.1 targets and filenames**; published downloads are listed on the release page.
 
 | Minecraft | Loader version | Java | File |
 |---|---|---|---|
@@ -102,9 +106,9 @@ Choose **one** JAR matching your Minecraft version and loader. Place it in your 
 
 The NeoForge versions are the minimum supported stable releases for each Minecraft branch. Optional integrations must also meet their own dependency requirements.
 
-**Optional integrations:** FTB Teams enables shared wallets; Patchouli enables the in-game handbook. When installing either, also install the dependencies required by that mod's matching release. For NeoForge 1.21.1, the documented combination is FTB Teams 2101.1.11, FTB Library 2101.1.30, Architectury API 13.0.8 and Patchouli 1.21.1-93-NEOFORGE. Other targets require their own matching releases.
+**Optional integrations:** FTB Teams provides shared wallets; Patchouli provides the in-game handbook. Install a matching release of each integration and its required dependencies.
 
-Team Economy works without these optional mods. Fabric and other Minecraft/loader combinations are not included in this release. The 1.20.1 catalog and prize pools use content available in 1.20.1.
+Team Economy can run independently of these integrations. Supported platforms are listed above; the 1.20.1 catalogue and prize pools contain items available in that Minecraft version.
 
 Back up your world and configuration before replacing the mod or changing loaders. Remove the previous JAR when installing a replacement.
 
@@ -112,7 +116,7 @@ Back up your world and configuration before replacing the mod or changing loader
 
 ### Player commands
 
-These commands do not require operator permissions. Replace `<item_id>` and `<amount>` with actual values; do not type the angle brackets.
+Player commands require no operator permissions. Angle brackets mark required arguments and should be replaced with actual values.
 
 | Command | Purpose |
 |---|---|
@@ -122,7 +126,7 @@ These commands do not require operator permissions. Replace `<item_id>` and `<am
 | `/teamecon balance` | Show the current personal or team wallet balance |
 | `/teamecon price <item_id>` | Look up an item's estimated value, e.g. `/teamecon price minecraft:diamond`; recycling income also depends on demand |
 | `/teamecon sell` | **Immediately sell the entire stack in your main hand**; use the shop's Sell tab to review a quote first |
-| `/teamecon buy <item_id> <amount>` | Buy a quantity, e.g. `/teamecon buy minecraft:bread 16`; funds, inventory space and purchase requirements still apply |
+| `/teamecon buy <item_id> <amount>` | Buy a quantity, e.g. `/teamecon buy minecraft:bread 16`; requires sufficient funds, inventory space and purchase eligibility |
 
 ### Administrator commands
 
@@ -131,7 +135,7 @@ These require **operator permission level 2 or higher**. Enable cheats to use th
 | Command | Purpose |
 |---|---|
 | `/teamecon admin kit` | Give yourself six game machines, a Vending Machine and a Mystery Box Machine; `admin machine` is an alias |
-| `/teamecon admin balance <points>` | **Set** your current wallet balance, rather than add to it |
+| `/teamecon admin balance <points>` | Set the current wallet balance to the specified amount |
 | `/teamecon admin unlock [player]` | Set the target's current wallet to Lv.5 and enable their personal Team Economy advancement bypass |
 | `/teamecon admin level <level> [player]` | Set the target's current wallet level to 1–5, retaining their personal bypass setting |
 | `/teamecon admin bypass <true/false> [player]` | Enable or disable the personal advancement bypass without changing wallet level |
@@ -142,25 +146,7 @@ These require **operator permission level 2 or higher**. Enable cheats to use th
 | `/teamecon_quest_reward <FTB_reward_id> <points> [player]` | Grant team points using an FTB reward ID |
 | `/teamecon admin reload` | Reload the mod's JSON configuration |
 
-**The bypass applies only to Team Economy and does not grant or remove vanilla advancements.** It persists per player and is not shared with teammates. Wallet level and balance belong to the current personal or team wallet, so changing a team wallet affects its members. Purchases still cost points, and item bans and trading restrictions still apply. `/teamecon admin advancements [player]` is an alias for enabling the bypass.
-
-To try all machines in a world with cheats enabled:
-
-```text
-/teamecon admin kit
-/teamecon admin unlock
-/teamecon admin balance 1000000
-/teamecon shop
-```
-
-This gives equipment, unlocks the mod's level and advancement requirements, and sets your current wallet to 1,000,000 points. To restore normal advancement requirements and Lv.1:
-
-```text
-/teamecon admin bypass false
-/teamecon admin level 1
-```
-
-Your balance, items and existing vanilla advancements are retained.
+The advancement bypass applies to Team Economy purchase and access requirements, is stored per player, and does not modify vanilla advancements. Wallet levels and balances belong to the current personal or team wallet; changes to a team wallet affect all members. Prices and trading restrictions apply while the bypass is enabled. `/teamecon admin advancements [player]` is an alias for enabling it.
 
 ## Configuration
 
@@ -181,29 +167,33 @@ Server owners can customize prices, market demand, progression, equipment access
 
 Server owners can replace the default item catalogue, hide items, set purchase prices and explicitly add installed mod items. Mystery box pools support custom rewards, quantities, percentages and per-pool switches. File changes apply with `/teamecon admin reload`; panel saves apply immediately. Modded items require an explicit recycling price in the pricing panel to enable recycling. See the [shop and mystery box examples](docs/server-configuration.md) and the [balance guide (Chinese)](docs/平衡配置指南.md).
 
-## In-game pricing, mystery boxes and quest rewards
+## In-game administration
 
-Operators can open `/teamecon admin prices` to browse creative-style category tabs, an item grid and a scrollbar. Clicking an icon selects it for editing without taking an item. Search the whole catalogue by display name, item ID, Chinese pinyin or initials (`jinding` and `jd` find 金锭).
+### Item pricing
+
+`/teamecon admin prices` opens an item pricing panel with creative-inventory category tabs and an item grid. Clicking an icon selects the item for editing. Search covers the full catalogue by display name, item ID, Chinese pinyin or initials; `jinding` and `jd` match 金锭.
 
 ![In-game item pricing panel with independent purchase and recycling prices](docs/images/screenshots/pricing-editor-en.png)
 
-The screenshot shows example operator overrides: purchase price 2,000 and base recycling price 80.
+Purchase and base recycling prices independently support **Inherit**, **Disabled** and **Custom**. Changes are stored in `config/teamecon_price_overrides.json` and apply immediately; Reset removes the item’s overrides. Purchase prices are subject to markup and equipment floors, recycling proceeds depend on demand, and trades require the relevant advancements. The image shows custom prices.
 
-Purchase and base recycling prices independently support **Inherit**, **Disabled** and **Custom**. Save applies the change immediately; Reset removes that item's overrides. Only edited entries are stored in `config/teamecon_price_overrides.json`. Purchase markup, equipment floors and progression rules still apply, while recycling proceeds depend on market demand. Mod items require an explicit recycling price and must match their default item state; modified or filled variants are not recycled. See [pricing configuration](docs/server-configuration.md).
+Modded items require an explicit recycling price. Recycling supports their default item state; variants with extra data or stored contents are excluded. See [pricing configuration](docs/server-configuration.md).
 
 ### Mystery box editor
 
-Use `/teamecon admin boxes` (OP level 2) to open a chest-style prize template grid above your inventory. Drag an inventory stack into the grid or Shift-click it to add a sample, drag templates to rearrange them, and right-click to remove them. Samples never consume the original items, and blank cells are not draws. Select a template to edit its quantity and enter its chance directly as a percentage, such as `12.5`. Values range from `0–100`, with up to six decimal places. Allocated and remaining percentages are shown, and the total must be `100%` to save. New prizes start at `0%`; other chances stay unchanged. **Box settings** provides names, prices, availability and optional stages.
+`/teamecon admin boxes` opens the mystery box editor. Operators can create, edit and delete box types, set names and prices, control availability and assign optional stages.
 
-**Add prize** keeps name, ID, Chinese pinyin and initials search, including individual potion effects. Inventory samples support ordinary items and potion variants; renamed, enchanted or filled items with extra data are rejected with a message.
+The prize template grid appears above the player’s inventory. Drag or Shift-click inventory items to add templates, drag templates to rearrange them, and right-click to remove them. Templates do not consume the original items; empty cells are excluded from draws. Each prize has a quantity and a percentage from **0 to 100**, with up to six decimal places. The panel shows allocated, remaining or excess probability; the total must be **100%** before saving. New prizes start at **0%**, with other percentages unchanged.
+
+**Add prize** supports name, item ID, potion ID, Chinese pinyin and initials searches. Prizes support ordinary items and specific potion effects. Inventory samples with additional data, such as names, enchantments or container contents, are not supported.
 
 ![Chest-style prize templates and player inventory](docs/images/screenshots/box-admin-en.png)
 
-Save applies immediately and keeps a `.bak` backup of `config/teamecon_blindbox.json`. You can enable modded prizes, toggle value checks and delete a box with confirmation. Clicking an item selects a prize without adding it to your inventory. See [configuration details](docs/server-configuration.md).
+Changes are saved to `config/teamecon_blindbox.json`, apply immediately and retain a `.bak` backup. Each pool has separate controls for modded prizes and value checks. See [configuration details](docs/server-configuration.md).
 
 ### Quest reward integration
 
-Quest authors can use the built-in command without an additional reward mod:
+The main mod provides reward commands for quest systems such as FTB Quests:
 
 ```text
 teamecon reward yourpack:chapter1/start 100
@@ -211,17 +201,13 @@ teamecon reward yourpack:chapter1/start 100
 
 For FTB Quests command rewards, execute as the claiming player, use permission level **2**, and enable **team_reward**. Rewards add to the player's current personal/team wallet, once per reward ID per wallet, with claims persisted in the world save. Console calls must append an online player name. Amounts range from 1 to 1,000,000,000; use a unique namespace for your pack.
 
-The `teamecon_quest_reward 7445429B27FE4CD5 25` command is also available. Quest content and amounts belong in your task configuration. See the [quest integration guide](docs/quest-rewards.md) for command behavior and the Java API.
+The compatible `teamecon_quest_reward 7445429B27FE4CD5 25` command grants points using an FTB reward ID. Quest content, IDs and amounts are defined in the quest configuration. Command specifications and the Java API are documented in the [quest integration guide](docs/quest-rewards.md).
 
-## Common questions
+### Trading scope
 
-**What kind of economy is this?** Points are stored in personal or FTB team wallets and used for the system shop and games. The shop follows server rules; it does not provide player-managed listings, prices or stock.
+The default shop catalogue provides vanilla items and enchanted books. Server owners can add installed mod items to the shop, enable recycling through the pricing panel, or include them in mystery boxes. Third-party enchantments are not sold. Team Economy equipment, terminals and tickets have dedicated acquisition menus and cannot be recycled.
 
-**Can I trade modded items?** The default catalog supports vanilla items and enchantments. Server owners can explicitly add installed mod items to the shop or mystery boxes through JSON configuration. Operators can explicitly enable recycling for individual mod items in the pricing panel; third-party enchantments are not sold. Team Economy equipment, terminals and tickets use their own acquisition menus and cannot be recycled.
-
-**Can points buy every item?** Some purchases require the player's vanilla advancements. Key loot such as elytra and nether stars is unavailable for purchase by default. Mystery boxes use their own displayed prize pools.
-
-**Can I include this in a modpack?** Yes. The MIT License permits modpack inclusion, modifications and commercial use. Retain the copyright and permission notices; see [LICENSE](LICENSE).
+Some purchases require the buying player’s vanilla advancements; elytra, nether stars and other key loot are unavailable for purchase by default. The system shop is managed through server configuration and does not provide player-operated listings, prices or stock.
 
 ## Documentation and feedback
 
@@ -256,7 +242,7 @@ On Linux or macOS:
 bash ./gradlew releaseMod
 ```
 
-The first build needs network access; add `--offline` when all dependencies are cached. `releaseMod` writes the JAR and checksum to `dist/`. A regular Gradle `build` writes to `build/libs/`. Resources are included, and building the NeoForge target does not require Python or launch the game.
+The first build requires network access; `--offline` uses cached dependencies. `releaseMod` writes the JAR and checksum to `dist/`, while a regular Gradle `build` writes to `build/libs/`.
 
 To build all four targets and prepare the six GitHub Release attachments, install Python 3.11+, the dependencies in `requirements.txt`, JDK 17 and JDK 21, then run:
 
@@ -266,7 +252,7 @@ py -3.12 tools/package_release.py --offline
 
 Remove `--offline` if dependencies need downloading. See the [packaging guide (Chinese)](docs/手动打包指南.md) for target-specific commands and JDK selection.
 
-`release/1.0.1/` contains four player JARs, `CHANGELOG.md` and `SHA256SUMS.txt`. Source code is available in the [GitHub repository](https://github.com/Evoltsuki/Team_Economy), with independently maintained `README.md` and `README_EN.md` files. The version remains **1.0.1** until the author explicitly requests a change; build and packaging commands never increment it.
+`release/1.0.1/` contains four mod JARs, `CHANGELOG.md` and `SHA256SUMS.txt`.
 
 </details>
 
@@ -293,8 +279,8 @@ Remove `--offline` if dependencies need downloading. See the [packaging guide (C
 | `logs/` | Local runtime logs |
 | `run/` | Development game configuration and saved worlds |
 
-Root Gradle files, the Wrapper and `build-mod.bat` support builds. `requirements.txt` lists Python tool dependencies. `README.md` and `README_EN.md` are independently maintained project documentation, alongside the license and attribution files.
+Root Gradle files, the Wrapper and `build-mod.bat` support builds. `requirements.txt` lists Python tool dependencies. `README.md` and `README_EN.md` provide Chinese and English project documentation, alongside the license and attribution files.
 
-`dist/`, `release/`, `build/`, `.gradle/`, `logs/`, `run/`, `internal/`, `PROGRESS.md` and the local task file are excluded from the repository. Local-only directories may be absent from a clean source download.
+`dist/`, `release/`, `build/`, `.gradle/`, `logs/` and `run/` are generated by local builds or game sessions and are excluded from the source repository.
 
 </details>
