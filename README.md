@@ -216,9 +216,9 @@ bash ./gradlew releaseMod
 py -3.12 tools/package_release.py --offline
 ```
 
-根目录 `README.md` 为 GitHub 中文首页，`README_EN.md` 为独立英文版；两份文件分别维护，并包含在公开源码 ZIP 中。
+根目录 `README.md` 为 GitHub 中文首页，`README_EN.md` 为独立英文版；两份文件分别维护。源码可从 [GitHub 仓库](https://github.com/Evoltsuki/Team_Economy)获取。
 
-Python 依赖及联网打包方法见[手动打包指南](docs/手动打包指南.md)。完整打包另需 JDK 17（Forge 1.20.1）及 Python 3.11+；四个目标的命令见打包指南。`release/1.0.0/` 只包含四份玩家 JAR、一份公开源码 ZIP 和 `SHA256SUMS.txt`。
+Python 依赖及联网打包方法见[手动打包指南](docs/手动打包指南.md)。完整打包另需 JDK 17（Forge 1.20.1）及 Python 3.11+；四个目标的命令见打包指南。`release/1.0.0/` 包含四份玩家 JAR 和 `SHA256SUMS.txt`。
 
 **版本固定为 1.0.0。后续仅在作者明确要求时修改 `gradle.properties`；构建与打包不自动递增版本。**
 
@@ -240,7 +240,7 @@ Python 依赖及联网打包方法见[手动打包指南](docs/手动打包指�
 | `gradle/`、`gradle/wrapper/` | 固定 Gradle 版本的启动器，源码构建必需 |
 | `.github/` | 自动构建工作流和问题反馈模板 |
 | `dist/` | 本地构建得到的玩家 JAR 与校验值 |
-| `release/`、`release/1.0.0/` | 按版本存放准备上传 GitHub Release 的六个公开附件 |
+| `release/`、`release/1.0.0/` | 按版本存放四份玩家 JAR 与 SHA-256 校验清单 |
 | `build/` | 本地构建输出与临时文件 |
 | `.gradle/` | Gradle 构建缓存 |
 | `logs/` | 本地运行日志 |
@@ -248,6 +248,6 @@ Python 依赖及联网打包方法见[手动打包指南](docs/手动打包指�
 
 根目录的 Gradle 文件、Wrapper 和 `build-mod.bat` 用于构建；`requirements.txt` 列出 Python 工具依赖。`README.md`、`README_EN.md`、许可及署名文件为公开项目说明。
 
-`dist/`、`release/`、`build/`、`.gradle/`、`logs/`、`run/`、`internal/` 以及本地任务文件 `PROGRESS.md`、`待办事项.txt` 不提交仓库，也不进入公开源码 ZIP。下载的干净源码中可能没有这些本地目录。
+`dist/`、`release/`、`build/`、`.gradle/`、`logs/`、`run/`、`internal/` 以及本地任务文件 `PROGRESS.md`、`待办事项.txt` 不提交仓库。下载的干净源码中可能没有这些本地目录。
 
 </details>

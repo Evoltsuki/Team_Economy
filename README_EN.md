@@ -219,7 +219,7 @@ bash ./gradlew releaseMod
 
 The first build needs network access; add `--offline` when all dependencies are cached. `releaseMod` writes the JAR and checksum to `dist/`. A regular Gradle `build` writes to `build/libs/`. Resources are included, and building the NeoForge target does not require Python or launch the game.
 
-To build all four targets and prepare the six GitHub Release attachments, install Python 3.11+, the dependencies in `requirements.txt`, JDK 17 and JDK 21, then run:
+To build all four targets and prepare the five GitHub Release attachments, install Python 3.11+, the dependencies in `requirements.txt`, JDK 17 and JDK 21, then run:
 
 ```powershell
 py -3.12 tools/package_release.py --offline
@@ -227,7 +227,7 @@ py -3.12 tools/package_release.py --offline
 
 Remove `--offline` if dependencies need downloading. See the [packaging guide (Chinese)](docs/手动打包指南.md) for target-specific commands and JDK selection.
 
-`release/1.0.0/` contains four player JARs, the public source ZIP and `SHA256SUMS.txt`. The source ZIP includes `README.md` and `README_EN.md`, each maintained separately. The version remains **1.0.0** until the author explicitly requests a change; build and packaging commands never increment it.
+`release/1.0.0/` contains four player JARs and `SHA256SUMS.txt`. Source code is available in the [GitHub repository](https://github.com/Evoltsuki/Team_Economy), with independently maintained `README.md` and `README_EN.md` files. The version remains **1.0.0** until the author explicitly requests a change; build and packaging commands never increment it.
 
 </details>
 
@@ -256,6 +256,6 @@ Remove `--offline` if dependencies need downloading. See the [packaging guide (C
 
 Root Gradle files, the Wrapper and `build-mod.bat` support builds. `requirements.txt` lists Python tool dependencies. `README.md` and `README_EN.md` are independently maintained project documentation, alongside the license and attribution files.
 
-`dist/`, `release/`, `build/`, `.gradle/`, `logs/`, `run/`, `internal/`, `PROGRESS.md` and the local task file are excluded from the repository and public source ZIP. Local-only directories may be absent from a clean source download.
+`dist/`, `release/`, `build/`, `.gradle/`, `logs/`, `run/`, `internal/`, `PROGRESS.md` and the local task file are excluded from the repository. Local-only directories may be absent from a clean source download.
 
 </details>

@@ -17,4 +17,4 @@
 重新生成资源需 `py -m pip install -r requirements.txt`。美术工具默认使用 Windows 字体。
 
 
-根目录 `README.md` 为 GitHub 中文首页，`README_EN.md` 为英文版；两份文档独立维护，并一同进入公开源码包。完整构建方法见[手动打包指南](../docs/手动打包指南.md)。
+根目录 `README.md` 为 GitHub 中文首页，`README_EN.md` 为英文版；两份文档独立维护，并一同保留在仓库中。完整构建方法见[手动打包指南](../docs/手动打包指南.md)。

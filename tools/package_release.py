@@ -1,4 +1,4 @@
-"""Build a public GitHub release: four mod JARs, source ZIP and SHA256SUMS.
+"""Build a public GitHub release: four mod JARs and SHA256SUMS.
 
 Private notes, development backups and QA output never enter the source manifest.
 The version is read from gradle.properties and is never changed by this tool.
@@ -11,7 +11,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import zipfile
 import xml.etree.ElementTree as ET
 from verify_release import TARGETS, verify
 
@@ -64,6 +63,22 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def write_release(jars, dest):
+    expected = {jar.name for jar in jars} | {'SHA256SUMS.txt'}
+    if dest.exists() and any(p.name not in expected or not p.is_file() for p in dest.iterdir()):
+        raise ValueError(f'Archive old/unexpected contents of {dest} before packaging')
+    with tempfile.TemporaryDirectory(prefix='public-release-', dir=ROOT / 'build') as temp:
+        artifact_dir = Path(temp)
+        for jar in jars:
+            shutil.copy2(jar, artifact_dir / jar.name)
+        (artifact_dir / 'SHA256SUMS.txt').write_text(''.join(
+            f'{sha(artifact_dir / jar.name)}  {jar.name}\n' for jar in jars), encoding='utf-8')
+        dest.mkdir(parents=True, exist_ok=True)
+        for path in artifact_dir.iterdir():
+            shutil.copy2(path, dest / path.name)
+    return sorted(expected)
+
+
 def package(offline=False, java17=None):
     # A failed build or resource check must never publish a stale JAR.
     wrapper = [str(ROOT / 'gradlew.bat')] if sys.platform == 'win32' else ['bash', str(ROOT / 'gradlew')]
@@ -86,26 +101,7 @@ def package(offline=False, java17=None):
     subprocess.run([sys.executable, str(ROOT / 'tools/verify_assets.py'), '--jar', str(jars[0])], cwd=ROOT, check=True)
 
     dest = ROOT / 'release' / VERSION
-    source_name = f'teamecon-{VERSION}-github-source.zip'
-    expected = {jar.name for jar in jars} | {source_name, 'SHA256SUMS.txt'}
-    # Only the public Chinese and English READMEs enter the source ZIP.
-    if dest.exists() and any(p.name not in expected or not p.is_file() for p in dest.iterdir()):
-        raise ValueError(f'Archive old/unexpected contents of {dest} before packaging')
-    with tempfile.TemporaryDirectory(prefix='public-release-', dir=ROOT / 'build') as temp:
-        temp = Path(temp)
-        source = stage(temp / 'source')
-        artifact_dir = temp / 'artifacts'
-        artifact_dir.mkdir()
-        for jar in jars: shutil.copy2(jar, artifact_dir / jar.name)
-        with zipfile.ZipFile(artifact_dir / source_name, 'w', zipfile.ZIP_DEFLATED) as archive:
-            for path in sorted(source.rglob('*')):
-                if path.is_file():
-                    archive.write(path, f'Team_Economy-{VERSION}/' + path.relative_to(source).as_posix())
-        (artifact_dir / 'SHA256SUMS.txt').write_text(''.join(
-            f'{sha(artifact_dir / name)}  {name}\n' for name in [jar.name for jar in jars] + [source_name]), encoding='utf-8')
-        dest.mkdir(parents=True, exist_ok=True)
-        for path in artifact_dir.iterdir():
-            shutil.copy2(path, dest / path.name)
+    artifacts = write_release(jars, dest)
     dist = ROOT / 'dist'
     dist.mkdir(exist_ok=True)
     for jar in jars:
@@ -113,7 +109,7 @@ def package(offline=False, java17=None):
         (dist/(jar.name+'.sha256')).write_text(sha(jar)+'  '+jar.name+'\n', encoding='utf-8')
     record = {'version': VERSION, 'checks': checks,
               'tests': tests, 'source_files': len(source_files()),
-              'artifacts': sorted(expected)}
+              'artifacts': artifacts}
     (ROOT / 'build/release-delivery.json').write_text(json.dumps(record, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     print(json.dumps(record, ensure_ascii=False, indent=2))
 
