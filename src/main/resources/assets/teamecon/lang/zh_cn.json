@@ -202,7 +202,7 @@
   "gui.teamecon.shop.sale_empty": "请放入可回收的原版物品",
   "gui.teamecon.shop.sale_quote": "总报价：%s 点",
   "gui.teamecon.shop.sale_slot": "待售区 · 27 格",
-  "gui.teamecon.shop.search": "名称 / ID / #标签",
+  "gui.teamecon.shop.search": "名称/拼音/ID/#标签",
   "gui.teamecon.shop.sell_hint": "只出售 27 格待售区中的原版物品。未出售或不支持的物品在关闭时退回。相同材料共享需求，小数收入保留。",
   "gui.teamecon.shop.sell_hint_short": "未出售的物品在关闭时退回。",
   "gui.teamecon.shop.sell_instructions": "Shift 点击放入待售区，核对总报价后出售。",

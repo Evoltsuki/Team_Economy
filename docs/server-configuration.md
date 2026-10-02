@@ -103,3 +103,9 @@ Server-side files live in the game's `config/` directory. Edit UTF-8 JSON, then 
 - `teamecon_shop_catalog.json`: set `includeDefaultItems=false` for a custom-only item shop; list exact IDs in `disabledItems` to hide them. Add `{ "item": "namespace:item", "price": 80 }` to `items` for an explicit offer. An optional `stage` adds an FTB stage requirement. Installed third-party items are supported by explicit offers and remain non-recyclable. Purchase prices retain the resale-price × markup floor and equipment floors; progression and sell-only rules still apply.
 - `teamecon_blindbox.json`: use the complete `version` / `pools` example above. Each opening draws one `entries` row. `count` controls quantity and `weight / total weight` determines probability. `enabled=false` hides a pool. `allowModdedItems=true` permits explicitly listed installed third-party rewards. `enforceValueCap=false` opts that pool out of the weighted resale-value check. The legacy top-level array remains supported.
 - Malformed item catalogues close item purchases; invalid reward pools are disabled without charging players. Missing mod items are logged. Duplicate pool IDs disable the entire pool file. Correct the file and reload to recover. No custom NBT/components are supported.
+
+## 压缩材料基础估价 / Storage block values
+
+金属块、钻石块、绿宝石块、红石块、煤炭块、青金石块与干草块，使用 `teamecon_base_prices.json` 中对应基础材料的九倍估价，不额外增加可逆压缩的合成加价。默认金锭 64 点，对应金块 576 点；出售时仍计算市场需求衰减，同等需求条件下，一个方块与九份原料的结算一致。若服主明确填写方块自身的基础价，以该覆盖值为准。修改后执行 `/teamecon admin reload`。
+
+Storage blocks use nine times their configured raw material value without reversible crafting markup. Explicit block entries in `teamecon_base_prices.json` take precedence. Actual sale proceeds still include market demand adjustments. Reload after editing.

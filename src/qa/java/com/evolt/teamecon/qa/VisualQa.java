@@ -300,7 +300,16 @@ public final class VisualQa {
             require(!hasButton("gui.teamecon.shop.tab.boxes"),"Blind boxes remain in the ordinary shop");
             require(ClientShopCache.items().stream().allMatch(r->r.itemKey().startsWith("minecraft:")||r.itemKey().startsWith("teamecon:")),"Third-party item listed");
             RESULTS.put("catalogue",ClientShopCache.items().size()+" items; "+screen.pageCapacity()+" per page");
-        });snapshot("store-dense-catalogue");compactLayouts("store");
+        });snapshot("store-dense-catalogue");
+        action("full pinyin search",()->{
+            edit("jinding");
+            require(hasButton("item.minecraft.gold_ingot"),"Full pinyin did not find gold ingot");
+            require(!hasButton("block.minecraft.gold_block"),"Full pinyin matched the wrong gold item");
+        });snapshot("store-pinyin-full");
+        action("pinyin initials search",()->{
+            edit("jd");require(hasButton("item.minecraft.gold_ingot"),"Pinyin initials did not find gold ingot");
+        });snapshot("store-pinyin-initials");
+        action("reset pinyin search",()->edit(""));compactLayouts("store");
         action("next catalogue page",()->click("›"));snapshot("store-page-two");
         action("direct tools filter and tag search",()->{click("gui.teamecon.shop.category.tools");edit("#minecraft:pickaxes");});
         snapshot("store-tools-search");
@@ -848,6 +857,11 @@ public final class VisualQa {
             p.level().getBlockState(SHOP).useWithoutItem(p.level(),p,new BlockHitResult(Vec3.atCenterOf(SHOP),Direction.SOUTH,SHOP,false));
         }));
         until("storefront catalogue ready",()->mc().screen instanceof ShopScreen shop&&ClientShopCache.containerId()==shop.getMenu().containerId&&ClientShopCache.items().size()>1000&&ClientCasinoProgression.ready());
+        action("vending defaults to active sale slots",()->{
+            var menu=((ShopScreen)mc().screen).getMenu();
+            require(menu.initialTab().equals("sell")&&menu.getSlot(0).isActive(),"Vending machine did not open Sell");
+        });snapshot("store-default-sell");
+        action("browse vending items",()->click("gui.teamecon.shop.tab.items"));
     }
     private static void openTerminal(){
         action("open wireless terminal",()->mc().gameMode.useItem(mc().player,InteractionHand.MAIN_HAND));

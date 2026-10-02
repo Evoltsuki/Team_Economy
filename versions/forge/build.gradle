@@ -75,7 +75,7 @@ tasks.register('prepareGameTests') {
     outputs.dir(structures)
     doLast {
         structures.get().asFile.mkdirs()
-        ['concurrentmachinestest', 'adminunlocktest', 'portsmoketest', 'serverconfigurationtest', 'teamecon'].each { name ->
+        ['concurrentmachinestest', 'adminunlocktest', 'portsmoketest', 'serverconfigurationtest', 'marketfeedbacktest', 'teamecon'].each { name ->
             new File(structures.get().asFile, "${name}.empty.snbt").text = '{size:[42,8,16],palette:[{Name:"minecraft:air"}],entities:[],blocks:[],DataVersion:3465}'
         }
     }

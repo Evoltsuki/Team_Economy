@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw
 RES=Path(__file__).resolve().parents[1]/'src/main/resources'
 ASSETS=RES/'assets/teamecon'
 TEXT={
-    'gui.teamecon.shop.search':('名称 / ID / #标签','Name / ID / #tag'),
+    'gui.teamecon.shop.search':('名称/拼音/ID/#标签','Name / pinyin / ID / #tag'),
     'gui.teamecon.shop.card_stake':('票面 %s 积分','Face value: %s'),
     'gui.teamecon.shop.sale_slot':('待售区 · 27 格','Sale deposits · 27 slots'),
     'gui.teamecon.shop.sell_stack':('出售全部待售物品','Sell all deposits'),

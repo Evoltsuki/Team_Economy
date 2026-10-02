@@ -358,7 +358,7 @@ tasks.register('prepareGameTests') {
     doLast {
         def destination = folder.get().asFile
         destination.mkdirs()
-        ['machineplacementtest', 'economyintegrationtest', 'ftbteamsintegrationtest', 'physicalgamestest', 'progressiontest', 'casinolevelstest', 'todoregressiontest', 'revisionregressiontest', 'concurrentmachinestest', 'adminunlocktest', 'serverconfigurationtest'].each { name ->
+        ['machineplacementtest', 'economyintegrationtest', 'ftbteamsintegrationtest', 'physicalgamestest', 'progressiontest', 'casinolevelstest', 'todoregressiontest', 'revisionregressiontest', 'concurrentmachinestest', 'adminunlocktest', 'serverconfigurationtest', 'marketfeedbacktest'].each { name ->
             new File(destination, "${name}.empty.snbt").text = '{size:[42,8,16],palette:[{Name:"minecraft:air"}],entities:[],blocks:[],DataVersion:3955}'
         }
     }

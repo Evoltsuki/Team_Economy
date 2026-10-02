@@ -2,9 +2,11 @@
 
 [简体中文](README.md)
 
-[Download 1.0.0](https://github.com/Evoltsuki/Team_Economy/releases/tag/v1.0.0) · [Source code](https://github.com/Evoltsuki/Team_Economy) · [Report an issue](https://github.com/Evoltsuki/Team_Economy/issues)
+This source tree contains **1.0.1 changes awaiting release**. The public download is currently **1.0.0**.
 
-![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1%20%7C%201.21%20%7C%201.21.1-5C913B) ![Loaders](https://img.shields.io/badge/Loaders-NeoForge%20%7C%20Forge-D97834) ![Version](https://img.shields.io/badge/Version-1.0.0-3979A8)
+[Download 1.0.0](https://github.com/Evoltsuki/Team_Economy/releases/tag/v1.0.0) · [Source code](https://github.com/Evoltsuki/Team_Economy) · [Changelog](CHANGELOG.md) · [Report an issue](https://github.com/Evoltsuki/Team_Economy/issues)
+
+![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1%20%7C%201.21%20%7C%201.21.1-5C913B) ![Loaders](https://img.shields.io/badge/Loaders-NeoForge%20%7C%20Forge-D97834) ![Version](https://img.shields.io/badge/Version-1.0.1-3979A8)
 
 **Turn spare materials into points, and build an arcade at your survival base.**
 
@@ -18,7 +20,7 @@ Team Economy adds material recycling, a points shop, shared team wallets and six
 
 ### Recycle materials and shop for supplies
 
-The shop's **Sell** tab has a **27-slot staging area**. Add materials, review the quote for the entire batch, then confirm the sale. Points go directly into your wallet. Spend them on vanilla items and enchanted books, with category filters and searches by name, item ID or `#tag`.
+Vending Machines open on the **Sell** tab, which has a **27-slot staging area**. Add materials, review the quote for the entire batch, then confirm the sale. Points go directly into your wallet. Spend them on vanilla items and enchanted books, with category filters and searches by name, full pinyin, pinyin initials, item ID or `#tag`. For example, `jinding` or `jd` matches the Chinese name for a gold ingot.
 
 Selling more of the same material lowers demand and its recycling value. Purchase prices are calculated separately. Default advancement requirements keep exploration and resource gathering part of survival progression.
 
@@ -83,10 +85,10 @@ Choose **one** JAR matching your Minecraft version and loader. Place it in your 
 
 | Minecraft | Loader version | Java | File |
 |---|---|---|---|
-| 1.21.1 | NeoForge 21.1.1+ | 21 | `teamecon-neoforge-1.21.1-1.0.0.jar` |
-| 1.21 | NeoForge 21.0.143+ | 21 | `teamecon-neoforge-1.21-1.0.0.jar` |
-| 1.20.1 | Forge 47.4.10 | 17 | `teamecon-forge-1.20.1-1.0.0.jar` |
-| 1.21.1 | Forge 52.1.0 | 21 | `teamecon-forge-1.21.1-1.0.0.jar` |
+| 1.21.1 | NeoForge 21.1.1+ | 21 | `teamecon-neoforge-1.21.1-1.0.1.jar` |
+| 1.21 | NeoForge 21.0.143+ | 21 | `teamecon-neoforge-1.21-1.0.1.jar` |
+| 1.20.1 | Forge 47.4.10 | 17 | `teamecon-forge-1.20.1-1.0.1.jar` |
+| 1.21.1 | Forge 52.1.0 | 21 | `teamecon-forge-1.21.1-1.0.1.jar` |
 
 The NeoForge versions are the minimum supported stable releases for each Minecraft branch. Optional integrations must also meet their own dependency requirements.
 
@@ -98,7 +100,7 @@ Back up your world and configuration before replacing the mod or changing loader
 
 ## Getting started
 
-The following amounts use the **1.0.0 defaults**; servers may customize them.
+The following amounts use the **1.0.1 defaults**; servers may customize them.
 
 1. Run `/teamecon shop`. A new personal wallet starts at **Lv.1 with 200 points**.
 2. Open **Sell**, Shift-click spare vanilla materials into the staging area, review the quote and sell enough to reach **300 points**.
@@ -222,7 +224,7 @@ bash ./gradlew releaseMod
 
 The first build needs network access; add `--offline` when all dependencies are cached. `releaseMod` writes the JAR and checksum to `dist/`. A regular Gradle `build` writes to `build/libs/`. Resources are included, and building the NeoForge target does not require Python or launch the game.
 
-To build all four targets and prepare the five GitHub Release attachments, install Python 3.11+, the dependencies in `requirements.txt`, JDK 17 and JDK 21, then run:
+To build all four targets and prepare the six GitHub Release attachments, install Python 3.11+, the dependencies in `requirements.txt`, JDK 17 and JDK 21, then run:
 
 ```powershell
 py -3.12 tools/package_release.py --offline
@@ -230,7 +232,7 @@ py -3.12 tools/package_release.py --offline
 
 Remove `--offline` if dependencies need downloading. See the [packaging guide (Chinese)](docs/手动打包指南.md) for target-specific commands and JDK selection.
 
-`release/1.0.0/` contains four player JARs and `SHA256SUMS.txt`. Source code is available in the [GitHub repository](https://github.com/Evoltsuki/Team_Economy), with independently maintained `README.md` and `README_EN.md` files. The version remains **1.0.0** until the author explicitly requests a change; build and packaging commands never increment it.
+`release/1.0.1/` contains four player JARs, `CHANGELOG.md` and `SHA256SUMS.txt`. Source code is available in the [GitHub repository](https://github.com/Evoltsuki/Team_Economy), with independently maintained `README.md` and `README_EN.md` files. The version remains **1.0.1** until the author explicitly requests a change; build and packaging commands never increment it.
 
 </details>
 

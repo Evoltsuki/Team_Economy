@@ -202,7 +202,7 @@
   "gui.teamecon.shop.sale_empty": "Deposit vanilla items to recycle",
   "gui.teamecon.shop.sale_quote": "Total quote: %s",
   "gui.teamecon.shop.sale_slot": "Sale deposits · 27 slots",
-  "gui.teamecon.shop.search": "Name / ID / #tag",
+  "gui.teamecon.shop.search": "Name / pinyin / ID / #tag",
   "gui.teamecon.shop.sell_hint": "Sells vanilla items in the 27 deposit slots. Unsold and unsupported items return on closing. Related materials share demand; fractions carry forward.",
   "gui.teamecon.shop.sell_hint_short": "Unsold items return on closing.",
   "gui.teamecon.shop.sell_instructions": "Shift-click items into the deposit grid, review the total, then sell.",

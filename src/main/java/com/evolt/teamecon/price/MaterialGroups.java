@@ -16,6 +16,7 @@ public final class MaterialGroups {
     }
 
     private final Map<String, GroupEntry> entries = new HashMap<>();
+    private final Map<String, String> storageBlocks = new HashMap<>();
 
     public MaterialGroups() {
         defaults();
@@ -34,6 +35,21 @@ public final class MaterialGroups {
         return entry == null ? itemKey : entry.group;
     }
 
+    /** Storage blocks preserve their configured raw material value, without crafting markup. */
+    public Long storageValue(String itemKey, BasePrices base) {
+        String material = storageBlocks.get(itemKey);
+        if (material == null || !base.has(material)) return null;
+        return Math.min(com.evolt.teamecon.economy.MoneyMath.MAX_PRICE,
+                base.get(material) * (long) entries.get(itemKey).unitsPerItem());
+    }
+
+    public java.util.Set<String> storageBlocks() { return java.util.Set.copyOf(storageBlocks.keySet()); }
+
+    private void storage(String material, String block, int count) {
+        put(material, block, count);
+        storageBlocks.put(block, material);
+    }
+
     private void put(String group, String item, double units) {
         entries.put(item, new GroupEntry(group, units));
     }
@@ -43,12 +59,12 @@ public final class MaterialGroups {
         put(ingot, ingot, 1D);
         if (name.equals("iron") || name.equals("gold"))
             put(ingot, "minecraft:" + name + "_nugget", 1D / 9D);
-        put(ingot, "minecraft:" + name + "_block", 9D);
+        storage(ingot, "minecraft:" + name + "_block", 9);
     }
 
     private void gemFamily(String item) {
         put(item, item, 1D);
-        put(item, item + "_block", 9D);
+        storage(item, item + "_block", 9);
     }
 
     private void defaults() {
@@ -59,13 +75,13 @@ public final class MaterialGroups {
         gemFamily("minecraft:diamond");
         gemFamily("minecraft:emerald");
         put("minecraft:lapis_lazuli", "minecraft:lapis_lazuli", 1D);
-        put("minecraft:lapis_lazuli", "minecraft:lapis_block", 9D);
+        storage("minecraft:lapis_lazuli", "minecraft:lapis_block", 9);
         gemFamily("minecraft:redstone");
         gemFamily("minecraft:coal");
         put("minecraft:quartz", "minecraft:quartz_block", 4D);
         put("minecraft:amethyst_shard", "minecraft:amethyst_block", 4D);
         put("minecraft:wheat", "minecraft:wheat", 1D);
-        put("minecraft:wheat", "minecraft:hay_block", 9D);
+        storage("minecraft:wheat", "minecraft:hay_block", 9);
         put("minecraft:wheat", "minecraft:bread", 3D); // approximates the flour-less vanilla recipe
         put("minecraft:melon_slice", "minecraft:melon_slice", 1D);
         put("minecraft:melon_slice", "minecraft:melon", 9D);

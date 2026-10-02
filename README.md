@@ -2,9 +2,11 @@
 
 [English README](README_EN.md)
 
-[下载 1.0.0](https://github.com/Evoltsuki/Team_Economy/releases/tag/v1.0.0) · [源码仓库](https://github.com/Evoltsuki/Team_Economy) · [问题反馈](https://github.com/Evoltsuki/Team_Economy/issues)
+当前源码为 **1.0.1 待发布版本**，下文包含尚未发布的改动；目前公开下载为 **1.0.0**。
 
-![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1%20%7C%201.21%20%7C%201.21.1-5C913B) ![Loaders](https://img.shields.io/badge/Loaders-NeoForge%20%7C%20Forge-D97834) ![Version 1.0.0](https://img.shields.io/badge/Version-1.0.0-3979A8)
+[下载 1.0.0](https://github.com/Evoltsuki/Team_Economy/releases/tag/v1.0.0) · [源码仓库](https://github.com/Evoltsuki/Team_Economy) · [更新日志](CHANGELOG.md) · [问题反馈](https://github.com/Evoltsuki/Team_Economy/issues)
+
+![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1%20%7C%201.21%20%7C%201.21.1-5C913B) ![Loaders](https://img.shields.io/badge/Loaders-NeoForge%20%7C%20Forge-D97834) ![Version 1.0.1](https://img.shields.io/badge/Version-1.0.1-3979A8)
 
 **把仓库里的余料换成点数，在基地开一间小队游戏厅。**
 
@@ -22,7 +24,7 @@ Team Economy 为 Minecraft 生存加入物资回收、积分商店和六种实�
 
 ### 回收余料，买点需要的东西
 
-商店的「出售」页提供 **27 格待售区**：放入材料、查看整批报价、确认出售。点数直接记入钱包，可以购买原版物品与附魔书。找商品时，可使用分类、名称、物品 ID 或 `#标签` 搜索。
+右键自动售货机默认进入「出售」页，提供 **27 格待售区**：放入材料、查看整批报价、确认出售。点数直接记入钱包，可以购买原版物品与附魔书。找商品时，可使用分类、名称、全拼、拼音首字母、物品 ID 或 `#标签` 搜索，例如 `jinding` 或 `jd` 查找金锭。
 
 同类材料卖得越多，回收需求越低；采购价与回收价分别计算。默认保留生存进度门槛，让商店用于补充物资，也让采集与探索继续有用。
 
@@ -92,10 +94,10 @@ Team Economy 为 Minecraft 生存加入物资回收、积分商店和六种实�
 
 | Minecraft | 加载器版本 | Java | 安装文件 |
 |---|---|---|---|
-| 1.21.1 | NeoForge 21.1.1+ | 21 | `teamecon-neoforge-1.21.1-1.0.0.jar` |
-| 1.21 | NeoForge 21.0.143+ | 21 | `teamecon-neoforge-1.21-1.0.0.jar` |
-| 1.20.1 | Forge 47.4.10 | 17 | `teamecon-forge-1.20.1-1.0.0.jar` |
-| 1.21.1 | Forge 52.1.0 | 21 | `teamecon-forge-1.21.1-1.0.0.jar` |
+| 1.21.1 | NeoForge 21.1.1+ | 21 | `teamecon-neoforge-1.21.1-1.0.1.jar` |
+| 1.21 | NeoForge 21.0.143+ | 21 | `teamecon-neoforge-1.21-1.0.1.jar` |
+| 1.20.1 | Forge 47.4.10 | 17 | `teamecon-forge-1.20.1-1.0.1.jar` |
+| 1.21.1 | Forge 52.1.0 | 21 | `teamecon-forge-1.21.1-1.0.1.jar` |
 
 NeoForge 列出对应 Minecraft 分支的最低正式版本；可选联动模组还需满足各自的依赖要求。
 
@@ -220,9 +222,9 @@ py -3.12 tools/package_release.py --offline
 
 根目录 `README.md` 为 GitHub 中文首页，`README_EN.md` 为独立英文版；两份文件分别维护。源码可从 [GitHub 仓库](https://github.com/Evoltsuki/Team_Economy)获取。
 
-Python 依赖及联网打包方法见[手动打包指南](docs/手动打包指南.md)。完整打包另需 JDK 17（Forge 1.20.1）及 Python 3.11+；四个目标的命令见打包指南。`release/1.0.0/` 包含四份玩家 JAR 和 `SHA256SUMS.txt`。
+Python 依赖及联网打包方法见[手动打包指南](docs/手动打包指南.md)。完整打包另需 JDK 17（Forge 1.20.1）及 Python 3.11+；四个目标的命令见打包指南。`release/1.0.1/` 包含四份玩家 JAR、`CHANGELOG.md` 和 `SHA256SUMS.txt`。
 
-**版本固定为 1.0.0。后续仅在作者明确要求时修改 `gradle.properties`；构建与打包不自动递增版本。**
+**版本固定为 1.0.1。后续仅在作者明确要求时修改 `gradle.properties`；构建与打包不自动递增版本。**
 
 </details>
 
@@ -243,7 +245,7 @@ Python 依赖及联网打包方法见[手动打包指南](docs/手动打包指�
 | `.github/` | 自动构建、凭据检查工作流和问题反馈模板 |
 | `.githooks/` | 提交前扫描暂存区，阻止已知凭据进入提交 |
 | `dist/` | 本地构建得到的玩家 JAR 与校验值 |
-| `release/`、`release/1.0.0/` | 按版本存放四份玩家 JAR 与 SHA-256 校验清单 |
+| `release/`、`release/1.0.1/` | 按版本存放四份玩家 JAR、更新日志与 SHA-256 校验清单 |
 | `build/` | 本地构建输出与临时文件 |
 | `.gradle/` | Gradle 构建缓存 |
 | `logs/` | 本地运行日志 |

@@ -74,6 +74,8 @@ public final class RecipePricer {
         if (prices.basePrices().has(itemKey)) {
             return prices.basePrices().get(itemKey);
         }
+        Long storage = prices.groups().storageValue(itemKey, prices.basePrices());
+        if (storage != null) return storage;
         Long cached = prices.derivedValue(itemKey);
         if (cached != null) {
             return cached;

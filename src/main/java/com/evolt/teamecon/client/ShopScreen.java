@@ -26,7 +26,7 @@ public class ShopScreen extends CompactContainerScreen<ShopMenu> {
     private enum Tab { ITEMS, SELL, MACHINES, CARDS, LEVELS }
     private enum Category { ALL, BLOCKS, TOOLS, WEAPONS, ARMOR, FOOD, MAGIC, MATERIALS }
     private record Row(Component name, ItemStack icon, String id, long price, ShopActionPayload.Kind kind,
-                       boolean unlocked, String lockReason, String mod, Category category) {}
+                       boolean unlocked, String lockReason, String mod, Category category, SearchText searchText) {}
     private record Filter(String id, Component label) {}
     private Tab tab=Tab.ITEMS;
     private Category category=Category.ALL;
@@ -39,6 +39,7 @@ public class ShopScreen extends CompactContainerScreen<ShopMenu> {
     private final List<Button> tiles=new ArrayList<>(), quantities=new ArrayList<>();
     private List<Row> catalogue=List.of(), filtered=List.of();
     private List<Filter> filters=List.of();
+    private final Map<String,SearchText> searchKeys=new HashMap<>();
     private Row selected;
 
     public ShopScreen(ShopMenu menu, Inventory inventory, Component title) { super(menu,inventory,title); try{tab=Tab.valueOf(menu.initialTab().toUpperCase(Locale.ROOT));}catch(IllegalArgumentException ignored){} }
@@ -121,8 +122,10 @@ public class ShopScreen extends CompactContainerScreen<ShopMenu> {
         return item instanceof BlockItem?Category.BLOCKS:Category.MATERIALS;
     }
     private static String modName(String id) {return net.neoforged.fml.ModList.get().getModContainerById(id).map(c->c.getModInfo().getDisplayName()).orElse(id);}
-    private static Row row(Component name,ItemStack icon,String id,long price,ShopActionPayload.Kind kind,boolean open,String reason,String namespace) {
-        return new Row(name,icon,id,price,kind,open,reason,namespace,category(icon));
+    private Row row(Component name,ItemStack icon,String id,long price,ShopActionPayload.Kind kind,boolean open,String reason,String namespace) {
+        String label=name.getString();
+        return new Row(name,icon,id,price,kind,open,reason,namespace,category(icon),
+                searchKeys.computeIfAbsent(label+"\n"+id,key->SearchText.of(label,id)));
     }
     private void buildCatalogue() {
         List<Row> all=new ArrayList<>();
@@ -168,7 +171,7 @@ public class ShopScreen extends CompactContainerScreen<ShopMenu> {
                 catalogue.stream().map(Row::mod).distinct().sorted().forEach(id->options.add(new Filter(id,Component.literal(modName(id)+" ("+id+")"))));
             }else for(Category c:Category.values())options.add(new Filter(c.name(),tr("category."+c.name().toLowerCase(Locale.ROOT))));
             String needle=filterQuery.toLowerCase(Locale.ROOT);
-            filters=options.stream().filter(f->f.label.getString().toLowerCase(Locale.ROOT).contains(needle)).toList();
+            filters=options.stream().filter(f->SearchText.of(f.label.getString(),f.id).matches(needle)).toList();
             int capacity=filterCapacity();page=Math.clamp(page,0,Math.max(0,(filters.size()-1)/capacity));
             for(int i=page*capacity;i<Math.min(filters.size(),(page+1)*capacity);i++) {
                 Filter f=filters.get(i);
@@ -192,7 +195,7 @@ public class ShopScreen extends CompactContainerScreen<ShopMenu> {
     private boolean matches(Row r,String needle) {
         if(needle.startsWith("@"))return r.mod.contains(needle.substring(1))||modName(r.mod).toLowerCase(Locale.ROOT).contains(needle.substring(1));
         if(needle.startsWith("#"))return r.icon.getTags().anyMatch(t->t.location().toString().contains(needle.substring(1)));
-        return needle.isEmpty()||r.name.getString().toLowerCase(Locale.ROOT).contains(needle)||r.id.contains(needle);
+        return r.searchText.matches(needle);
     }
     private int filterCapacity(){return Math.max(1,(imageHeight-gridTop-36)/20);}
     private int quantity(Row r){return r.kind==ShopActionPayload.Kind.BUY_TICKET||r.kind==ShopActionPayload.Kind.BUY_ITEM&&tab==Tab.ITEMS?amount:1;}

@@ -1,4 +1,4 @@
-"""Build a public GitHub release: four mod JARs and SHA256SUMS.
+"""Build a public GitHub release: four mod JARs, CHANGELOG and SHA256SUMS.
 
 Private notes, development backups and QA output never enter the source manifest.
 The version is read from gradle.properties and is never changed by this tool.
@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 VERSION = next(line.split('=', 1)[1].strip() for line in
                (ROOT / 'gradle.properties').read_text(encoding='utf-8').splitlines()
                if line.startswith('mod_version='))
-ROOT_FILES = ('README.md', 'README_EN.md', 'LICENSE', 'NOTICE.md', 'CREDITS.md',
+ROOT_FILES = ('README.md', 'README_EN.md', 'CHANGELOG.md', 'LICENSE', 'NOTICE.md', 'CREDITS.md',
               'TEMPLATE_LICENSE.txt', 'build.gradle', 'settings.gradle',
               'gradle.properties', 'gradlew', 'gradlew.bat', 'requirements.txt',
               '.gitignore', '.gitattributes', 'build-mod.bat')
@@ -67,15 +67,16 @@ def sha(path):
 
 
 def write_release(jars, dest):
-    expected = {jar.name for jar in jars} | {'SHA256SUMS.txt'}
+    payloads = list(jars) + [ROOT / 'CHANGELOG.md']
+    expected = {path.name for path in payloads} | {'SHA256SUMS.txt'}
     if dest.exists() and any(p.name not in expected or not p.is_file() for p in dest.iterdir()):
         raise ValueError(f'Archive old/unexpected contents of {dest} before packaging')
     with tempfile.TemporaryDirectory(prefix='public-release-', dir=ROOT / 'build') as temp:
         artifact_dir = Path(temp)
-        for jar in jars:
-            shutil.copy2(jar, artifact_dir / jar.name)
+        for path in payloads:
+            shutil.copy2(path, artifact_dir / path.name)
         (artifact_dir / 'SHA256SUMS.txt').write_text(''.join(
-            f'{sha(artifact_dir / jar.name)}  {jar.name}\n' for jar in jars), encoding='utf-8')
+            f'{sha(artifact_dir / path.name)}  {path.name}\n' for path in payloads), encoding='utf-8')
         dest.mkdir(parents=True, exist_ok=True)
         for path in artifact_dir.iterdir():
             shutil.copy2(path, dest / path.name)

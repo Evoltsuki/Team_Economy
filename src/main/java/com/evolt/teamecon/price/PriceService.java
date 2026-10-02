@@ -182,6 +182,10 @@ public final class PriceService {
             }
         });
         out.putAll(derived);
+        for (String key : groups.storageBlocks()) {
+            Long value = groups.storageValue(key, basePrices);
+            if (value != null) out.put(key, value);
+        }
         out.putAll(basePrices.all());
         out.entrySet().removeIf(entry -> entry.getValue() <= 0 || !TradePolicy.canTrade(entry.getKey()));
         return out;
@@ -201,6 +205,8 @@ public final class PriceService {
             long value = basePrices.get(itemKey);
             return new Result(value, value > 0 ? Source.BASE : Source.UNKNOWN);
         }
+        Long storage = groups.storageValue(itemKey, basePrices);
+        if (storage != null) return new Result(storage, storage > 0 ? Source.DERIVED : Source.UNKNOWN);
         Long value = derived.get(itemKey);
         if (value != null) {
             return new Result(value, Source.DERIVED);

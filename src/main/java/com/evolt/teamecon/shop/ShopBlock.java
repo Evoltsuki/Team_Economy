@@ -42,7 +42,7 @@ public class ShopBlock extends BaseEntityBlock {
     @Override protected BlockState mirror(BlockState state,Mirror mirror){return state.rotate(mirror.getRotation(state.getValue(FACING)));}
     @Override protected VoxelShape getShape(BlockState s,BlockGetter level,BlockPos pos,CollisionContext context){return Block.box(1,0,1,15,16,15);}
     @Override protected InteractionResult useWithoutItem(BlockState state,Level level,BlockPos pos,Player player,BlockHitResult hit){
-        if(player instanceof ServerPlayer p)ShopMenu.open(p,base(pos,state),false,state.is(ModRegistries.BLIND_BOX_MACHINE.get())?"boxes":"items");
+        if(player instanceof ServerPlayer p)ShopMenu.open(p,base(pos,state),false,state.is(ModRegistries.BLIND_BOX_MACHINE.get())?"boxes":"sell");
         return InteractionResult.SUCCESS;
     }
     @Override protected ItemInteractionResult useItemOn(ItemStack stack,BlockState state,Level level,BlockPos pos,Player p,InteractionHand hand,BlockHitResult hit){
