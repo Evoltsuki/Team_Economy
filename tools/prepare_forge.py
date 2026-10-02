@@ -134,6 +134,7 @@ def translate(s, name, mc):
         if name.endswith('BoxReward.java'):
             s=s.replace('import net.minecraft.core.component.DataComponents;', '').replace('import net.minecraft.world.item.alchemy.PotionContents;', '')
             s=s.replace('stack.set(DataComponents.POTION_CONTENTS,\n                new PotionContents(BuiltInRegistries.POTION.getHolder(new ResourceLocation(potion)).orElseThrow()))', 'net.minecraft.world.item.alchemy.PotionUtils.setPotion(stack, BuiltInRegistries.POTION.get(new ResourceLocation(potion)))')
+            s=s.replace('stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).potion()\n                .map(p -> BuiltInRegistries.POTION.getKey(p.value()).toString()).orElse("")', 'net.minecraft.world.item.alchemy.PotionUtils.getPotion(stack) == net.minecraft.world.item.alchemy.Potions.EMPTY ? "" : BuiltInRegistries.POTION.getKey(net.minecraft.world.item.alchemy.PotionUtils.getPotion(stack)).toString()')
         if name.endswith('RecipePricer.java'):
             s=s.replace('import net.minecraft.world.item.crafting.RecipeHolder;', '')
             s=s.replace('for (RecipeHolder<?> holder : recipeManager.getRecipes()) {\n            Recipe<?> recipe = holder.value();','for (Recipe<?> recipe : recipeManager.getRecipes()) {').replace('holder.id().toString()', 'recipe.getId().toString()')
@@ -174,6 +175,8 @@ def generate(mc,qa=False):
         if p.name in ('ConcurrentMachinesTest.java', 'AdminUnlockTest.java', 'MarketFeedbackTest.java', 'PriceAdminTest.java', 'QuestRewardsTest.java', 'BoxFeaturesTest.java'):
             source=source.replace('ProgressionTest.player(', 'PortSmokeTest.player(')
             if mc=='1.20.1': source=source.replace(',h.getLevel().registryAccess()', '')
+        if p.name == 'BoxFeaturesTest.java' and mc == '1.20.1':
+            source=source.replace('named.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME,Component.literal("Custom sample"))', 'named.setHoverName(Component.literal("Custom sample"))')
         if p.name == 'MarketFeedbackTest.java' and mc == '1.20.1':
             source=source.replace('.useWithoutItem(h.getLevel(),p,new BlockHitResult(',
                                   '.use(h.getLevel(),p,net.minecraft.world.InteractionHand.MAIN_HAND,new BlockHitResult(')

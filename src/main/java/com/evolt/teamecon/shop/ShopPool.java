@@ -124,6 +124,7 @@ public final class ShopPool {
         JsonArray array = obj.getAsJsonArray("entries");
         if (array == null || array.isEmpty() || array.size() > 128)
             throw new IllegalArgumentException("Pool " + id + " needs 1 to 128 entries");
+        new BoxPrizeGrid(array); // Validate optional editor layout without changing prize weights.
         List<Entry> parsed = new ArrayList<>();
         for (int i = 0; i < array.size(); i++) {
             JsonObject entry = array.get(i).getAsJsonObject();

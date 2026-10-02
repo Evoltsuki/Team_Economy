@@ -459,7 +459,7 @@
   "gui.teamecon.box_admin.mods_off": "模组物品：关",
   "gui.teamecon.box_admin.cap_on": "价值校验：开",
   "gui.teamecon.box_admin.cap_off": "价值校验：关",
-  "gui.teamecon.box_admin.prizes": "奖品列表",
+  "gui.teamecon.box_admin.prizes": "奖品样板",
   "gui.teamecon.box_admin.count": "数量",
   "gui.teamecon.box_admin.weight": "权重",
   "gui.teamecon.box_admin.chance": "概率：%s",
@@ -489,5 +489,14 @@
   "gui.teamecon.boxes.pending_count": "待领 %s 件 · 清出空间后点击领取",
   "shop.teamecon.box_pending_first": "请先领取上批奖品，再开启新的盲盒",
   "shop.teamecon.box_claimed": "已领取 %s 件，仍待领取 %s 件",
-  "gui.teamecon.box_admin.name": "显示名称"
+  "gui.teamecon.box_admin.name": "显示名称",
+  "gui.teamecon.box_admin.box_tab": "箱种设置",
+  "gui.teamecon.box_admin.prize_tab": "奖品设置",
+  "gui.teamecon.box_admin.template_subtitle": "奖品样板栏 · 放入只记录样板，不消耗物品",
+  "gui.teamecon.box_admin.inventory_hint": "背包拖放或 Shift 点击添加 · 拖动样板换位 · 右键移除",
+  "gui.teamecon.box_admin.slot_hint": "点击设置数量与权重；拖动换位；右键移除",
+  "gui.teamecon.box_admin.sample_added": "已记录奖品样板，背包原物保留",
+  "gui.teamecon.box_admin.unsupported_sample": "物品或附加数据不支持；模组物品需开启，改名/附魔等暂不支持",
+  "gui.teamecon.box_admin.full": "奖品栏已满（最多 128 项）",
+  "gui.teamecon.box_admin.grid_page": "第 %s / %s 页"
 }

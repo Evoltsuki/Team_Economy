@@ -59,10 +59,23 @@ public final class BoxFeaturesTest {
     @GameTest(template="empty")
     public static void boxEditorRejectsForgedRequestsAndCannotGiveItems(GameTestHelper h){
         var player=ProgressionTest.player(h,"box-no-op");var menu=new BoxAdminMenu(93,player.getInventory(),"");
-        h.assertTrue(menu.slots.isEmpty()&&!menu.stillValid(player),"Ordinary player can edit boxes");
+        h.assertTrue(menu.slots.size()==36&&menu.slots.stream().allMatch(s->s.container==player.getInventory())&&!menu.stillValid(player),"Prize templates became mutable inventory slots");
+        player.getInventory().setItem(9,new ItemStack(Items.DIAMOND,8));
+        menu.clicked(0,0,net.minecraft.world.inventory.ClickType.PICKUP,player);
+        h.assertTrue(menu.getCarried().isEmpty()&&player.getInventory().countItem(Items.DIAMOND)==8,"Non-operator inventory click accepted");
         player.containerMenu=menu;var config=TeamEconomyMod.get().shop().boxAdmin();long revision=config.revision();
         com.evolt.teamecon.network.BoxAdminNetwork.handle(player,new com.evolt.teamecon.network.payloads.BoxAdminActionPayload(93,1,revision,2,"common",""));
         h.assertTrue(config.revision()==revision&&menu.quickMoveStack(player,0).isEmpty(),"Forged deletion or item extraction accepted");
         player.containerMenu=player.inventoryMenu;h.succeed();
+    }
+    @GameTest(template="empty")
+    public static void inventorySamplesPreservePotionsAndRejectUnrepresentableData(GameTestHelper h){
+        ItemStack diamonds=new ItemStack(Items.DIAMOND,8);
+        h.assertTrue(BoxReward.fromStack(diamonds).count()==8&&diamonds.getCount()==8,"Sampling consumed items");
+        var potion=new BoxReward("minecraft:splash_potion","minecraft:strong_healing",1);
+        h.assertTrue(BoxReward.fromStack(potion.stack()).equals(potion),"Sampling stripped potion data");
+        ItemStack named=diamonds.copy();named.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME,Component.literal("Custom sample"));
+        boolean rejected=false;try{BoxReward.fromStack(named);}catch(IllegalArgumentException ex){rejected=true;}
+        h.assertTrue(rejected&&named.getCount()==8,"Sampling silently stripped custom data");h.succeed();
     }
 }

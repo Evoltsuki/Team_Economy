@@ -189,9 +189,11 @@ Purchase and base recycling prices independently support **Inherit**, **Disabled
 
 ### Mystery box editor
 
-Use `/teamecon admin boxes` (OP level 2) to add box types and edit display names, prices, availability and optional stages. Choose prizes from an item grid with name, ID, Chinese pinyin and initials search. Potion effects are separate choices; set quantities and weights to calculate the displayed chances.
+Use `/teamecon admin boxes` (OP level 2) to open a chest-style prize template grid above your inventory. Drag an inventory stack into the grid or Shift-click it to add a sample, drag templates to rearrange them, and right-click to remove them. Samples never consume the original items, and blank cells are not draws. Select a template to edit its quantity and weight; the side panel shows its chance. **Box settings** provides names, prices, availability and optional stages.
 
-![Mystery box editor with a custom potion pool](docs/images/screenshots/box-admin-en.png)
+**Add prize** keeps name, ID, Chinese pinyin and initials search, including individual potion effects. Inventory samples support ordinary items and potion variants; renamed, enchanted or filled items with extra data are rejected with a message.
+
+![Chest-style prize templates and player inventory](docs/images/screenshots/box-admin-en.png)
 
 Save applies immediately and keeps a `.bak` backup of `config/teamecon_blindbox.json`. You can enable modded prizes, toggle value checks and delete a box with confirmation. Clicking an item selects a prize without adding it to your inventory. See [configuration details](docs/server-configuration.md).
 

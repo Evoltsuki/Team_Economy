@@ -359,10 +359,29 @@ public final class VisualQa {
     }
 
     private static void boxAdminReady(){until("box admin ready",()->mc().screen instanceof BoxAdminScreen screen&&screen.ready());delay(5);}
+    private static void boxClick(int x,int y,int button){
+        var screen=(BoxAdminScreen)mc().screen;double f=screenScale(),px=(screen.getGuiLeft()+x)*f,py=(screen.getGuiTop()+y)*f;
+        screen.mouseClicked(px,py,button);screen.mouseReleased(px,py,button);
+    }
+    private static void boxDrag(int x,int y,int dx,int dy){
+        var screen=(BoxAdminScreen)mc().screen;double f=screenScale(),px=(screen.getGuiLeft()+x)*f,py=(screen.getGuiTop()+y)*f;
+        double endX=(screen.getGuiLeft()+dx)*f,endY=(screen.getGuiTop()+dy)*f;
+        screen.mouseClicked(px,py,0);screen.mouseDragged(endX,endY,0,endX-px,endY-py);screen.mouseReleased(endX,endY,0);
+    }
+    private static void shiftBoxInventory(int slot){
+        try{
+            var screen=(BoxAdminScreen)mc().screen;
+            var method=BoxAdminScreen.class.getDeclaredMethod("slotClicked",net.minecraft.world.inventory.Slot.class,int.class,int.class,net.minecraft.world.inventory.ClickType.class);
+            method.setAccessible(true);method.invoke(screen,screen.getMenu().getSlot(slot),slot,0,net.minecraft.world.inventory.ClickType.QUICK_MOVE);
+        }catch(ReflectiveOperationException ex){throw new IllegalStateException(ex);}
+    }
     private static void planBoxAdmin(){
         action("prepare box editor",()->{
             org.lwjgl.glfw.GLFW.glfwSetWindowSize(mc().getWindow().getWindow(),1600,900);scale(2);
-            server(p->{p.getServer().getPlayerList().op(p.getGameProfile());p.getInventory().clearContent();p.inventoryMenu.sendAllDataToRemote();com.evolt.teamecon.shop.BoxAdminMenu.open(p);});
+            server(p->{p.getServer().getPlayerList().op(p.getGameProfile());p.getInventory().clearContent();
+                p.getInventory().setItem(9,new ItemStack(Items.IRON_INGOT,16));p.getInventory().setItem(10,new ItemStack(Items.DIAMOND,8));
+                p.getInventory().setItem(11,new ItemStack(Items.EMERALD,4));p.getInventory().setItem(12,new ItemStack(Items.GOLD_INGOT,4));
+                p.inventoryMenu.sendAllDataToRemote();com.evolt.teamecon.shop.BoxAdminMenu.open(p);});
         });boxAdminReady();snapshot("box-admin-overview");
         action("new custom box",()->{
             click("gui.teamecon.box_admin.new");
@@ -376,14 +395,34 @@ public final class VisualQa {
             click("gui.teamecon.box_admin.add");field("gui.teamecon.box_admin.search").setValue("minecraft:swiftness");
             click("item.minecraft.potion.effect.swiftness");click("gui.teamecon.box_admin.apply");
         });snapshot("box-admin-edit-pool");
+        action("shift copy inventory stack into prize template",()->{
+            shiftBoxInventory(0);require(mc().player.getInventory().countItem(Items.IRON_INGOT)==16,"Shift sample consumed inventory");
+            require(((BoxAdminScreen)mc().screen).currentPool().getAsJsonArray("entries").size()==3,"Shift sample not added");
+        });
+        action("drag real diamonds into a template cell",()->boxDrag(142,237,140,94));delay(5);
+        action("sample leaves real cursor intact",()->{
+            var screen=(BoxAdminScreen)mc().screen;require(screen.getMenu().getCarried().getCount()==8,"Sample consumed real cursor");
+            require(screen.currentPool().getAsJsonArray("entries").size()==4,"Drag sample not added");boxClick(142,237,0);
+        });delay(5);
+        action("move prize template to an empty cell",()->{
+            boxDrag(140,94,200,94);var grid=new com.evolt.teamecon.shop.BoxPrizeGrid(((BoxAdminScreen)mc().screen).currentPool().getAsJsonArray("entries"));
+            require(grid.get(10)==null&&grid.get(13).get("count").getAsInt()==8,"Template drag did not preserve its stack");
+        });snapshot("box-admin-inventory");
+        action("remove only sample templates",()->{
+            boxClick(160,74,1);boxClick(200,94,1);
+            require(((BoxAdminScreen)mc().screen).currentPool().getAsJsonArray("entries").size()==2,"Right click did not remove samples");
+            require(mc().player.getInventory().countItem(Items.DIAMOND)==8&&mc().player.getInventory().countItem(Items.IRON_INGOT)==16,"Template movement changed real inventory");
+        });
         action("save custom pool",()->click("gui.teamecon.box_admin.save"));boxAdminReady();
         action("custom pool saved without spawning items",()->{
             require(((BoxAdminScreen)mc().screen).currentPool().get("id").getAsString().equals("alchemy"),"Custom box not saved");
-            require(mc().player.getInventory().isEmpty()&&((BoxAdminScreen)mc().screen).getMenu().slots.isEmpty(),"Editor generated items");closeScreen();
+            require(mc().player.getInventory().countItem(Items.DIAMOND)==8&&((BoxAdminScreen)mc().screen).getMenu().slots.size()==36,"Editor generated items");
+            boxClick(142,237,0);require(((BoxAdminScreen)mc().screen).getMenu().getCarried().getCount()==8,"Inventory pickup failed");closeScreen();
         });delay(5);
         action("reopen saved box editor",()->server(com.evolt.teamecon.shop.BoxAdminMenu::open));boxAdminReady();
         action("select persisted pool",()->click("alchemy"));boxAdminReady();
         action("verify persisted fields",()->{
+            require(mc().player.getInventory().countItem(Items.DIAMOND)==8&&((BoxAdminScreen)mc().screen).getMenu().getCarried().isEmpty(),"Closing the editor lost or duplicated the real cursor stack");
             var pool=((BoxAdminScreen)mc().screen).currentPool();require(pool.get("price").getAsLong()==100&&pool.getAsJsonArray("entries").size()==2,"Pool did not persist");
             field("gui.teamecon.box_admin.price").setValue("120");click("gui.teamecon.box_admin.save");
         });boxAdminReady();
@@ -400,6 +439,16 @@ public final class VisualQa {
             require(((BoxAdminScreen)mc().screen).currentPool().get("price").getAsLong()==121,"Reload did not read the externally edited file");
             field("gui.teamecon.box_admin.price").setValue("120");click("gui.teamecon.box_admin.save");
         });boxAdminReady();snapshot("box-admin-saved");
+        for(int[] layout:new int[][]{{854,480,0},{1280,720,2},{1920,1080,0}}){
+            String name="box-admin-"+layout[0]+"x"+layout[1];
+            action("resize inventory editor "+name,()->{org.lwjgl.glfw.GLFW.glfwSetWindowSize(mc().getWindow().getWindow(),layout[0],layout[1]);scale(layout[2]);});delay(8);
+            action("scaled prize drag and selection "+name,()->{
+                boxDrag(120,74,160,114);boxDrag(160,114,120,74);
+                require(((BoxAdminScreen)mc().screen).currentPool().getAsJsonArray("entries").size()==2,"Scaled drag changed the prize count");
+            });snapshot(name);
+        }
+        action("restore inventory editor viewport",()->{org.lwjgl.glfw.GLFW.glfwSetWindowSize(mc().getWindow().getWindow(),1600,900);scale(2);});delay(8);
+        action("save rearranged template layout",()->click("gui.teamecon.box_admin.save"));boxAdminReady();
         for(String language:List.of("en_us","zh_cn")){
             action("box editor language "+language,()->{closeScreen();mc().getLanguageManager().setSelected(language);mc().options.languageCode=language;languageReload=mc().reloadResourcePacks();});
             until("box editor language ready",()->languageReload.isDone()&&mc().getOverlay()==null);

@@ -459,7 +459,7 @@
   "gui.teamecon.box_admin.mods_off": "Mods: OFF",
   "gui.teamecon.box_admin.cap_on": "Cap: ON",
   "gui.teamecon.box_admin.cap_off": "Cap: OFF",
-  "gui.teamecon.box_admin.prizes": "Prize entries",
+  "gui.teamecon.box_admin.prizes": "Prize templates",
   "gui.teamecon.box_admin.count": "Count",
   "gui.teamecon.box_admin.weight": "Weight",
   "gui.teamecon.box_admin.chance": "Chance: %s",
@@ -489,5 +489,14 @@
   "gui.teamecon.boxes.pending_count": "%s items pending · Free space, then claim",
   "shop.teamecon.box_pending_first": "Claim the previous batch before opening more boxes",
   "shop.teamecon.box_claimed": "Claimed %s items; %s still pending",
-  "gui.teamecon.box_admin.name": "Display name"
+  "gui.teamecon.box_admin.name": "Display name",
+  "gui.teamecon.box_admin.box_tab": "Box settings",
+  "gui.teamecon.box_admin.prize_tab": "Prize settings",
+  "gui.teamecon.box_admin.template_subtitle": "Prize templates · Adding a sample does not consume the item",
+  "gui.teamecon.box_admin.inventory_hint": "Drag or Shift-click inventory to add · Drag templates to move · Right-click to remove",
+  "gui.teamecon.box_admin.slot_hint": "Click to edit quantity/weight; drag to move; right-click to remove",
+  "gui.teamecon.box_admin.sample_added": "Sample added; the original inventory item is preserved",
+  "gui.teamecon.box_admin.unsupported_sample": "Unsupported item/data. Enable mod items; renamed/enchanted samples are unsupported.",
+  "gui.teamecon.box_admin.full": "Prize grid is full (128 entries maximum)",
+  "gui.teamecon.box_admin.grid_page": "Page %s / %s"
 }

@@ -29,6 +29,19 @@ public record BoxReward(String itemKey, String potion, int count) {
         return stack;
     }
     public BoxReward withCount(int amount) { return new BoxReward(itemKey, potion, amount); }
+    /** Never silently strip a sample's enchantments, names, contents or other custom data. */
+    public static BoxReward fromStack(ItemStack sample) {
+        if (sample.isEmpty()) throw new IllegalArgumentException("Empty sample");
+        String item = BuiltInRegistries.ITEM.getKey(sample.getItem()).toString();
+        BoxReward reward = new BoxReward(item, potionItem(item) ? potionId(sample) : "", sample.getCount());
+        if (!ItemStack.isSameItemSameComponents(sample, reward.stack()))
+            throw new IllegalArgumentException("Unsupported sample data");
+        return reward;
+    }
+    private static String potionId(ItemStack stack) {
+        return stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).potion()
+                .map(p -> BuiltInRegistries.POTION.getKey(p.value()).toString()).orElse("");
+    }
     public static List<BoxReward> merge(List<BoxReward> entries) {
         Map<String, BoxReward> merged = new LinkedHashMap<>();
         for (BoxReward e : entries) {

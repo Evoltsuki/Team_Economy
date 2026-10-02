@@ -9,10 +9,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-/** No inventory slots: every visible item is a selection icon, never a movable stack. */
+/** Only the player's own inventory is mutable. Prize samples are configuration, never item slots. */
 public final class BoxAdminMenu extends AbstractContainerMenu {
+    public static final int INVENTORY_X = 114, INVENTORY_Y = 229, HOTBAR_Y = 293, SLOT_STEP = 20;
     private final String initialItem;
     private long lastRequest, nextSaveTick;
     public BoxAdminMenu(int id, Inventory inventory, RegistryFriendlyByteBuf buffer) {
@@ -21,6 +23,10 @@ public final class BoxAdminMenu extends AbstractContainerMenu {
     public BoxAdminMenu(int id, Inventory inventory, String initialItem) {
         super(ModRegistries.BOX_ADMIN_MENU.value(), id);
         this.initialItem = initialItem;
+        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++)
+            addSlot(new Slot(inventory, col + row * 9 + 9, INVENTORY_X + col * SLOT_STEP, INVENTORY_Y + row * SLOT_STEP));
+        for (int col = 0; col < 9; col++)
+            addSlot(new Slot(inventory, col, INVENTORY_X + col * SLOT_STEP, HOTBAR_Y));
     }
     public String initialItem() { return initialItem; }
     public boolean accept(long sequence, long tick, boolean save) {
@@ -41,5 +47,7 @@ public final class BoxAdminMenu extends AbstractContainerMenu {
     }
     @Override public boolean stillValid(Player player) { return player.isAlive() && player.hasPermissions(2); }
     @Override public ItemStack quickMoveStack(Player player, int index) { return ItemStack.EMPTY; }
-    @Override public void clicked(int slot, int button, ClickType type, Player player) { }
+    @Override public void clicked(int slot, int button, ClickType type, Player player) {
+        if (stillValid(player)) super.clicked(slot, button, type, player);
+    }
 }

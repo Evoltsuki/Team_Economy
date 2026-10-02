@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 
 public final class ForgeNetwork {
-    private static final String PROTOCOL="3";
+    private static final String PROTOCOL="4";
     private static final SimpleChannel CHANNEL=NetworkRegistry.newSimpleChannel(new ResourceLocation("teamecon","main"),()->PROTOCOL,PROTOCOL::equals,PROTOCOL::equals);
     private static int nextId;
     public static void init(){var registrar=new PayloadRegistrar();ModNetwork.register(registrar);ShopNetwork.register(registrar);}

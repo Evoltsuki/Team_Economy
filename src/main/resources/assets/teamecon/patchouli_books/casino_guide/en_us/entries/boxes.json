@@ -36,7 +36,7 @@
     {
       "type": "patchouli:text",
       "title": "Potions and custom pools",
-      "text": "Each default pool has five potion entries, including healing, fire resistance, water breathing and swiftness, plus splash and lingering variants.$(br2)Operators can use /teamecon admin boxes to edit box types, prices, potion effects and weights. The preview reflects the server configuration."
+      "text": "Each default pool has five potion entries, including splash and lingering variants.$(br2)Operators: /teamecon admin boxes opens a prize template grid. Drag or Shift-click inventory items to add samples without consuming them. Select a template to edit quantity and weight. Box settings controls names and prices."
     },
     {
       "type": "patchouli:crafting",
