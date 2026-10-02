@@ -39,6 +39,12 @@
 
 English: `/teamecon admin prices` opens the operator-only creative-style editor with name, ID and pinyin search. `buy` and `sell` independently use missing/`-1` for inherited settings, `0` for disabled trading, or a positive custom price. Values override individual trades, not recipe anchors. Explicit mod recycling accepts default-state stacks only. Save applies immediately; external edits require `/teamecon admin reload`.
 
+## 游戏内盲盒管理
+
+`/teamecon admin boxes`（OP 2）打开盲盒管理面板。左侧选择箱种，或点击「新增箱种」；填写唯一 ID、显示名称、单盒价格和可选阶段。「添加奖品」打开物品搜索网格，支持中文、全拼、首字母、物品 ID 和药水 ID。选择奖品后设置数量和权重，点击「应用数量与权重」即可查看概率，最后点击「保存」生效。
+
+面板可启用/停用或删除箱种，删除需再次确认；也可开关第三方物品与价值校验。文件写入使用临时文件替换并保留 `.bak`。两个管理员同时编辑时，旧修订会被拒绝，需重新读取；外部修改文件后点击「重新读取配置」，或执行 `/teamecon admin reload`。保存只替换当前箱种，保留其他箱种和已有额外 JSON 字段。
+
 ## 自定义商店
 
 文件：`config/teamecon_shop_catalog.json`。下面的完整例子只出售面包、铁锭和橡木原木：
@@ -99,22 +105,34 @@ English: `/teamecon admin prices` opens the operator-only creative-style editor 
 | 字段 | 含义 |
 |---|---|
 | `id` | 唯一箱子标识，1–32 位小写英文字母、数字或下划线；自定义箱以此标识显示 |
+| `name` | 可选显示名称，最多 64 字符；ID 仍用于命令和配置引用。名称不含逗号、分号或控制字符 |
 | `price` | 开启一个箱子的价格，必须是正整数 |
 | `enabled` | 是否启用该箱，默认 `true` |
 | `stage` | 可选阶段要求，默认空字符串；不要求原版进度或钱包等级 |
 | `allowModdedItems` | 默认 `false`；显式设为 `true` 后允许已安装第三方模组的普通注册物品进入该奖池 |
 | `enforceValueCap` | 默认 `true`，检查奖品按回收价计算的加权价值是否超过配置阈值；活动赠送箱可设为 `false`，不影响其他小游戏的阈值 |
 | `entries[].item` | 奖品注册 ID；`minecraft:air` 表示空奖 |
+| `entries[].potion` | 可选药水注册 ID，例如 `minecraft:long_fire_resistance`；仅适用于药水、喷溅药水、滞留药水或药箭 |
 | `entries[].count` | 一次抽中交付的数量，默认 1，范围 1–2,304 |
 | `entries[].weight` | 正整数权重，默认 1，最大 1,000,000；概率 = 当前权重 ÷ 本箱权重总和 |
 
-最多 64 个箱子，每箱最多 128 个奖项。相同物品可配置不同数量及权重；相同物品与数量的概率会在界面中合并显示。数量、价格和权重必须为 JSON 整数，不能填小数或带引号的数字。
+最多 64 个箱子，每箱最多 128 个奖项。相同物品可配置不同数量及权重；相同物品、药水效果与数量的概率会在界面中合并显示。数量、价格和权重必须为 JSON 整数，不能填小数或带引号的数字。
 
 设置 `allowModdedItems=true` 不会自动加入任何商品，也不会开启第三方物品回收。需要在 `entries` 中逐项写入奖品。默认友好／中立原版生物刷怪蛋可作奖品；受限原版物品、敌对原版刷怪蛋、本模组内部物品和空白票卡不可作奖品。物品必须在当前游戏版本及模组组合中存在。
 
 缺失物品、负数、零权重或非法条目会禁用对应整箱，避免悄悄删除某个奖项而改变概率；重复箱子 ID 会禁用整个文件。不会扣费发放无效奖品。空 `pools` 数组可关闭全部盲盒。原有顶层数组格式仍可读取，无需强制转换。
 
-批量开启仍支持 1／10／64 个；先检查所有可能奖品组合的背包空间，再统一扣款与交付。配置大量物品时，即使某个奖项概率很低，也可能需要足够空间才能开启。
+批量开启支持 1／10／64 个，按实际抽取结果统一扣款。能装入的奖品立即发放，剩余部分按购买者 UUID 保存在世界经济数据中；退出游戏和正常重启后仍可领取。玩家清出空间后，在任意盲盒机点击「领取待领」，或执行 `/teamecon claimboxes`。领取不会重新抽奖或收费；未领完上批奖品前不能继续开盒。即使对应箱种已删除或配置已修改，待领奖品仍保留原结果；卸载奖品所属模组时暂缓发放，恢复该模组后可继续领取。
+
+![64 盒药水的待领奖品](images/screenshots/blind-box-pending.png)
+
+药水奖项示例（发放真实的抗火效果，预览也显示对应名称和颜色）：
+
+```json
+{"item": "minecraft:splash_potion", "potion": "minecraft:long_fire_resistance", "count": 2, "weight": 5}
+```
+
+玩家奖池中同一物品、药水效果及数量的重复条目合并显示，总权重决定右上角概率；极小概率以 `<.01%` 显示，悬停可查看更高精度。批量开启不改变单盒概率。
 
 ## 附魔书和其他配置
 
@@ -128,8 +146,9 @@ English: `/teamecon admin prices` opens the operator-only creative-style editor 
 
 Server-side files live in the game's `config/` directory. Edit UTF-8 JSON, then run `/teamecon admin reload` as OP 2. Open menus receive the updated catalogue. Back up edited files and check the server log for rejected entries.
 
-- `teamecon_shop_catalog.json`: set `includeDefaultItems=false` for a custom-only item shop; list exact IDs in `disabledItems` to hide them. Add `{ "item": "namespace:item", "price": 80 }` to `items` for an explicit offer. An optional `stage` adds an FTB stage requirement. Installed third-party items are supported by explicit offers and remain non-recyclable. Purchase prices retain the resale-price × markup floor and equipment floors; progression and sell-only rules still apply.
-- `teamecon_blindbox.json`: use the complete `version` / `pools` example above. Each opening draws one `entries` row. `count` controls quantity and `weight / total weight` determines probability. `enabled=false` hides a pool. `allowModdedItems=true` permits explicitly listed installed third-party rewards. `enforceValueCap=false` opts that pool out of the weighted resale-value check. The legacy top-level array remains supported.
+- `teamecon_shop_catalog.json`: set `includeDefaultItems=false` for a custom-only item shop; list exact IDs in `disabledItems` to hide them. Add `{ "item": "namespace:item", "price": 80 }` to `items` for an explicit offer. An optional `stage` adds an FTB stage requirement. Installed third-party items are supported by explicit offers; recycling requires an explicit price in the pricing panel. Purchase prices retain the resale-price × markup floor and equipment floors; progression and sell-only rules still apply.
+- `/teamecon admin boxes`: create/edit/delete box types in game, including display names, prices, searchable potion variants and prize weights. Save is immediate and keeps a backup. `/teamecon claimboxes` collects saved overflow rewards without another charge.
+- `teamecon_blindbox.json`: optional `name` labels the box; `entries[].potion` selects the potion registry ID for potion items or tipped arrows. Overflow prizes remain in the buyer's saved pending list; finish claiming it before opening another batch. Use the complete `version` / `pools` example above. Each opening draws one `entries` row. `count` controls quantity and `weight / total weight` determines probability. `enabled=false` hides a pool. `allowModdedItems=true` permits explicitly listed installed third-party rewards. `enforceValueCap=false` opts that pool out of the weighted resale-value check. The legacy top-level array remains supported.
 - Malformed item catalogues close item purchases; invalid reward pools are disabled without charging players. Missing mod items are logged. Duplicate pool IDs disable the entire pool file. Correct the file and reload to recover. No custom NBT/components are supported.
 
 ## 压缩材料基础估价 / Storage block values

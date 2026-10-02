@@ -204,12 +204,13 @@ public final class VisualQa {
 
     /** Only changed features are planned. A failed group can be rerun with -PqaScenarios=store, etc. */
     private static void plan() {
-        require(!SCENARIOS.isEmpty() && Set.of("store","machines","terminal","team","guide","boxes","hilo","food","showcase","readme","prices").containsAll(SCENARIOS),
+        require(!SCENARIOS.isEmpty() && Set.of("store","machines","terminal","team","guide","boxes","hilo","food","showcase","readme","prices","boxadmin").containsAll(SCENARIOS),
                 "Unknown QA group: " + SCENARIOS);
         RESULTS.put("scenarios",String.join(",",SCENARIOS));
         until("test world ready", () -> worldReady);
         delay(40);
         if(SCENARIOS.contains("store"))planStore();
+        if(SCENARIOS.contains("boxadmin"))planBoxAdmin();
         if(SCENARIOS.contains("prices"))planPrices();
         if(SCENARIOS.contains("machines"))planMachines();
         if(SCENARIOS.contains("boxes")&&!SCENARIOS.contains("store"))planBoxes();
@@ -355,6 +356,80 @@ public final class VisualQa {
         action("reset mod overrides",()->click("gui.teamecon.prices.restore"));pricingReady();
         action("close pricing editor",VisualQa::closeScreen);
         action("pricing complete",()->RESULTS.put("prices","passed"));
+    }
+
+    private static void boxAdminReady(){until("box admin ready",()->mc().screen instanceof BoxAdminScreen screen&&screen.ready());delay(5);}
+    private static void planBoxAdmin(){
+        action("prepare box editor",()->{
+            org.lwjgl.glfw.GLFW.glfwSetWindowSize(mc().getWindow().getWindow(),1600,900);scale(2);
+            server(p->{p.getServer().getPlayerList().op(p.getGameProfile());p.getInventory().clearContent();p.inventoryMenu.sendAllDataToRemote();com.evolt.teamecon.shop.BoxAdminMenu.open(p);});
+        });boxAdminReady();snapshot("box-admin-overview");
+        action("new custom box",()->{
+            click("gui.teamecon.box_admin.new");
+            field("gui.teamecon.box_admin.id").setValue("alchemy");field("gui.teamecon.box_admin.name").setValue("炼金盲盒");field("gui.teamecon.box_admin.price").setValue("100");
+            click("gui.teamecon.box_admin.cap_on");click("gui.teamecon.box_admin.add");
+            field("gui.teamecon.box_admin.search").setValue("zhiliao");
+            require(hasButton("item.minecraft.potion.effect.healing"),"Pinyin search did not find a healing potion");
+        });snapshot("box-admin-potion-search");
+        action("choose healing potion",()->{
+            click("item.minecraft.potion.effect.healing");field("gui.teamecon.box_admin.weight").setValue("3");click("gui.teamecon.box_admin.apply");
+            click("gui.teamecon.box_admin.add");field("gui.teamecon.box_admin.search").setValue("minecraft:swiftness");
+            click("item.minecraft.potion.effect.swiftness");click("gui.teamecon.box_admin.apply");
+        });snapshot("box-admin-edit-pool");
+        action("save custom pool",()->click("gui.teamecon.box_admin.save"));boxAdminReady();
+        action("custom pool saved without spawning items",()->{
+            require(((BoxAdminScreen)mc().screen).currentPool().get("id").getAsString().equals("alchemy"),"Custom box not saved");
+            require(mc().player.getInventory().isEmpty()&&((BoxAdminScreen)mc().screen).getMenu().slots.isEmpty(),"Editor generated items");closeScreen();
+        });delay(5);
+        action("reopen saved box editor",()->server(com.evolt.teamecon.shop.BoxAdminMenu::open));boxAdminReady();
+        action("select persisted pool",()->click("alchemy"));boxAdminReady();
+        action("verify persisted fields",()->{
+            var pool=((BoxAdminScreen)mc().screen).currentPool();require(pool.get("price").getAsLong()==100&&pool.getAsJsonArray("entries").size()==2,"Pool did not persist");
+            field("gui.teamecon.box_admin.price").setValue("120");click("gui.teamecon.box_admin.save");
+        });boxAdminReady();
+        action("external box price edit and reload",()->{
+            try {
+                Path file=net.neoforged.fml.loading.FMLPaths.CONFIGDIR.get().resolve("teamecon_blindbox.json");
+                var root=com.google.gson.JsonParser.parseString(Files.readString(file)).getAsJsonObject();
+                for(var entry:root.getAsJsonArray("pools"))if(entry.getAsJsonObject().get("id").getAsString().equals("alchemy"))entry.getAsJsonObject().addProperty("price",121);
+                Files.writeString(file,new GsonBuilder().setPrettyPrinting().create().toJson(root));
+            } catch(java.io.IOException ex){throw new IllegalStateException(ex);}
+            click("gui.teamecon.box_admin.refresh");
+        });boxAdminReady();
+        action("reloaded external price can be edited",()->{
+            require(((BoxAdminScreen)mc().screen).currentPool().get("price").getAsLong()==121,"Reload did not read the externally edited file");
+            field("gui.teamecon.box_admin.price").setValue("120");click("gui.teamecon.box_admin.save");
+        });boxAdminReady();snapshot("box-admin-saved");
+        for(String language:List.of("en_us","zh_cn")){
+            action("box editor language "+language,()->{closeScreen();mc().getLanguageManager().setSelected(language);mc().options.languageCode=language;languageReload=mc().reloadResourcePacks();});
+            until("box editor language ready",()->languageReload.isDone()&&mc().getOverlay()==null);
+            action("open translated box editor",()->server(com.evolt.teamecon.shop.BoxAdminMenu::open));boxAdminReady();
+            action("select translated custom pool",()->click("alchemy"));boxAdminReady();
+            if(language.equals("en_us"))snapshot("box-admin-en");
+        }
+        action("close box editor",VisualQa::closeScreen);delay(5);
+        action("approach custom box counter",()->camera(35.5,64.3,4.2,180,-5));delay(8);
+        action("open custom box counter",()->server(p->{
+            p.getInventory().clearContent();p.inventoryMenu.sendAllDataToRemote();
+            TeamEconomyMod.get().economy().manager().setBalance(TeamUtil.walletKey(p.getServer(),p.getUUID()),100000);
+            com.evolt.teamecon.shop.ShopMenu.open(p,SHOP.east(3),false,"boxes");
+        }));
+        until("custom pool appears",()->mc().screen instanceof BlindBoxScreen box&&ClientShopCache.containerId()==box.getMenu().containerId&&ClientShopCache.boxes().stream().anyMatch(p->p.poolId().equals("alchemy")));
+        action("select custom potion pool",()->click("炼金盲盒"));snapshot("boxes-potion-probabilities");
+        action("open sixty four unstackable rewards",()->{balanceBefore=ClientShopCache.balance();click("×64");click("gui.teamecon.boxes.open");});
+        until("overflow saved on server",()->ClientShopCache.balance()==balanceBefore-7680&&ClientShopCache.pending().stream().mapToInt(ClientShopCache.PrizeRow::count).sum()==28);
+        action("view pending prizes",()->click("gui.teamecon.boxes.pending"));snapshot("boxes-pending-64");
+        action("reopen with pending rewards",()->{closeScreen();server(p->com.evolt.teamecon.shop.ShopMenu.open(p,SHOP.east(3),false,"boxes"));});
+        until("pending survives menu reopen",()->mc().screen instanceof BlindBoxScreen&&ClientShopCache.pending().stream().mapToInt(ClientShopCache.PrizeRow::count).sum()==28);
+        action("make room for remaining prizes",()->server(p->{p.getInventory().clearContent();p.inventoryMenu.sendAllDataToRemote();}));delay(5);
+        action("claim overflow without another charge",()->click("gui.teamecon.boxes.claim"));
+        until("all pending prizes claimed",()->ClientShopCache.pending().isEmpty()&&mc().player.getInventory().countItem(Items.POTION)==28);
+        action("verify claim balance",()->require(ClientShopCache.balance()==balanceBefore-7680,"Claim charged again"));
+        action("close claim view",VisualQa::closeScreen);delay(5);
+        action("open editor for cleanup",()->server(com.evolt.teamecon.shop.BoxAdminMenu::open));boxAdminReady();
+        action("select custom box for deletion",()->click("alchemy"));boxAdminReady();
+        action("delete custom box with confirmation",()->{click("gui.teamecon.box_admin.delete");click("gui.teamecon.box_admin.confirm_delete");});boxAdminReady();
+        action("deleted box absent",()->{require(!hasButton("alchemy"),"Deleted pool still appears");closeScreen();RESULTS.put("boxadmin","passed");});
     }
 
     private static void planStore(){

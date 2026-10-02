@@ -68,11 +68,13 @@ Team Economy 为 Minecraft 生存加入物资回收、积分商店和六种实�
 
 ### 刮张卡，看看盲盒里有什么
 
-**八种实体刮刮卡**从幸运数字到皇冠大奖逐级开放：主手持卡，左键打开，拖动刮开后自动结算。**独立盲盒机**提供奖池预览，可开 1／10／64 盒并查看本次奖品。图标下的「×N」表示奖品数量。
+**八种实体刮刮卡**从幸运数字到皇冠大奖逐级开放：主手持卡，左键打开，拖动刮开后自动结算。**独立盲盒机**提供奖池预览，可开 1／10／64 盒并查看本次奖品。奖品格右上角显示概率，下方「×N」表示数量。奖池包含治疗、抗火、水肺等药水，以及喷溅和滞留药水。
 
 ![刮刮卡购买页：选择卡种并调整票面金额](docs/images/screenshots/scratch-purchase.png)
 
 ![盲盒购买页：预览奖池并选择开启数量](docs/images/screenshots/blind-box-purchase.png)
+
+一次可开 1／10／64 盒，按实际结果扣费和发放。背包装不下的奖品按购买者保存到「待领取」，退出游戏后仍保留；清出空间后点击「领取待领」，或执行 `/teamecon claimboxes`。领完上批奖品后可继续开盒。
 
 后期可兑换**无线终端**，随身使用商店、回收、升级、小游戏和购卡功能。游戏界面与 Patchouli 图文指南支持简体中文、繁体中文和英文。
 
@@ -117,6 +119,7 @@ NeoForge 列出对应 Minecraft 分支的最低正式版本；可选联动模组
 |---|---|
 | `/teamecon` | 查看简要帮助 |
 | `/teamecon shop` | 打开积分商店，进行采购、回收和升级 |
+| `/teamecon claimboxes` | 将待领取的盲盒奖品放入背包，不额外收费 |
 | `/teamecon balance` | 查看当前个人／队伍钱包余额 |
 | `/teamecon price <物品ID>` | 查询物品估价，例如 `/teamecon price minecraft:diamond`；实际回收收入还受市场需求影响 |
 | `/teamecon sell` | **立即出售主手整叠物品**；需要先核对报价时，请使用商店的「出售」页 |
@@ -134,6 +137,7 @@ NeoForge 列出对应 Minecraft 分支的最低正式版本；可选联动模组
 | `/teamecon admin level <等级> [玩家]` | 设置目标玩家当前钱包等级，等级范围为 1–5；保留个人豁免状态 |
 | `/teamecon admin bypass <true/false> [玩家]` | 用 `true` 开启、`false` 关闭个人进度豁免；钱包等级不变 |
 | `/teamecon admin status [玩家]` | 查看目标玩家当前钱包的等级、余额和个人进度豁免状态 |
+| `/teamecon admin boxes` | 管理箱种、价格、奖品、数量与权重 |
 | `/teamecon admin prices` | 打开物品定价面板；手持物品时直接选中该物品 |
 | `/teamecon reward <奖励ID> <点数> [玩家]` | 为目标玩家当前团队钱包发放一次任务奖励 |
 | `/teamecon_quest_reward <FTB奖励ID> <点数> [玩家]` | 按 FTB 奖励 ID 发放一次团队积分 |
@@ -170,6 +174,18 @@ NeoForge 列出对应 Minecraft 分支的最低正式版本；可选联动模组
 截图中的购买价 2,000、回收基础价 80 是服主自定义示例。
 
 玩家购买价与系统基础回收价分别设置，可选择「沿用默认」「关闭」「自定义」。保存后立即生效，恢复默认会移除该物品的面板覆盖。面板配置保存在 `config/teamecon_price_overrides.json`，只记录改过的物品；购买差价、设备底价与进度要求继续适用，回收仍计算市场需求。第三方物品须明确填写回收价才能回收，仅接受默认状态物品，不回收带额外数据或储存内容的变体。详细规则见[定价配置](docs/server-configuration.md)。
+
+### 盲盒管理
+
+使用 `/teamecon admin boxes`（OP 2）管理盲盒：新增箱种，设置显示名称、价格、启用状态和可选阶段；从搜索网格选择物品或具体药水，设置数量与权重，查看计算后的概率。搜索支持中文、全拼、首字母、物品 ID 和药水 ID。
+
+![盲盒管理：箱种、价格与奖品权重](docs/images/screenshots/box-admin.png)
+
+![使用拼音查找不同类型的治疗药水](docs/images/screenshots/box-admin-picker.png)
+
+点击「保存」应用到 `config/teamecon_blindbox.json`；删除箱种需要再次确认。面板支持第三方物品开关和价值校验开关，保存会保留备份。图中炼金盲盒为自定义示例；完整字段见[服主配置](docs/server-configuration.md)。
+
+### 任务奖励接口
 
 任务作者可使用主模组自带的奖励命令，无需任务奖励附属模组。例如在 FTB Quests 的命令奖励中填写：
 

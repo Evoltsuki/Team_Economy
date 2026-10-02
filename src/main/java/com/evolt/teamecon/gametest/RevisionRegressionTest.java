@@ -144,7 +144,7 @@ public final class RevisionRegressionTest {
                 """);
             var shop=new ShopService(p.getServer(),manager,TeamEconomyMod.get().prices());shop.loadConfigs(dir);
             var first=shop.buyBlindBox(p,"diamond",64);
-            h.assertTrue(first.outcome()==ShopService.Outcome.OK&&first.charged()==64_000&&first.rewards().equals("minecraft:diamond,64"),"Batch still locked or receipt is wrong");
+            h.assertTrue(first.outcome()==ShopService.Outcome.OK&&first.charged()==64_000&&com.evolt.teamecon.shop.BoxReward.decode(first.rewards()).equals(java.util.List.of(new com.evolt.teamecon.shop.BoxReward("minecraft:diamond","",64))),"Batch still locked or receipt is wrong");
             h.assertTrue(manager.getBalance(wallet)==36_000&&p.getInventory().countItem(Items.DIAMOND)==64,"Batch charge or delivery was incomplete");
             for(int invalid:new int[]{0,-1,65,Integer.MAX_VALUE})h.assertTrue(shop.buyBlindBox(p,"diamond",invalid).outcome()==ShopService.Outcome.BAD_ITEM,"Invalid batch accepted");
             h.assertTrue(shop.buyBlindBox(p,"diamond",64).outcome()==ShopService.Outcome.NO_FUNDS&&manager.getBalance(wallet)==36_000,"Unfunded batch charged");

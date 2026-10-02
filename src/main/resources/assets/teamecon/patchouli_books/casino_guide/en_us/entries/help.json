@@ -16,7 +16,7 @@
     {
       "type": "patchouli:text",
       "title": "",
-      "text": "Guide will not open? Install Patchouli for 1.21.1 NeoForge. Cannot buy an item? Check its listed requirements. Box will not open? Check funds and inventory space.$(br2)Upgrades and machine purchases are separate. Owning a machine does not bypass its level requirement."
+      "text": "Guide will not open? Install Patchouli for 1.21.1 NeoForge. Cannot buy an item? Check its listed requirements. Box will not open? Check funds and claim the previous batch first.$(br2)Upgrades and machine purchases are separate. Owning a machine does not bypass its level requirement."
     },
     {
       "type": "patchouli:text",

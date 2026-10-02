@@ -39,6 +39,7 @@ public final class ShopService {
     private final PurchaseRules progression;
     private final com.evolt.teamecon.gambling.CasinoProgression casino;
     private final com.evolt.teamecon.scratch.ScratchCardService cards;
+    private final BoxAdminConfig boxAdmin = new BoxAdminConfig();
     private final BlindBoxPools blindBoxes = new BlindBoxPools();
     private final EnchantShop enchants = new EnchantShop();
 
@@ -63,7 +64,7 @@ public final class ShopService {
     public void loadConfigs(java.nio.file.Path configDir) {
         prices.catalog().load(configDir);
         progression.load(configDir);
-        blindBoxes.load(configDir, prices);
+        reloadBlindBoxes(configDir);
         enchants.load(configDir);
         enchants.priceOffers(offer -> prices.shopPrices().enchantPrice(offer.enchantmentId(), offer.level(),
                 offer.price(), prices.basePrices().get("minecraft:diamond")));
@@ -77,6 +78,12 @@ public final class ShopService {
         ModLogger.info("Shop ready: {} boxes, {} enchanted books", blindBoxes.all().size(), enchants.all().size());
     }
 
+    public void reloadBlindBoxes(java.nio.file.Path configDir) {
+        blindBoxes.load(configDir, prices);
+        boxAdmin.load(configDir);
+    }
+
+    public BoxAdminConfig boxAdmin() { return boxAdmin; }
     public BlindBoxPools blindBoxes() { return blindBoxes; }
     public EnchantShop enchants() { return enchants; }
     public PriceService prices() { return prices; }
@@ -193,25 +200,35 @@ public final class ShopService {
         long total = MoneyMath.total(pool.price(), count);
         if (total <= 0) return Result.fail(Outcome.BAD_ITEM);
         if (!manager.canAfford(wallet, total)) return new Result(Outcome.NO_FUNDS, total, "", "");
-        var outcomes = new java.util.ArrayList<ItemStack>();
-        for (ShopPool.Entry entry : pool.entries()) {
-            if (entry.itemKey().equals("minecraft:air")) continue;
-            Item item = pool.item(entry.itemKey());
-            if (item == null) return Result.fail(Outcome.BAD_ITEM);
-            outcomes.add(new ItemStack(item, entry.count()));
-        }
-        if (!ItemDelivery.canFitAnyBatch(player.getInventory(), outcomes, count)) return Result.fail(Outcome.NO_SPACE);
-        var prizes = new java.util.LinkedHashMap<String, Integer>();
-        for (int i = 0; i < count; i++) {
-            ShopPool.Entry drawn = pool.draw(player.getRandom());
-            prizes.merge(drawn.itemKey(), drawn.itemKey().equals("minecraft:air") ? 1 : drawn.count(), Integer::sum);
-        }
+        if (!manager.pendingBoxRewards(player.getUUID()).isEmpty())
+            return new Result(Outcome.NO_SPACE, 0, "shop.teamecon.box_pending_first", "");
+        if (pool.entries().stream().anyMatch(e -> !e.reward().available())) return Result.fail(Outcome.BAD_ITEM);
+        var drawn = new java.util.ArrayList<BoxReward>();
+        for (int i = 0; i < count; i++) drawn.add(pool.draw(player.getRandom()).reward());
+        var prizes = BoxReward.merge(drawn);
         charge(player, wallet, total, TxType.BLINDBOX, pool.id(), count);
-        prizes.forEach((key, amount) -> {
-            if (!key.equals("minecraft:air")) ItemDelivery.give(player.getInventory(), new ItemStack(pool.item(key), amount));
-        });
-        String receipt = prizes.entrySet().stream().map(e -> e.getKey() + "," + e.getValue()).collect(java.util.stream.Collectors.joining(";"));
-        return new Result(Outcome.OK, total, "shop.teamecon.box_batch", count + "," + total, receipt);
+        manager.pendingBoxRewards(player.getUUID(), prizes.stream().filter(e -> !e.itemKey().equals("minecraft:air")).toList());
+        deliverPendingBoxes(player);
+        return new Result(Outcome.OK, total, "shop.teamecon.box_batch", count + "," + total, BoxReward.encode(prizes));
+    }
+
+    public List<BoxReward> pendingBoxes(ServerPlayer player) { return manager.pendingBoxRewards(player.getUUID()); }
+    private int deliverPendingBoxes(ServerPlayer player) {
+        List<BoxReward> left = new java.util.ArrayList<>();
+        int delivered = 0;
+        for (BoxReward reward : pendingBoxes(player)) {
+            if (!reward.available()) { left.add(reward); continue; }
+            ItemStack remaining = ItemDelivery.giveUpToFit(player.getInventory(), reward.stack());
+            delivered += reward.count() - remaining.getCount();
+            if (!remaining.isEmpty()) left.add(reward.withCount(remaining.getCount()));
+        }
+        manager.pendingBoxRewards(player.getUUID(), left);
+        return delivered;
+    }
+    public Result claimBlindBoxes(ServerPlayer player) {
+        int delivered = deliverPendingBoxes(player);
+        int remaining = pendingBoxes(player).stream().mapToInt(BoxReward::count).sum();
+        return new Result(Outcome.OK, 0, "shop.teamecon.box_claimed", delivered + "," + remaining);
     }
 
     /** Books use the vanilla stored-enchantment component, for normal anvil application. */

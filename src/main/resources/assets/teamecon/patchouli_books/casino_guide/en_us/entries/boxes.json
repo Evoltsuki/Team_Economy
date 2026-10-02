@@ -16,12 +16,12 @@
     {
       "type": "patchouli:text",
       "title": "",
-      "text": "Supply Boxes cost 64 points; Treasure Boxes cost 512. Contents shows possible items and quantities. Each box awards one random entry.$(br2)Open 1, 10 or 64 at once. Last opening shows the actual prizes delivered to your inventory."
+      "text": "Default Supply Boxes cost 64 points; Treasure Boxes cost 512. Each tile shows its chance at the top right and a ×N count below. Each box draws one entry.$(br2)Open 1, 10 or 64 at once. Last opening shows the actual results."
     },
     {
       "type": "patchouli:text",
       "title": "",
-      "text": "Supply: 11 entries, including two diamonds (1.8%) and a netherite ingot (0.2%).$(br2)Treasure includes 16 diamonds (0.5%), an enchanted golden apple (0.5%) and a netherite ingot (1%). Friendly mob eggs total 10%, including villagers, allays, sniffers and animals. Neutral mobs can retaliate."
+      "text": "Supply: 16 entries, including two diamonds (1.8%) and a netherite ingot (0.2%).$(br2)Treasure includes 16 diamonds (0.5%), an enchanted golden apple (0.5%) and a netherite ingot (1%). Friendly/neutral mob eggs total 10%. Neutral mobs can retaliate."
     },
     {
       "type": "patchouli:text",
@@ -31,7 +31,12 @@
     {
       "type": "patchouli:text",
       "title": "",
-      "text": "Boxes have no advancement or level gate. Leave space for all possible outcomes of the selected batch; insufficient space prevents charging.$(br2)Server owners can customize pools. The preview reflects the current server."
+      "text": "Boxes have no default level or advancement gate. Overflow is saved in Pending, even across logouts.$(br2)Free inventory space and click Claim pending or use /teamecon claimboxes. Claiming never rerolls or charges again. Claim the batch before opening more."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Potions and custom pools",
+      "text": "Each default pool has five potion entries, including healing, fire resistance, water breathing and swiftness, plus splash and lingering variants.$(br2)Operators can use /teamecon admin boxes to edit box types, prices, potion effects and weights. The preview reflects the server configuration."
     },
     {
       "type": "patchouli:crafting",

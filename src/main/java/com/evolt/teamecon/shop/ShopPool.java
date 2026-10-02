@@ -22,10 +22,12 @@ import java.util.List;
  */
 public final class ShopPool {
 
-    public record Entry(String itemKey, int count, int weight) {
+    public record Entry(String itemKey, int count, int weight, String potion) {
+        public Entry(String itemKey, int count, int weight) { this(itemKey, count, weight, ""); }
+        public BoxReward reward() { return new BoxReward(itemKey, potion, count); }
     }
 
-    private String id = "";
+    private String id = "", name = "";
     private long price = 0L;
     private String stage = "";
     private boolean enabled = true, allowModdedItems, enforceValueCap = true;
@@ -34,6 +36,8 @@ public final class ShopPool {
     public String id() {
         return id;
     }
+
+    public String name() { return name; }
 
     public long price() {
         return price;
@@ -90,6 +94,7 @@ public final class ShopPool {
         return entries.get(entries.size() - 1);
     }
 
+    public boolean allowModdedItems() { return allowModdedItems; }
     public boolean enabled() { return enabled; }
     public boolean enforceValueCap() { return enforceValueCap; }
     public boolean allows(String key) {
@@ -106,6 +111,8 @@ public final class ShopPool {
     boolean read(JsonObject obj) {
         entries.clear();
         id = ConfigJson.text(obj, "id", "");
+        name = ConfigJson.text(obj, "name", "");
+        if (name.length()>64 || name.contains(",") || name.contains(";") || name.chars().anyMatch(Character::isISOControl)) throw new IllegalArgumentException("Invalid box name");
         enabled = ConfigJson.bool(obj, "enabled", true);
         allowModdedItems = ConfigJson.bool(obj, "allowModdedItems", false);
         enforceValueCap = ConfigJson.bool(obj, "enforceValueCap", true);
@@ -124,7 +131,9 @@ public final class ShopPool {
             if (!ShopCatalog.id(key)) throw new IllegalArgumentException("Invalid item in " + id + " entry " + i);
             int count = (int) ConfigJson.integer(entry, "count", 1, 1, com.evolt.teamecon.economy.MoneyMath.MAX_PURCHASE);
             int weight = (int) ConfigJson.integer(entry, "weight", 1, 1, 1_000_000);
-            parsed.add(new Entry(key, count, weight));
+            String potion = ConfigJson.text(entry, "potion", "");
+            new BoxReward(key, potion, count);
+            parsed.add(new Entry(key, count, weight, potion));
         }
         entries.addAll(parsed);
         return ready();

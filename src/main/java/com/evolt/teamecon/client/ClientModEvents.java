@@ -63,5 +63,6 @@ public final class ClientModEvents {
                 ? new BlindBoxScreen(menu, inventory, title) : new ShopScreen(menu, inventory, title));
         event.register(ModRegistries.SCRATCH_MENU.value(), ScratchCardScreen::new);
         event.register(ModRegistries.PRICE_ADMIN_MENU.value(), PriceAdminScreen::new);
+        event.register(ModRegistries.BOX_ADMIN_MENU.value(), BoxAdminScreen::new);
     }
 }

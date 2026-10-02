@@ -65,9 +65,9 @@ public final class BlindBoxPools {
                 if (array.size() > 64) { ModLogger.warn("Too many blind boxes in {}; maximum 64", file); return; }
                 java.util.Set<String> ids = new java.util.HashSet<>();
                 // Only replace the exact shipped legacy pools. Edited pools remain the owner's choice.
-                if (array.equals(legacyDefaults()) || array.equals(previousDefaults())) {
+                if (array.equals(legacyDefaults()) || array.equals(previousDefaults()) || array.equals(expandedDefaultsJson())) {
                     try {
-                        Path backup = file.resolveSibling(FILE_NAME + (array.equals(legacyDefaults()) ? ".pre-1.0.bak" : ".pre-expanded.bak"));
+                        Path backup = file.resolveSibling(FILE_NAME + (array.equals(legacyDefaults()) ? ".pre-1.0.bak" : array.equals(previousDefaults()) ? ".pre-expanded.bak" : ".pre-potions.bak"));
                         if (!Files.exists(backup)) Files.copy(file, backup);
                         defaults();
                         writeDefaults(file);
@@ -105,7 +105,7 @@ public final class BlindBoxPools {
     }
 
     /** Nonempty supply boxes. Ordinary prizes cover the default retail cost, not the resale cost. */
-    private void defaults() {
+    private void expandedDefaults() {
         pools.clear();
         ShopPool common = new ShopPool();
         common.read(json("common", 64L, "",
@@ -126,6 +126,50 @@ public final class BlindBoxPools {
         rare.read(json("rare", 512L, "", rewards.toArray(String[]::new)));
         pools.put(common.id(), common);
         pools.put(rare.id(), rare);
+    }
+
+    private void defaults() {
+        expandedDefaults();
+        JsonObject common = toJson(pools.get("common"));
+        JsonArray c = common.getAsJsonArray("entries");
+        c.get(0).getAsJsonObject().addProperty("weight", 1600);
+        c.get(1).getAsJsonObject().addProperty("weight", 1200);
+        c.get(2).getAsJsonObject().addProperty("weight", 1200);
+        addPotion(c, "minecraft:potion", "minecraft:healing", 1, 250);
+        addPotion(c, "minecraft:potion", "minecraft:long_swiftness", 1, 250);
+        addPotion(c, "minecraft:potion", "minecraft:long_fire_resistance", 1, 250);
+        addPotion(c, "minecraft:potion", "minecraft:long_water_breathing", 1, 250);
+        addPotion(c, "minecraft:splash_potion", "minecraft:healing", 1, 200);
+        JsonObject rare = toJson(pools.get("rare"));
+        JsonArray r = rare.getAsJsonArray("entries");
+        r.get(0).getAsJsonObject().addProperty("weight", 1700);
+        r.get(1).getAsJsonObject().addProperty("weight", 1300);
+        r.get(2).getAsJsonObject().addProperty("weight", 1000);
+        addPotion(r, "minecraft:splash_potion", "minecraft:strong_healing", 2, 200);
+        addPotion(r, "minecraft:potion", "minecraft:strong_strength", 2, 200);
+        addPotion(r, "minecraft:potion", "minecraft:long_night_vision", 2, 200);
+        addPotion(r, "minecraft:lingering_potion", "minecraft:regeneration", 1, 200);
+        addPotion(r, "minecraft:potion", "minecraft:slow_falling", 2, 200);
+        ShopPool a = new ShopPool(), b = new ShopPool(); a.read(common); b.read(rare);
+        pools.put(a.id(), a); pools.put(b.id(), b);
+    }
+    private static void addPotion(JsonArray entries, String item, String potion, int count, int weight) {
+        JsonObject e = new JsonObject(); e.addProperty("item", item); e.addProperty("potion", potion);
+        e.addProperty("count", count); e.addProperty("weight", weight); entries.add(e);
+    }
+    public static JsonObject toJson(ShopPool pool) {
+        JsonObject obj = json(pool.id(), pool.price(), pool.stage(), pool.entries().stream()
+                .map(e -> e.itemKey()+"|"+e.count()+"|"+e.weight()).toArray(String[]::new));
+        if (!pool.name().isEmpty()) obj.addProperty("name", pool.name());
+        obj.addProperty("enabled", pool.enabled()); obj.addProperty("allowModdedItems", pool.allowModdedItems());
+        obj.addProperty("enforceValueCap", pool.enforceValueCap());
+        for (int i=0;i<pool.entries().size();i++) if (!pool.entries().get(i).potion().isEmpty())
+            obj.getAsJsonArray("entries").get(i).getAsJsonObject().addProperty("potion",pool.entries().get(i).potion());
+        return obj;
+    }
+    static JsonArray expandedDefaultsJson() {
+        BlindBoxPools old = new BlindBoxPools(); old.expandedDefaults();
+        JsonArray array = new JsonArray(); old.all().forEach(p -> array.add(toJson(p))); return array;
     }
 
     static JsonArray previousDefaults() {
@@ -184,23 +228,7 @@ public final class BlindBoxPools {
             Files.createDirectories(file.getParent());
             JsonArray array = new JsonArray();
             for (ShopPool pool : pools.values()) {
-                JsonObject obj = new JsonObject();
-                obj.addProperty("id", pool.id());
-                obj.addProperty("price", pool.price());
-                obj.addProperty("stage", pool.stage());
-                obj.addProperty("enabled", true);
-                obj.addProperty("allowModdedItems", false);
-                obj.addProperty("enforceValueCap", true);
-                JsonArray entries = new JsonArray();
-                for (ShopPool.Entry entry : pool.entries()) {
-                    JsonObject e = new JsonObject();
-                    e.addProperty("item", entry.itemKey());
-                    e.addProperty("count", entry.count());
-                    e.addProperty("weight", entry.weight());
-                    entries.add(e);
-                }
-                obj.add("entries", entries);
-                array.add(obj);
+                array.add(toJson(pool));
             }
             JsonObject root = new JsonObject();
             root.addProperty("version", 1);
@@ -225,7 +253,7 @@ public final class BlindBoxPools {
                 if (entry.itemKey().equals("minecraft:air")) return true;
                 net.minecraft.resources.ResourceLocation id = net.minecraft.resources.ResourceLocation.tryParse(entry.itemKey());
                 boolean validItem = pool.allows(entry.itemKey()) && id != null
-                        && net.minecraft.core.registries.BuiltInRegistries.ITEM.containsKey(id);
+                        && net.minecraft.core.registries.BuiltInRegistries.ITEM.containsKey(id) && entry.reward().available();
                 if (!validItem) ModLogger.warn("Blind box '{}' rejected: unavailable/unsupported item {}", pool.id(), entry.itemKey());
                 return validItem;
             });

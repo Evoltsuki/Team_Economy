@@ -137,15 +137,17 @@ public final class EconomyIntegrationTest {
         try {
             Files.writeString(dir.resolve("teamecon_blindbox.json"),"""
                     [{"id":"empty","price":10,"entries":[{"item":"minecraft:air","count":1,"weight":1}]},
-                     {"id":"mixed","price":1000,"entries":[{"item":"minecraft:air","count":1,"weight":1},{"item":"minecraft:diamond","count":2,"weight":1}]}]
+                     {"id":"mixed","price":1000,"entries":[{"item":"minecraft:diamond","count":2,"weight":1}]}]
                     """);
             var shop=new ShopService(h.getLevel().getServer(),manager,TeamEconomyMod.get().prices()); shop.loadConfigs(dir);
             var empty=shop.buyBlindBox(p,"empty");
             h.assertTrue(empty.outcome()==ShopService.Outcome.OK&&manager.getBalance(wallet)==9990,"Empty result allowed a free reroll");
             for(int i=0;i<36;i++)p.getInventory().items.set(i,new ItemStack(Items.COBBLESTONE,64));
             p.getInventory().items.set(0,new ItemStack(Items.DIAMOND,63));
-            for(int i=0;i<20;i++)h.assertTrue(shop.buyBlindBox(p,"mixed").outcome()==ShopService.Outcome.NO_SPACE,"Capacity checks must precede the random draw");
-            h.assertTrue(manager.getBalance(wallet)==9990&&p.getInventory().items.get(0).getCount()==63,"Rejected blind box mutated state");
+            h.assertTrue(shop.buyBlindBox(p,"mixed").outcome()==ShopService.Outcome.OK,"Paid draw was rejected despite persistent delivery");
+            h.assertTrue(manager.getBalance(wallet)==8990&&p.getInventory().items.get(0).getCount()==64&&shop.pendingBoxes(p).getFirst().count()==1,"Prize was not split into inventory and pending");
+            for(int i=0;i<20;i++)h.assertTrue(shop.buyBlindBox(p,"mixed").outcome()==ShopService.Outcome.NO_SPACE,"Pending reward allowed another draw");
+            h.assertTrue(manager.getBalance(wallet)==8990,"Blocked draw charged again");
         } finally {
             try(var files=Files.list(dir)) { for(Path file:files.toList())Files.deleteIfExists(file); }
             Files.deleteIfExists(dir);

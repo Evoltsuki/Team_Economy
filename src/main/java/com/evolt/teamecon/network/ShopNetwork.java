@@ -28,7 +28,8 @@ public final class ShopNetwork {
 
     public static void register(RegisterPayloadHandlersEvent event) {
         PriceAdminNetwork.register(event);
-        event.registrar("7")
+        BoxAdminNetwork.register(event);
+        event.registrar("8")
                 .playToServer(ShopActionPayload.TYPE, ShopActionPayload.STREAM_CODEC, ShopNetwork::handleAction)
                 .playToClient(ShopSyncPayload.TYPE, ShopSyncPayload.STREAM_CODEC,
                         (p, c) -> c.enqueueWork(() -> ClientShopCache.update(p)));
@@ -41,7 +42,7 @@ public final class ShopNetwork {
                     || menu.containerId != p.containerId() || !menu.stillValid(player)) return;
             ShopService shop = TeamEconomyMod.get().shop();
             if (shop == null) return;
-            if (menu.boxesOnly() != (p.kind() == ShopActionPayload.Kind.BUY_BOX)) return;
+            if (menu.boxesOnly() != (p.kind() == ShopActionPayload.Kind.BUY_BOX || p.kind() == ShopActionPayload.Kind.CLAIM_BOX)) return;
             if (!menu.acceptRequest(p.requestId(), player.level().getGameTime())) {
                 sendSync(player, "message.teamecon.busy", "");
                 return;
@@ -53,6 +54,7 @@ public final class ShopNetwork {
             ShopService.Result result = switch (p.kind()) {
                 case OPEN_TERMINAL -> throw new IllegalStateException();
                 case BUY_ITEM -> shop.buyItem(player, shop.pricesItem(p.target()), p.amount());
+                case CLAIM_BOX -> shop.claimBlindBoxes(player);
                 case BUY_BOX -> shop.buyBlindBox(player, p.target(), p.amount());
                 case ENCHANT -> shop.buyEnchant(player, p.target());
                 case SELL_STACK -> {
@@ -78,7 +80,7 @@ public final class ShopNetwork {
                 args = result.detailKey().isEmpty() ? String.valueOf(result.charged()) : result.detailArg();
                 if (p.kind() != ShopActionPayload.Kind.SELL_STACK && menu.pos() != null && player.level().getBlockEntity(menu.pos()) instanceof ShopMachineBlockEntity machine) {
                     String icon = switch (p.kind()) {
-                        case OPEN_TERMINAL -> "minecraft:air";
+                        case OPEN_TERMINAL, CLAIM_BOX -> "minecraft:air";
                         case BUY_ITEM -> p.target();
                         case BUY_TICKET -> "teamecon:scratch_card_" + p.target();
                         case UPGRADE_LEVEL -> "minecraft:experience_bottle";
@@ -123,9 +125,10 @@ public final class ShopNetwork {
         long balance = economy.manager().getBalance(TeamUtil.walletKey(player.getServer(), player.getUUID()));
         long quote = economy.saleQuote(player, menu.sale());
         String name = ModNetwork.walletName(player);
+        String pending = BoxReward.encode(shop.pendingBoxes(player));
         if (menu.catalogSent()) {
             PacketDistributor.sendToPlayer(player, new ShopSyncPayload(menu.containerId, balance, name, quote,
-                    -1, 0, "", "", "", message, args, rewards));
+                    -1, 0, "", "", "", message, args, rewards, pending));
             return;
         }
         List<String> chunks = new ArrayList<>();
@@ -145,7 +148,7 @@ public final class ShopNetwork {
             var access = shop.boxAccess(player, pool);
             for (var prize : pool.entries()) {
                 String row = pool.id() + "," + pool.price() + "," + access.reason() + "," + (access.unlocked() ? 1 : 0)
-                        + "," + prize.itemKey() + "," + prize.count() + "," + prize.weight();
+                        + "," + prize.itemKey() + "," + prize.count() + "," + prize.weight() + "," + prize.potion() + "," + pool.name();
                 if (boxChunk.length() + row.length() + 1 > 12000) { boxChunks.add(boxChunk.toString()); boxChunk.setLength(0); }
                 if (!boxChunk.isEmpty()) boxChunk.append(";");
                 boxChunk.append(row);
@@ -161,7 +164,7 @@ public final class ShopNetwork {
         for (int i = 0; i < count; i++)
             PacketDistributor.sendToPlayer(player, new ShopSyncPayload(menu.containerId, balance, name, quote,
                     i, count, i < chunks.size() ? chunks.get(i) : "", i < boxChunks.size() ? boxChunks.get(i) : "",
-                    i == 0 ? books : "", message, args, rewards));
+                    i == 0 ? books : "", message, args, rewards, pending));
         menu.markCatalogSent();
     }
 }

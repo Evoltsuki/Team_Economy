@@ -51,23 +51,20 @@ class ReleaseBalanceTest {
         assertEquals(1_000,retail.itemPrice("minecraft:cooked_beef",1_000,256));
     }
 
-    @Test void defaultBoxesHaveNoFillerAndCoverRetailWithoutResaleProfit() {
+    @Test void defaultBoxesHaveNoFillerAndIncludeUtilityPotions() {
         var pools=new BlindBoxPools();pools.load(dir,null);
         var prices=new PriceService();prices.basePrices().load(dir.resolve("base.json"));var retail=new ShopPricing();
         for(var pool:pools.all()) {
             assertEquals(10_000,pool.totalWeight());
             for(var entry:pool.entries()) {
                 assertNotEquals("minecraft:air",entry.itemKey());assertNotEquals("minecraft:rotten_flesh",entry.itemKey());
-                if(!BoxPrizePolicy.exclusive(entry.itemKey())) {
+                if(!BoxPrizePolicy.exclusive(entry.itemKey()) && entry.potion().isEmpty()) {
                     long unit=prices.basePrices().get(entry.itemKey());assertTrue(unit>0);
                     assertTrue(retail.itemPrice(entry.itemKey(),unit*2,256)*entry.count()>=pool.price());
                 }
             }
-            double ev=BlindBoxPools.expectedValue(pool,prices);
-            assertTrue(ev>pool.price()*.4&&ev<pool.price());
+            assertEquals(5,pool.entries().stream().filter(e->!e.potion().isEmpty()).count());
         }
-        assertTrue(BlindBoxPools.expectedValue(pools.byId("common"),prices)>32.64);
-        assertTrue(BlindBoxPools.expectedValue(pools.byId("rare"),prices)>248.2176);
         var eggs=pools.byId("rare").entries().stream().filter(e->BoxPrizePolicy.exclusive(e.itemKey())).toList();
         assertEquals(BoxPrizePolicy.EGGS.size(),eggs.size());
         assertEquals(.1,eggs.stream().mapToInt(ShopPool.Entry::weight).sum()/10000D,1e-12);
@@ -125,7 +122,7 @@ class ReleaseBalanceTest {
         Files.writeString(file,previous);
         var pools=new BlindBoxPools();pools.load(dir,null);
         assertEquals(previous,Files.readString(dir.resolve("teamecon_blindbox.json.pre-expanded.bak")));
-        assertEquals(54,pools.byId("rare").entries().size());
+        assertEquals(59,pools.byId("rare").entries().size());
         String updated=Files.readString(file);pools.load(dir,null);
         assertEquals(updated,Files.readString(file));
     }

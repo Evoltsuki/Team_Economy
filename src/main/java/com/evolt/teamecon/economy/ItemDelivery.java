@@ -48,6 +48,11 @@ public final class ItemDelivery {
     public static void give(Inventory inventory, ItemStack offered) {
         if (offered.isEmpty()) return;
         if (!canFit(inventory, offered)) throw new IllegalStateException("Delivery was not preflighted");
+        giveUpToFit(inventory, offered);
+    }
+
+    /** Insert as much as fits; return the remainder without dropping it into the world. */
+    public static ItemStack giveUpToFit(Inventory inventory, ItemStack offered) {
         ItemStack remaining = offered.copy();
         for (ItemStack slot : inventory.items) {
             if (!slot.isEmpty() && ItemStack.isSameItemSameComponents(slot, remaining)) {
@@ -65,5 +70,6 @@ public final class ItemDelivery {
             }
         }
         inventory.setChanged();
+        return remaining;
     }
 }

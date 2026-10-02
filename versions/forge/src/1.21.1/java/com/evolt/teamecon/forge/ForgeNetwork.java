@@ -10,7 +10,7 @@ import net.minecraftforge.network.SimpleChannel;
 import java.util.function.BiConsumer;
 
 public final class ForgeNetwork {
-    private static final SimpleChannel CHANNEL=ChannelBuilder.named("teamecon:main").networkProtocolVersion(2).simpleChannel();
+    private static final SimpleChannel CHANNEL=ChannelBuilder.named("teamecon:main").networkProtocolVersion(3).simpleChannel();
     private static int nextId;
     public static void init(){var registrar=new PayloadRegistrar();ModNetwork.register(registrar);ShopNetwork.register(registrar);CHANNEL.build();}
     static <T extends CustomPacketPayload> void register(CustomPacketPayload.Type<T> type,StreamCodec<FriendlyByteBuf,T> codec,BiConsumer<T,PayloadContext> handler,boolean serverbound){

@@ -26,7 +26,7 @@ public final class BlindBoxScreen extends CompactContainerScreen<ShopMenu> {
     private List<ClientShopCache.PrizeRow> receipt=List.of();
     private final List<Button> amountButtons=new ArrayList<>();
     private Button open;
-    private boolean preview=true;
+    private boolean preview=true, pendingView;
     private String receiptPool="", requestedPool="";
 
     public BlindBoxScreen(ShopMenu menu, Inventory inventory, Component title) { super(menu,inventory,title); }
@@ -34,9 +34,9 @@ public final class BlindBoxScreen extends CompactContainerScreen<ShopMenu> {
     private ClientShopCache.BoxRow pool() {
         return ClientShopCache.boxes().stream().filter(p->p.poolId().equals(poolId)).findFirst().orElse(null);
     }
-    private int poolCapacity() { return Math.max(1,(imageHeight-97)/38); }
-    private int prizeColumns() { return Math.max(1,(imageWidth-leftWidth-38)/28); }
-    private int prizeCapacity() { return prizeColumns()*Math.max(1,(imageHeight-194)/28); }
+    private int poolCapacity() { return Math.max(1,(imageHeight-137)/38); }
+    private int prizeColumns() { return Math.max(1,(imageWidth-leftWidth-38)/34); }
+    private int prizeCapacity() { return prizeColumns()*Math.max(1,(imageHeight-191)/34); }
 
     @Override protected void init() {
         imageWidth=360;imageHeight=260;super.init();
@@ -48,7 +48,7 @@ public final class BlindBoxScreen extends CompactContainerScreen<ShopMenu> {
         for(int i=start;i<Math.min(pools.size(),start+poolCapacity());i++){
             var entry=pools.get(i);
             var button=addRenderableWidget(new BoxButton(12,52+(i-start)*38,leftWidth,34,poolName(entry.poolId()),()->{
-                poolId=entry.poolId();preview=true;rewardPage=0;rebuildWidgets();
+                poolId=entry.poolId();preview=true;pendingView=false;rewardPage=0;rebuildWidgets();
             }){
                 @Override protected boolean chosen(){return poolId.equals(entry.poolId());}
                 @Override protected void renderWidget(GuiGraphics g,int mx,int my,float partial){
@@ -60,8 +60,8 @@ public final class BlindBoxScreen extends CompactContainerScreen<ShopMenu> {
             button.active=waiting==0;
         }
         if(pools.size()>poolCapacity()){
-            addRenderableWidget(new BoxButton(12,imageHeight-39,22,18,Component.literal("‹"),()->{poolPage--;rebuildWidgets();})).active=poolPage>0;
-            addRenderableWidget(new BoxButton(leftWidth-10,imageHeight-39,22,18,Component.literal("›"),()->{poolPage++;rebuildWidgets();})).active=(start+poolCapacity())<pools.size();
+            addRenderableWidget(new BoxButton(12,imageHeight-80,22,18,Component.literal("‹"),()->{poolPage--;rebuildWidgets();})).active=poolPage>0;
+            addRenderableWidget(new BoxButton(leftWidth-10,imageHeight-80,22,18,Component.literal("›"),()->{poolPage++;rebuildWidgets();})).active=(start+poolCapacity())<pools.size();
         }
         int x=leftWidth+26,w=imageWidth-x-14,buttonWidth=(w-8)/3;
         for(int i=0;i<3;i++){
@@ -78,25 +78,32 @@ public final class BlindBoxScreen extends CompactContainerScreen<ShopMenu> {
         }){
             @Override protected boolean chosen(){return active;}
         });
-        int tabWidth=(w-4)/2;
-        addRenderableWidget(new BoxButton(x,68,tabWidth,18,tr("contents"),()->{preview=true;rewardPage=0;}){
+        addRenderableWidget(new BoxButton(12,imageHeight-52,leftWidth,32,tr("claim"),()->{
+            waiting=100;
+            ClientPayloadSender.sendToServer(new ShopActionPayload(menu.containerId,++sequence,ShopActionPayload.Kind.CLAIM_BOX,"",1));
+        })).active=!ClientShopCache.pending().isEmpty();
+        int tabWidth=(w-8)/3;
+        addRenderableWidget(new BoxButton(x,68,tabWidth,18,tr("contents"),()->{preview=true;pendingView=false;rewardPage=0;}){
             @Override protected boolean chosen(){return preview;}
         });
-        addRenderableWidget(new BoxButton(x+tabWidth+4,68,tabWidth,18,tr("receipt"),()->{preview=false;rewardPage=0;}){
-            @Override protected boolean chosen(){return !preview;}
+        addRenderableWidget(new BoxButton(x+tabWidth+4,68,tabWidth,18,tr("receipt"),()->{preview=false;pendingView=false;rewardPage=0;}){
+            @Override protected boolean chosen(){return !preview&&!pendingView;}
         }).active=!receipt.isEmpty();
+        addRenderableWidget(new BoxButton(x+2*(tabWidth+4),68,tabWidth,18,tr("pending"),()->{preview=false;pendingView=true;rewardPage=0;}){
+            @Override protected boolean chosen(){return pendingView;}
+        }).active=!ClientShopCache.pending().isEmpty();
         addRenderableWidget(new BoxButton(x,imageHeight-100,18,16,Component.literal("‹"),()->turnPage(-1)));
         addRenderableWidget(new BoxButton(x+w-18,imageHeight-100,18,16,Component.literal("›"),()->turnPage(1)));
         refresh();
     }
     private List<ClientShopCache.PrizeRow> displayed(){
         var selected=pool();
-        return preview ? selected==null?List.of():selected.prizes().stream().map(p->new ClientShopCache.PrizeRow(p.itemKey(),p.count())).toList() : receipt;
+        return preview ? selected==null?List.of():selected.prizes().stream().map(p->new ClientShopCache.PrizeRow(p.itemKey(),p.count(),p.potion())).toList() : pendingView?ClientShopCache.pending():receipt;
     }
     private void turnPage(int delta){rewardPage=Math.clamp(rewardPage+delta,0,Math.max(0,(displayed().size()-1)/prizeCapacity()));}
     private void refresh(){
         var selected=pool();long cost=selected==null?0:MoneyMath.total(selected.price(),amount);
-        if(open!=null)open.active=ready()&&waiting==0&&selected!=null&&selected.unlocked()&&cost>0&&ClientShopCache.balance()>=cost;
+        if(open!=null)open.active=ready()&&waiting==0&&selected!=null&&selected.unlocked()&&cost>0&&ClientShopCache.balance()>=cost&&ClientShopCache.pending().isEmpty();
         for(Button button:amountButtons)button.active=waiting==0;
     }
     @Override public void containerTick(){
@@ -104,7 +111,7 @@ public final class BlindBoxScreen extends CompactContainerScreen<ShopMenu> {
         if(ready()&&revision!=ClientShopCache.revision()){
             revision=ClientShopCache.revision();waiting=0;
             if(!ClientShopCache.rewards().isEmpty()&&receipt!=ClientShopCache.rewards()){
-                receipt=ClientShopCache.rewards();receiptPool=requestedPool;preview=false;revealTicks=16;rewardPage=0;
+                receipt=ClientShopCache.rewards();receiptPool=requestedPool;preview=false;pendingView=false;revealTicks=16;rewardPage=0;
             }
             rebuildWidgets();
         }
@@ -125,50 +132,62 @@ public final class BlindBoxScreen extends CompactContainerScreen<ShopMenu> {
         fit(g,tr("subtitle"),14,28,imageWidth-28,DULL);
         int x=leftWidth+28,w=imageWidth-x-16,cx=x+w/2;
         var selected=pool();
-        fit(g,preview?(selected==null?tr("empty"):poolName(selected.poolId())):poolName(receiptPool),x,53,w,WHITE);
+        fit(g,preview?(selected==null?tr("empty"):poolName(selected.poolId())):pendingView?tr("pending"):poolName(receiptPool),x,53,w,WHITE);
         var shown=displayed();int capacity=prizeCapacity();
         rewardPage=Math.clamp(rewardPage,0,Math.max(0,(shown.size()-1)/capacity));
         int start=rewardPage*capacity;
         for(int i=start;i<Math.min(shown.size(),start+capacity);i++){
-            var prize=shown.get(i);int dx=x+(i-start)%prizeColumns()*28,dy=94+(i-start)/prizeColumns()*28;
+            var prize=shown.get(i);int dx=x+(i-start)%prizeColumns()*34,dy=94+(i-start)/prizeColumns()*34;
             boolean rare=preview&&com.evolt.teamecon.shop.BoxPrizePolicy.exclusive(prize.itemKey());
-            g.fill(dx,dy,dx+25,dy+25,rare?0xFF775E35:0xFF30273C);
+            g.fill(dx,dy,dx+31,dy+31,rare?0xFF775E35:0xFF30273C);
             var id=ResourceLocation.tryParse(prize.itemKey());
-            ItemStack icon=new ItemStack(id==null||prize.itemKey().equals("minecraft:air")?Items.PAPER:BuiltInRegistries.ITEM.get(id));
-            g.renderItem(icon,dx+4,dy+1);
+            ItemStack icon=prize.itemKey().equals("minecraft:air")?new ItemStack(Items.PAPER):prize.stack();
+            g.renderItem(icon,dx+7,dy+8);
+            if(preview){
+                String chance=chanceLabel(prize);
+                g.pose().pushPose();g.pose().translate(dx+30,dy+1,0);g.pose().scale(.625F,.625F,1);
+                g.drawString(font,chance,-font.width(chance),0,GOLD,false);g.pose().popPose();
+            }
             String count=prize.itemKey().equals("minecraft:air")?"—":"×"+prize.count();
-            g.pose().pushPose();g.pose().translate(dx+12,dy+18,0);g.pose().scale(.625F,.625F,1);
+            g.pose().pushPose();g.pose().translate(dx+15,dy+25,0);g.pose().scale(.625F,.625F,1);
             g.drawString(font,count,-font.width(count)/2,0,WHITE,false);g.pose().popPose();
         }
         fit(g,tr("page",rewardPage+1,Math.max(1,(shown.size()+capacity-1)/capacity)),x+22,imageHeight-96,w-44,DULL);
         long cost=selected==null?0:MoneyMath.total(selected.price(),amount);
         fit(g,tr("total",amount,CasinoScreen.compact(cost)),x,imageHeight-80,w,GOLD);
         Component message=ready()?ModNetwork.formatMessage(ClientShopCache.messageKey(),ClientShopCache.messageArgs()):tr("loading");
-        fit(g,message.getString().isEmpty()?tr("delivery"):message,12,imageHeight-11,imageWidth-24,DULL);
+        fit(g,!ClientShopCache.pending().isEmpty()?tr("pending_count",ClientShopCache.pending().stream().mapToInt(ClientShopCache.PrizeRow::count).sum()):message.getString().isEmpty()?tr("delivery"):message,12,imageHeight-11,imageWidth-24,DULL);
     }
     @Override protected void renderPanel(GuiGraphics g,int mx,int my,float partial){
         super.renderPanel(g,mx,my,partial);
         var shown=displayed();int start=rewardPage*prizeCapacity(),x=leftPos+leftWidth+28;
         for(int i=start;i<Math.min(shown.size(),start+prizeCapacity());i++){
-            int dx=x+(i-start)%prizeColumns()*28,dy=topPos+94+(i-start)/prizeColumns()*28;
-            if(mx>=dx&&mx<dx+25&&my>=dy&&my<dy+25){
+            int dx=x+(i-start)%prizeColumns()*34,dy=topPos+94+(i-start)/prizeColumns()*34;
+            if(mx>=dx&&mx<dx+31&&my>=dy&&my<dy+31){
                 var prize=shown.get(i);var id=ResourceLocation.tryParse(prize.itemKey());
-                Component name=prize.itemKey().equals("minecraft:air")?tr("no_prize"):new ItemStack(BuiltInRegistries.ITEM.get(id)).getHoverName();
+                Component name=prize.itemKey().equals("minecraft:air")?tr("no_prize"):prize.stack().getHoverName();
                 var lines=new ArrayList<Component>();lines.add(name.copy().append(" ×"+prize.count()));
                 if(preview){
                     lines.add(tr("one_prize"));
                     var selected = pool();
                     if (selected != null) {
                         int total = selected.prizes().stream().mapToInt(ClientShopCache.BoxPrize::weight).sum();
-                        int weight = selected.prizes().stream().filter(p -> p.itemKey().equals(prize.itemKey()) && p.count() == prize.count())
+                        int weight = selected.prizes().stream().filter(p -> p.itemKey().equals(prize.itemKey()) && p.count() == prize.count() && p.potion().equals(prize.potion()))
                                 .mapToInt(ClientShopCache.BoxPrize::weight).sum();
-                        if (total > 0) lines.add(tr("chance", String.format(java.util.Locale.ROOT, "%.3f%%", weight * 100D / total)));
+                        if (total > 0) lines.add(tr("chance", String.format(java.util.Locale.ROOT, "%.4g%%", weight * 100D / total)));
                     }
                     if(com.evolt.teamecon.shop.BoxPrizePolicy.exclusive(prize.itemKey()))lines.add(tr("rare_prize"));
                 }
                 g.renderComponentTooltip(font,lines,mx,my);
             }
         }
+    }
+    private String chanceLabel(ClientShopCache.PrizeRow prize) {
+        var selected=pool(); if(selected==null)return "";
+        int total=selected.prizes().stream().mapToInt(ClientShopCache.BoxPrize::weight).sum();
+        int weight=selected.prizes().stream().filter(p->p.itemKey().equals(prize.itemKey())&&p.count()==prize.count()&&p.potion().equals(prize.potion())).mapToInt(ClientShopCache.BoxPrize::weight).sum();
+        double value=total==0?0:100D*weight/total;
+        return value>0&&value<.01?"<.01%":String.format(java.util.Locale.ROOT,value>=10?"%.1f%%":"%.2f%%",value);
     }
     @Override protected boolean scrollPanel(double x,double y,double dx,double dy){
         if(x>=leftPos+leftWidth+20){turnPage(dy<0?1:-1);return true;}
@@ -185,6 +204,6 @@ public final class BlindBoxScreen extends CompactContainerScreen<ShopMenu> {
         @Override protected void renderWidget(GuiGraphics g,int mx,int my,float partial){frame(g);String value=font.plainSubstrByWidth(getMessage().getString(),width-8);g.drawString(font,value,getX()+(width-font.width(value))/2,getY()+(height-8)/2,active?WHITE:DULL,false);}
     }
     private void fit(GuiGraphics g,Component text,int x,int y,int w,int color){g.drawString(font,font.plainSubstrByWidth(text.getString(),Math.max(1,w)),x,y,color,false);}
-    private static Component poolName(String id){String key="shop.teamecon.pool."+id;return net.minecraft.client.resources.language.I18n.exists(key)?Component.translatable(key):Component.literal(id);}
+    private static Component poolName(String id){var configured=ClientShopCache.boxes().stream().filter(p->p.poolId().equals(id)).findFirst().orElse(null);if(configured!=null&&!configured.name().isEmpty())return Component.literal(configured.name());String key="shop.teamecon.pool."+id;return net.minecraft.client.resources.language.I18n.exists(key)?Component.translatable(key):Component.literal(id);}
     private static Component tr(String key,Object...args){return Component.translatable("gui.teamecon.boxes."+key,args);}
 }

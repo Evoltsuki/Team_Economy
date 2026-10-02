@@ -40,6 +40,7 @@ public class TeamEconomyManager extends SavedData {
     private final Map<SessionKey, BetSession> bets = new HashMap<>();
     private final Map<SessionKey, PendingMachineGame> pendingMachines = new HashMap<>();
     private final Map<UUID, com.evolt.teamecon.scratch.ScratchTicket> scratchTickets = new HashMap<>();
+    private final Map<UUID, String> pendingBoxRewards = new HashMap<>();
     private final Map<UUID, Double> saleRemainders = new HashMap<>();
     private final DemandState demand = new DemandState(com.evolt.teamecon.market.MarketParams.fromConfig());
     private final AtomicLong txIdSeq = new AtomicLong(1);
@@ -127,6 +128,14 @@ public class TeamEconomyManager extends SavedData {
             try { var ticket = com.evolt.teamecon.scratch.ScratchTicket.load(tickets.getCompound(key)); manager.scratchTickets.put(ticket.id(),ticket); }
             catch (RuntimeException ex) { ModLogger.warn("Invalid saved scratch ticket {}: {}", key, ex.toString()); }
         }
+        CompoundTag boxRewards = tag.getCompound("pendingBoxRewards");
+        for (String key : boxRewards.getAllKeys()) {
+            try {
+                String value = boxRewards.getString(key);
+                com.evolt.teamecon.shop.BoxReward.decode(value);
+                manager.pendingBoxRewards.put(UUID.fromString(key), value);
+            } catch (RuntimeException ex) { ModLogger.warn("Invalid saved box rewards {}: {}", key, ex.toString()); }
+        }
         ModLogger.info("TeamEconomy data loaded: {} wallets, {} ledgers", manager.balances.size(), manager.ledgers.size());
         return manager;
     }
@@ -188,7 +197,19 @@ public class TeamEconomyManager extends SavedData {
         CompoundTag tickets = new CompoundTag();
         scratchTickets.forEach((id,ticket)->tickets.put(id.toString(),ticket.save()));
         tag.put("scratchTickets",tickets);
+        CompoundTag boxRewards = new CompoundTag();
+        pendingBoxRewards.forEach((player, value) -> boxRewards.putString(player.toString(), value));
+        tag.put("pendingBoxRewards", boxRewards);
         return tag;
+    }
+
+    public List<com.evolt.teamecon.shop.BoxReward> pendingBoxRewards(UUID player) {
+        return com.evolt.teamecon.shop.BoxReward.decode(pendingBoxRewards.getOrDefault(player, ""));
+    }
+    public void pendingBoxRewards(UUID player, List<com.evolt.teamecon.shop.BoxReward> rewards) {
+        if (rewards.isEmpty()) pendingBoxRewards.remove(player);
+        else pendingBoxRewards.put(player, com.evolt.teamecon.shop.BoxReward.encode(rewards));
+        setDirty();
     }
 
     // ---- balances ----------------------------------------------------------

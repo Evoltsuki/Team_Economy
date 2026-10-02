@@ -63,9 +63,11 @@ Upgrading unlocks permission to use equipment. Machines must still be crafted or
 
 ![Scratch ticket purchase page with ticket types and face-value selection](docs/images/screenshots/scratch-purchase.png)
 
-The separate **Mystery Box Machine** shows its prize pools before you buy. Open 1, 10 or 64 boxes at a time and review the rewards. Labels such as ×1 below the icons show item counts. Pools include materials, valuable items and friendly or neutral mob spawn eggs available in your Minecraft version. Each draw uses the displayed pool; opening a batch does not increase an individual draw's odds.
+The separate **Mystery Box Machine** shows its prize pools before you buy. Open 1, 10 or 64 boxes at a time and review the rewards. Each prize tile shows its chance at the top right and a ×N item count below. Pools also include healing, fire resistance, water breathing and other potions, including splash and lingering variants. Pools include materials, valuable items and friendly or neutral mob spawn eggs available in your Minecraft version. Each draw uses the displayed pool; opening a batch does not increase an individual draw's odds.
 
 ![Mystery box purchase page with prize preview and batch selection](docs/images/screenshots/blind-box-purchase.png)
+
+Open 1, 10 or 64 boxes at once. Prizes that fit go into your inventory; overflow belongs to the buyer and is saved in **Pending**, including across logouts. Free some space, then click **Claim pending** or run `/teamecon claimboxes`. Finish claiming a batch before opening another.
 
 The late-game **Wireless Terminal** provides portable access to the shop, recycling, upgrades, games and ticket purchases. Mystery boxes are opened at their own machine. Shop, box and terminal screens use compact, centered windows, including at automatic GUI scale.
 
@@ -112,6 +114,7 @@ These commands do not require operator permissions. Replace `<item_id>` and `<am
 |---|---|
 | `/teamecon` | Show brief help |
 | `/teamecon shop` | Open the shop for purchases, recycling and upgrades |
+| `/teamecon claimboxes` | Collect pending mystery-box prizes into available inventory space, without another charge |
 | `/teamecon balance` | Show the current personal or team wallet balance |
 | `/teamecon price <item_id>` | Look up an item's estimated value, e.g. `/teamecon price minecraft:diamond`; recycling income also depends on demand |
 | `/teamecon sell` | **Immediately sell the entire stack in your main hand**; use the shop's Sell tab to review a quote first |
@@ -129,6 +132,7 @@ These require **operator permission level 2 or higher**. Enable cheats to use th
 | `/teamecon admin level <level> [player]` | Set the target's current wallet level to 1–5, retaining their personal bypass setting |
 | `/teamecon admin bypass <true/false> [player]` | Enable or disable the personal advancement bypass without changing wallet level |
 | `/teamecon admin status [player]` | Show the target's wallet level, balance and personal bypass status |
+| `/teamecon admin boxes` | Manage box types, names, prices, prizes, quantities and weights |
 | `/teamecon admin prices` | Open the item pricing panel, selecting the held item when present |
 | `/teamecon reward <reward_id> <points> [player]` | Add a one-time quest reward to the target's current wallet |
 | `/teamecon_quest_reward <FTB_reward_id> <points> [player]` | Grant team points using an FTB reward ID |
@@ -171,9 +175,9 @@ Server owners can customize prices, market demand, progression, equipment access
 | `config/teamecon_slots.json` | Slot reel weights and payouts |
 | `config/teamecon_risk_tiers.json` | Risk tier settings |
 
-Server owners can replace the default item catalogue, hide items, set purchase prices and explicitly add installed mod items. Mystery box pools support custom rewards, quantities, weights and per-pool switches. Changes apply with `/teamecon admin reload`. Modded items are not recyclable. See the [shop and mystery box examples](docs/server-configuration.md) and the [balance guide (Chinese)](docs/平衡配置指南.md).
+Server owners can replace the default item catalogue, hide items, set purchase prices and explicitly add installed mod items. Mystery box pools support custom rewards, quantities, weights and per-pool switches. File changes apply with `/teamecon admin reload`; panel saves apply immediately. Modded items require an explicit recycling price in the pricing panel to enable recycling. See the [shop and mystery box examples](docs/server-configuration.md) and the [balance guide (Chinese)](docs/平衡配置指南.md).
 
-## In-game pricing and quest rewards
+## In-game pricing, mystery boxes and quest rewards
 
 Operators can open `/teamecon admin prices` to browse creative-style category tabs, an item grid and a scrollbar. Clicking an icon selects it for editing without taking an item. Search the whole catalogue by display name, item ID, Chinese pinyin or initials (`jinding` and `jd` find 金锭).
 
@@ -182,6 +186,16 @@ Operators can open `/teamecon admin prices` to browse creative-style category ta
 The screenshot shows example operator overrides: purchase price 2,000 and base recycling price 80.
 
 Purchase and base recycling prices independently support **Inherit**, **Disabled** and **Custom**. Save applies the change immediately; Reset removes that item's overrides. Only edited entries are stored in `config/teamecon_price_overrides.json`. Purchase markup, equipment floors and progression rules still apply, while recycling proceeds depend on market demand. Mod items require an explicit recycling price and must match their default item state; modified or filled variants are not recycled. See [pricing configuration](docs/server-configuration.md).
+
+### Mystery box editor
+
+Use `/teamecon admin boxes` (OP level 2) to add box types and edit display names, prices, availability and optional stages. Choose prizes from an item grid with name, ID, Chinese pinyin and initials search. Potion effects are separate choices; set quantities and weights to calculate the displayed chances.
+
+![Mystery box editor with a custom potion pool](docs/images/screenshots/box-admin-en.png)
+
+Save applies immediately and keeps a `.bak` backup of `config/teamecon_blindbox.json`. You can enable modded prizes, toggle value checks and delete a box with confirmation. Clicking an item selects a prize without adding it to your inventory. See [configuration details](docs/server-configuration.md).
+
+### Quest reward integration
 
 Quest authors can use the built-in command without an additional reward mod:
 

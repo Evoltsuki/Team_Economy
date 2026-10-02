@@ -81,7 +81,7 @@ if (portQaEnabled) {
     }
 }
 def qaSelection = providers.gradleProperty('qaScenarios').orElse('').get().split(',').collect { it.trim() }.findAll { !it.isEmpty() }
-def qaGroups = ['store', 'machines', 'terminal', 'team', 'guide', 'boxes', 'hilo', 'food', 'showcase', 'readme', 'prices']
+def qaGroups = ['store', 'machines', 'terminal', 'team', 'guide', 'boxes', 'hilo', 'food', 'showcase', 'readme', 'prices', 'boxadmin']
 if (visualQaEnabled && (qaSelection.isEmpty() || !qaGroups.containsAll(qaSelection))) {
     throw new GradleException('Select only changed features with -PqaScenarios=boxes,hilo,food,team,guide (or a smaller selection). Unknown or empty groups are not accepted; showcase records release footage.')
 }
@@ -358,7 +358,7 @@ tasks.register('prepareGameTests') {
     doLast {
         def destination = folder.get().asFile
         destination.mkdirs()
-        ['machineplacementtest', 'economyintegrationtest', 'ftbteamsintegrationtest', 'physicalgamestest', 'progressiontest', 'casinolevelstest', 'todoregressiontest', 'revisionregressiontest', 'concurrentmachinestest', 'adminunlocktest', 'serverconfigurationtest', 'marketfeedbacktest', 'priceadmintest', 'questrewardstest'].each { name ->
+        ['machineplacementtest', 'economyintegrationtest', 'ftbteamsintegrationtest', 'physicalgamestest', 'progressiontest', 'casinolevelstest', 'todoregressiontest', 'revisionregressiontest', 'concurrentmachinestest', 'adminunlocktest', 'serverconfigurationtest', 'marketfeedbacktest', 'priceadmintest', 'questrewardstest', 'boxfeaturestest'].each { name ->
             new File(destination, "${name}.empty.snbt").text = '{size:[42,8,16],palette:[{Name:"minecraft:air"}],entities:[],blocks:[],DataVersion:3955}'
         }
     }

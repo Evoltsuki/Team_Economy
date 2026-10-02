@@ -37,6 +37,14 @@ public final class ModCommands {
                     ctx.getSource().sendSuccess(() -> Component.translatable("command.teamecon.help"), false);
                     return 1;
                 })
+                .then(Commands.literal("claimboxes").executes(ctx -> {
+                    var player=ctx.getSource().getPlayerOrException();
+                    var result=TeamEconomyMod.get().shop().claimBlindBoxes(player);
+                    player.inventoryMenu.sendAllDataToRemote();
+                    if(player.containerMenu instanceof com.evolt.teamecon.shop.ShopMenu)com.evolt.teamecon.network.ShopNetwork.sendSync(player);
+                    ctx.getSource().sendSuccess(()->com.evolt.teamecon.network.ModNetwork.formatMessage(result.detailKey(),result.detailArg()),false);
+                    return 1;
+                }))
                 .then(Commands.literal("balance")
                         .executes(ctx -> balance(ctx.getSource())))
                 .then(Commands.literal("price")
@@ -56,6 +64,10 @@ public final class ModCommands {
                 .then(Commands.literal("admin")
                         .requires(source -> source.hasPermission(2))
                         .then(Commands.literal("kit").executes(ModCommands::adminMachine))
+                        .then(Commands.literal("boxes").executes(ctx -> {
+                            com.evolt.teamecon.shop.BoxAdminMenu.open(ctx.getSource().getPlayerOrException());
+                            return 1;
+                        }))
                         .then(Commands.literal("prices").executes(ctx -> {
                             com.evolt.teamecon.price.PriceAdminMenu.open(ctx.getSource().getPlayerOrException());
                             return 1;
