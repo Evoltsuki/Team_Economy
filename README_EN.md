@@ -12,7 +12,7 @@ This source tree contains **1.0.1 changes awaiting release**. The public downloa
 
 Team Economy adds material recycling, a points shop, shared team wallets and six playable game machines to Minecraft. Sell surplus supplies, buy what you need, unlock equipment and play directly on machines placed in your world. Install FTB Teams to share your wallet and equipment level with friends.
 
-[Installation](#installation) · [Getting started](#getting-started) · [Commands](#commands) · [Configuration](#configuration) · [Building from source](#building-from-source)
+[Installation](#installation) · [Gameplay guide (Chinese)](docs/试玩指南.md) · [Commands](#commands) · [Configuration](#configuration) · [Building from source](#building-from-source)
 
 ![Game machines in a white showroom](docs/images/screenshots/image-20260930001256496.png)
 
@@ -61,7 +61,11 @@ Upgrading unlocks permission to use equipment. Machines must still be crafted or
 
 **Eight physical scratch tickets** unlock as you progress, from Lucky Numbers to Crown Jackpot. Hold a purchased ticket in your main hand, left-click to open it, and drag to scratch. A fully revealed ticket settles automatically.
 
+![Scratch ticket purchase page with ticket types and face-value selection](docs/images/screenshots/scratch-purchase.png)
+
 The separate **Mystery Box Machine** shows its prize pools before you buy. Open 1, 10 or 64 boxes at a time and review the rewards. Pools include materials, valuable items and friendly or neutral mob spawn eggs available in your Minecraft version. Each draw uses the displayed pool; opening a batch does not increase an individual draw's odds.
+
+![Mystery box purchase page with prize preview and batch selection](docs/images/screenshots/blind-box-purchase.png)
 
 The late-game **Wireless Terminal** provides portable access to the shop, recycling, upgrades, games and ticket purchases. Mystery boxes are opened at their own machine. Shop, box and terminal screens use compact, centered windows, including at automatic GUI scale.
 
@@ -97,19 +101,6 @@ The NeoForge versions are the minimum supported stable releases for each Minecra
 Team Economy works without these optional mods. Fabric and other Minecraft/loader combinations are not included in this release. The 1.20.1 catalog and prize pools use content available in 1.20.1.
 
 Back up your world and configuration before replacing the mod or changing loaders. Remove the previous JAR when installing a replacement.
-
-## Getting started
-
-The following amounts use the **1.0.1 defaults**; servers may customize them.
-
-1. Run `/teamecon shop`. A new personal wallet starts at **Lv.1 with 200 points**.
-2. Open **Sell**, Shift-click spare vanilla materials into the staging area, review the quote and sell enough to reach **300 points**.
-3. Buy a **High / Low Machine for 200 points** from the Machines tab. Leave a space **2 blocks wide, 3 high and 2 deep** when placing it.
-4. Set a **20-point stake**, choose low or high, then start. Numbers 1–5 are low and 6–10 are high; either choice has a **50% chance**. A correct guess credits **36 points, including the stake**, with the default payout.
-
-Next, save **1,200 points** to upgrade to Lv.2. Craft a Slime Ice Hop Machine or buy one for **1,500 points**, keeping additional points for playing.
-
-The handbook explains individual winning conditions and probabilities. Previous losses do not improve the odds of a later independent round.
 
 ## Commands
 

@@ -14,7 +14,7 @@ Team Economy 为 Minecraft 生存加入物资回收、积分商店和六种实�
 
 *A survival economy mod with material recycling, shared team wallets, and six playable game machines. Available for Minecraft 1.20.1, 1.21 and 1.21.1 on Forge / NeoForge; see the version table below.*
 
-[下载与安装](#installation) · [图文试玩指南](docs/试玩指南.md) · [服主配置](docs/平衡配置指南.md) · [常用指令](#commands) · [反馈问题](#feedback)
+[下载与安装](#installation) · [图文试玩指南](docs/试玩指南.md) · [服主配置](docs/平衡配置指南.md) · [常用指令](#常用指令与快速试玩) · [反馈问题](#feedback)
 
 
 ![image-20260930001256496](docs/images/screenshots/image-20260930001256496.png)
@@ -70,6 +70,10 @@ Team Economy 为 Minecraft 生存加入物资回收、积分商店和六种实�
 
 **八种实体刮刮卡**从幸运数字到皇冠大奖逐级开放：主手持卡，左键打开，拖动刮开后自动结算。**独立盲盒机**提供奖池预览，可开 1／10／64 盒并查看本次奖品。
 
+![刮刮卡购买页：选择卡种并调整票面金额](docs/images/screenshots/scratch-purchase.png)
+
+![盲盒购买页：预览奖池并选择开启数量](docs/images/screenshots/blind-box-purchase.png)
+
 后期可兑换**无线终端**，随身使用商店、回收、升级、小游戏和购卡功能。游戏界面与 Patchouli 图文指南支持简体中文、繁体中文和英文。
 
 商店、盲盒与终端采用居中紧凑窗口，即使 GUI 缩放设为「自动」也会保留四周留白。黑红轮盘采用低台，下注点数显示在后方标题下，方便站在正面观察轮面。
@@ -102,21 +106,6 @@ Team Economy 为 Minecraft 生存加入物资回收、积分商店和六种实�
 NeoForge 列出对应 Minecraft 分支的最低正式版本；可选联动模组还需满足各自的依赖要求。
 
 进入世界后输入 `/teamecon shop`，即可打开积分商店。首次进入赠送指南书，也能用**书＋铁锭**无序合成；装有 Patchouli 时手持右键阅读。完整操作也可直接查看[网页版指南](docs/试玩指南.md)。更换模组文件前，请备份存档和配置，并移走原 JAR。
-
-## 第一局，从 300 点的小目标开始
-
-1. **打开商店。** 输入 `/teamecon shop`，普通玩家即可使用。全新个人开局默认领取 **200 点**启动资金，等级为 Lv.1。
-2. **回收一批余料。** 切到「出售」，Shift 点击背包材料，核对整批报价后出售，把余额攒到 **300 点**。
-3. **买下猜大小机。** 在「机器」页花 **200 点**购买，留下 100 点。放置时预留 **宽 2 × 高 3 × 深 2 格**。
-4. **选大小，玩一局。** 右键机身按钮将金额调到 **20 点**，选择「大」或「小」，再按「下注并开始」。1–5 为小，6–10 为大；猜中默认入账 36 点，包含本金。
-
-下一阶段可攒 **1,200 点**升到 Lv.2，再合成或花 **1,500 点**购买史莱姆跳冰机。两项直接购买合计 **2,700 点**，另留游玩本金。
-
-只想先看全部机器的操作？指南也提供[快速试玩路线](docs/试玩指南.md#quick-demo)，以及[全部机器配方](docs/试玩指南.md#recipes)。
-
-商店、盲盒和终端在不同 GUI 缩放下保持居中显示。完整操作、机器规则和常用命令见[试玩指南](docs/试玩指南.md)。
-
-<a id="commands"></a>
 
 ## 常用指令与快速试玩
 
