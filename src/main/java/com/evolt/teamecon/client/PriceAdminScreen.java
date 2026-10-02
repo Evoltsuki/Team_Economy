@@ -60,7 +60,7 @@ public final class PriceAdminScreen extends CompactContainerScreen<PriceAdminMen
         imageWidth = 400; imageHeight = 264;
         super.init();
         buildCatalogue(); tiles.clear(); tabs.clear();
-        search = new EditBox(font, leftPos + 10, topPos + 61, 176, 16, tr("search"));
+        search = UiTheme.input(font, leftPos + 10, topPos + 61, 176, 16, tr("search"));
         search.setMaxLength(96); search.setHint(tr("search")); search.setValue(query);
         search.setResponder(value -> { query = value; rowOffset = 0; filter(); });
         addRenderableWidget(search);
@@ -94,10 +94,10 @@ public final class PriceAdminScreen extends CompactContainerScreen<PriceAdminMen
     }
 
     private Button button(int x, int y, int w, int h, Component text, Runnable action) {
-        return addRenderableWidget(Button.builder(text, b -> action.run()).bounds(leftPos + x, topPos + y, w, h).build());
+        return addRenderableWidget(UiButton.of(text, b -> action.run()).bounds(leftPos + x, topPos + y, w, h).build());
     }
     private EditBox priceBox(int x, int y, boolean buy) {
-        EditBox box = new EditBox(font, leftPos + x, topPos + y, 86, 16, tr(buy ? "buy" : "sell"));
+        EditBox box = UiTheme.input(font, leftPos + x, topPos + y, 86, 16, tr(buy ? "buy" : "sell"));
         box.setMaxLength(10); box.setFilter(value -> value.matches("[0-9]*"));
         box.setValue(buy ? buyDraft : sellDraft);
         box.setResponder(value -> { if (buy) buyDraft = value; else sellDraft = value; if (!applying) changed(); });
@@ -178,35 +178,31 @@ public final class PriceAdminScreen extends CompactContainerScreen<PriceAdminMen
 
     @Override protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) { }
     @Override protected void renderBg(GuiGraphics g, float partial, int mouseX, int mouseY) {
-        panel(g, leftPos, topPos, imageWidth, imageHeight, 0xFFC6C6C6);
-        g.drawString(font, title, leftPos + 10, topPos + 13, 0x333333, false);
-        panel(g, leftPos + 210, topPos + 8, 182, 248, 0xFFD8D8D8);
-        g.drawCenteredString(font, tr("count", filtered.size()), leftPos + 107, topPos + 220, 0x444444);
-        g.drawString(font, font.plainSubstrByWidth(tr("search_hint").getString(), 192), leftPos + 10, topPos + 243, 0x555555, false);
-        g.fill(leftPos + 194, topPos + 89, leftPos + 202, topPos + 209, 0xFF888888);
+        UiTheme.panel(g, leftPos, topPos, imageWidth, imageHeight);
+        g.drawString(font, title, leftPos + 10, topPos + 13, UiTheme.TEXT, false);
+        UiTheme.section(g, leftPos + 210, topPos + 8, 182, 248);
+        UiTheme.centered(g,font, tr("count", filtered.size()), leftPos + 107, topPos + 220, UiTheme.TEXT);
+        g.drawString(font, font.plainSubstrByWidth(tr("search_hint").getString(), 192), leftPos + 10, topPos + 243, UiTheme.MUTED, false);
+        g.fill(leftPos + 194, topPos + 89, leftPos + 202, topPos + 209, UiTheme.SLOT);
         int thumb = maxOffset() == 0 ? 89 : 89 + rowOffset * 102 / maxOffset();
-        panel(g, leftPos + 194, topPos + thumb, 8, 18, 0xFFDDDDDD);
-        if (selected.isEmpty()) { g.drawWordWrap(font, tr("choose"), leftPos + 218, topPos + 22, 166, 0x444444); return; }
+        UiTheme.button(g, leftPos + 194, topPos + thumb, 8, 18, maxOffset()>0, dragging, false);
+        if (selected.isEmpty()) { g.drawWordWrap(font, tr("choose"), leftPos + 218, topPos + 22, 166, UiTheme.TEXT); return; }
         Row row = all.stream().filter(r -> r.id().equals(selected)).findFirst().orElse(null);
         if (row != null) {
             g.renderItem(row.icon(), leftPos + 216, topPos + 16);
-            g.drawString(font, font.plainSubstrByWidth(row.icon().getHoverName().getString(), 146), leftPos + 236, topPos + 20, 0x333333, false);
+            g.drawString(font, font.plainSubstrByWidth(row.icon().getHoverName().getString(), 146), leftPos + 236, topPos + 20, UiTheme.TEXT, false);
         }
-        g.drawString(font, font.plainSubstrByWidth(selected, 172), leftPos + 216, topPos + 38, 0x555555, false);
-        g.drawString(font, tr("reference", data == null || data.reference() <= 0 ? "—" : data.reference()), leftPos + 216, topPos + 56, 0x555555, false);
-        g.drawString(font, tr("buy"), leftPos + 216, topPos + 81, 0x333333, false);
-        g.drawString(font, tr("sell"), leftPos + 216, topPos + 133, 0x333333, false);
+        g.drawString(font, font.plainSubstrByWidth(selected, 172), leftPos + 216, topPos + 38, UiTheme.MUTED, false);
+        g.drawString(font, tr("reference", data == null || data.reference() <= 0 ? "—" : data.reference()), leftPos + 216, topPos + 56, UiTheme.MUTED, false);
+        g.drawString(font, tr("buy"), leftPos + 216, topPos + 81, UiTheme.TEXT, false);
+        g.drawString(font, tr("sell"), leftPos + 216, topPos + 133, UiTheme.TEXT, false);
         if (data != null) {
-            g.drawString(font, tr("effective", data.effectiveBuy() > 0 ? data.effectiveBuy() : tr("disabled").getString()), leftPos + 216, topPos + 117, 0x555555, false);
-            g.drawString(font, tr("effective", data.effectiveSell() > 0 ? data.effectiveSell() : tr("disabled").getString()), leftPos + 216, topPos + 169, 0x555555, false);
+            g.drawString(font, tr("effective", data.effectiveBuy() > 0 ? data.effectiveBuy() : tr("disabled").getString()), leftPos + 216, topPos + 117, UiTheme.MUTED, false);
+            g.drawString(font, tr("effective", data.effectiveSell() > 0 ? data.effectiveSell() : tr("disabled").getString()), leftPos + 216, topPos + 169, UiTheme.MUTED, false);
         }
         var lines = font.split(tr(status.isEmpty() ? "floor_hint" : status), 172);
         for (int i = 0; i < Math.min(2, lines.size()); i++) g.drawString(font, lines.get(i), leftPos + 216, topPos + 181 + i * 10,
-                status.equals("saved") ? 0x276330 : status.isEmpty() ? 0x555555 : 0x9A3A22, false);
-    }
-    private static void panel(GuiGraphics g, int x, int y, int w, int h, int fill) {
-        g.fill(x, y, x + w, y + h, 0xFF373737); g.fill(x + 1, y + 1, x + w - 1, y + h - 1, 0xFFFFFFFF);
-        g.fill(x + 2, y + 2, x + w - 2, y + h - 2, fill);
+                status.equals("saved") ? UiTheme.POSITIVE : status.isEmpty() ? UiTheme.MUTED : UiTheme.NEGATIVE, false);
     }
     @Override protected boolean scrollPanel(double x, double y, double dx, double dy) {
         if (x < leftPos + 206 && y >= topPos + 80) { scroll(dy > 0 ? -1 : 1); return true; }
@@ -231,7 +227,7 @@ public final class PriceAdminScreen extends CompactContainerScreen<PriceAdminMen
         private boolean chosen;
         private IconButton(int x, int y, Runnable action) { super(leftPos + x, topPos + y, 20, 20, Component.empty(), b -> action.run(), DEFAULT_NARRATION); }
         @Override protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partial) {
-            panel(g, getX(), getY(), 20, 20, chosen ? 0xFF82A9CB : isHoveredOrFocused() ? 0xFFE5E5E5 : 0xFF8B8B8B);
+            UiTheme.tile(g, getX(), getY(), 20, 20, chosen, isHoveredOrFocused());
             g.renderItem(icon, getX() + 2, getY() + 2);
         }
     }

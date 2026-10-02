@@ -32,18 +32,19 @@ public final class TeamBoardHud {
         }
         int x=0,h=23+count*10,y=0;
         g.pose().pushPose();
-        g.pose().translate(mc.getWindow().getGuiScaledWidth()-w*scale-3,(mc.getWindow().getGuiScaledHeight()-h*scale)/2,0);
+        g.pose().translate(mc.getWindow().getGuiScaledWidth()-w*scale-7,(mc.getWindow().getGuiScaledHeight()-h*scale)/2,0);
         g.pose().scale(scale,scale,1);
+        UiTheme.panel(g,x-6,y-6,w+12,h+11);
         String title=font.plainSubstrByWidth(data.get("team").getAsString(),Math.max(1,w-pageSpace));
-        g.drawString(font,title,x,y,0xFFF0CC7D,true);
-        g.drawString(font,font.plainSubstrByWidth(balance,w),x,y+11,0xFFEEF4ED,true);
+        g.drawString(font,title,x,y,UiTheme.ACCENT,false);
+        g.drawString(font,font.plainSubstrByWidth(balance,w),x,y+11,UiTheme.TEXT,false);
         for(int i=0;i<count;i++){
             var row=rows.get(start+i).getAsJsonObject();long n=row.get("earned").getAsLong();String value=(n<0?"−":n>0?"+":"")+CasinoScreen.compact(Math.abs(n));
             String name=font.plainSubstrByWidth(row.get("name").getAsString(),Math.max(1,w-font.width(value)-5));
-            g.drawString(font,name,x,y+23+i*10,row.get("online").getAsBoolean()?0xFFEDF1EB:0xFF9B9FAD,true);
-            g.drawString(font,value,x+font.width(name)+5,y+23+i*10,n<0?0xFFED968A:0xFF8AE0B3,true);
+            g.drawString(font,name,x,y+23+i*10,row.get("online").getAsBoolean()?UiTheme.TEXT:UiTheme.MUTED,false);
+            g.drawString(font,value,x+font.width(name)+5,y+23+i*10,n<0?UiTheme.NEGATIVE:UiTheme.POSITIVE,false);
         }
-        if(pages>1)g.drawString(font,pageLabel,x+w-font.width(pageLabel),y,0xFF9DBAB6,true);
+        if(pages>1)g.drawString(font,pageLabel,x+w-font.width(pageLabel),y,UiTheme.MUTED,false);
         g.pose().popPose();
     }
 }

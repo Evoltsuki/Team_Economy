@@ -16,7 +16,7 @@ import java.util.*;
 
 /** Physical scratch ticket. Removing the coating automatically requests a single server settlement. */
 public final class ScratchCardScreen extends CompactContainerScreen<ScratchCardMenu> {
-    private static final int INK=0xFF253544, MUTED=0xFF536578, PAPER=0xFFF1E8D4, GOLD=0xFFFFD365;
+    private static final int INK=UiTheme.TEXT, CELL_INK=0xFF253544, MUTED=UiTheme.MUTED, GOLD=UiTheme.ACCENT;
     private static final Map<UUID,BitSet> PROGRESS=new LinkedHashMap<>();
     private static final Item[] FRUIT={Items.APPLE,Items.SWEET_BERRIES,Items.MELON_SLICE,Items.CARROT,Items.CHORUS_FRUIT,Items.GOLDEN_APPLE};
     private final ScratchTicket ticket;
@@ -58,7 +58,7 @@ public final class ScratchCardScreen extends CompactContainerScreen<ScratchCardM
     }
     @Override protected void init() {
         super.init();
-        addRenderableWidget(Button.builder(Component.literal("×"),b->onClose()).bounds(leftPos+292,topPos+7,19,18).build());
+        addRenderableWidget(UiButton.of(Component.literal("×"),b->onClose()).bounds(leftPos+292,topPos+7,19,18).build());
     }
     @Override public void containerTick(){
         super.containerTick();ticks++;
@@ -69,19 +69,16 @@ public final class ScratchCardScreen extends CompactContainerScreen<ScratchCardM
         ClientPayloadSender.sendToServer(new ScratchActionPayload(false,menu.containerId,ticket.id()));
     }
     @Override protected void renderBg(GuiGraphics g,float partial,int mouseX,int mouseY){
-        g.fill(leftPos,topPos,leftPos+320,topPos+240,0xF51A2735);
-        g.fill(leftPos+7,topPos+5,leftPos+313,topPos+235,PAPER);
-        g.fill(leftPos+7,topPos+5,leftPos+313,topPos+27,ticket.kind().color());
-        g.renderOutline(leftPos+7,topPos+5,306,230,0xFF384B5A);
-        for(int y=34;y<230;y+=12){g.fill(leftPos+7,topPos+y,leftPos+10,topPos+y+4,0xFF1A2735);g.fill(leftPos+310,topPos+y,leftPos+313,topPos+y+4,0xFF1A2735);}
+        UiTheme.panel(g,leftPos,topPos,imageWidth,imageHeight);
+        g.fill(leftPos+12,topPos+10,leftPos+16,topPos+23,ticket.kind().color());
     }
+
     @Override protected void renderLabels(GuiGraphics g,int mouseX,int mouseY) {
         fit(g,title.getString(),23,12,261,INK);
         String rule=tr("rule."+ticket.kind().id()).getString();
         var lines=font.split(Component.literal(rule),280);
         for(int i=0;i<Math.min(2,lines.size());i++)g.drawString(font,lines.get(i),23,33+i*10,INK,false);
-        g.fill(17,55,214,184,0xFF243342);
-        g.renderOutline(17,55,197,129,ticket.kind().color());
+        UiTheme.section(g,17,55,197,129);
         Component subtitle=switch(ticket.kind()) {
             case MATCH -> tr("target",board.target());
             case VAULT -> tr("code",String.format(Locale.ROOT,"%03d",board.target()));
@@ -91,7 +88,7 @@ public final class ScratchCardScreen extends CompactContainerScreen<ScratchCardM
             case FRUIT -> tr("three_match");
             case SEVENS -> tr("find_seven");
         };
-        g.drawCenteredString(font,subtitle,115,61,GOLD);
+        UiTheme.centered(g,font,subtitle,115,61,GOLD);
         for(int i=0;i<areas.size();i++){
             Area a=areas.get(i);boolean uncovered=removed.get(a.offset,a.offset+a.count()).cardinality()==a.count();
             g.fill(a.x,a.y,a.x+a.width,a.y+a.height,0xFFF8F3E6);
@@ -111,7 +108,7 @@ public final class ScratchCardScreen extends CompactContainerScreen<ScratchCardM
             g.flush();g.pose().popPose();
         }
         if(ticket.kind()==ScratchKind.DICE||ticket.kind()==ScratchKind.FRUIT||ticket.kind()==ScratchKind.VAULT)
-            for(int row=0;row<3;row++)g.drawCenteredString(font,"×"+board.prize(row),181,88+row*35,GOLD);
+            for(int row=0;row<3;row++)UiTheme.centered(g,font,"×"+board.prize(row),181,88+row*35,GOLD);
         g.drawString(font,tr("price",ticket.price()),224,58,INK,false);
         g.drawString(font,tr("paytable"),224,77,INK,false);
         int[] multipliers=ticket.kind().multipliers();
@@ -122,18 +119,18 @@ public final class ScratchCardScreen extends CompactContainerScreen<ScratchCardM
             g.drawString(font,label,224,91+i*12,INK,false);
         }
         fit(g,tr("max_prize",ticket.price()*multipliers[multipliers.length-1]).getString(),224,169,80,MUTED);
-        g.fill(17,189,304,213,0xFF203F3A);
+        UiTheme.section(g,17,189,287,24);
         String status=answered?(paid<0?tr("invalid").getString():paid>0?tr("credited",paid,balance).getString():tr("no_prize",balance).getString())
                 :requested?tr("settling").getString():tr("automatic").getString();
-        fit(g,status,24,197,274,answered&&paid<0?0xFFFF9C8A:0xFFE7F5E3);
+        fit(g,status,24,197,274,answered&&paid<0?UiTheme.NEGATIVE:answered&&paid>0?UiTheme.POSITIVE:INK);
         int percent=Math.min(100,removed.cardinality()*100/Math.max(1,totalMask));
         fit(g,answered?tr("finished").getString():tr("drag",percent).getString(),23,220,280,MUTED);
     }
     private void drawValue(GuiGraphics g,int i,Area a) {
         int value=board.value(i),cx=a.x+a.width/2,cy=a.y+a.height/2;
         switch(ticket.kind()) {
-            case MATCH -> {number(g,String.valueOf(value),cx,a.y+5,1.8F);String prize="×"+board.prize(i);g.drawString(font,prize,cx-font.width(prize)/2,a.y+28,INK,false);}
-            case SEVENS -> {number(g,String.valueOf(value),a.x+15,a.y+6,1.8F);g.drawString(font,"×"+board.prize(i),a.x+28,a.y+12,INK,false);}
+            case MATCH -> {number(g,String.valueOf(value),cx,a.y+5,1.8F);String prize="×"+board.prize(i);g.drawString(font,prize,cx-font.width(prize)/2,a.y+28,CELL_INK,false);}
+            case SEVENS -> {number(g,String.valueOf(value),a.x+15,a.y+6,1.8F);g.drawString(font,"×"+board.prize(i),a.x+28,a.y+12,CELL_INK,false);}
             case VAULT -> number(g,String.valueOf(value),cx,a.y+6,2F);
             case DICE -> dice(g,cx,cy,value);
             case FRUIT -> CasinoVisuals.item(g,new ItemStack(FRUIT[value]),cx-12,cy-12,1.5F);
@@ -145,7 +142,7 @@ public final class ScratchCardScreen extends CompactContainerScreen<ScratchCardM
             }
         }
     }
-    private void number(GuiGraphics g,String s,int x,int y,float scale){g.pose().pushPose();g.pose().translate(x,y,0);g.pose().scale(scale,scale,1);g.drawString(font,s,-font.width(s)/2,0,INK,false);g.pose().popPose();}
+    private void number(GuiGraphics g,String s,int x,int y,float scale){g.pose().pushPose();g.pose().translate(x,y,0);g.pose().scale(scale,scale,1);g.drawString(font,s,-font.width(s)/2,0,CELL_INK,false);g.pose().popPose();}
     private void dice(GuiGraphics g,int x,int y,int value){
         g.fill(x-12,y-12,x+12,y+12,0xFFE9E6DC);g.renderOutline(x-12,y-12,24,24,0xFFA39D8E);
         if(value%2==1)dot(g,x,y);
@@ -153,7 +150,7 @@ public final class ScratchCardScreen extends CompactContainerScreen<ScratchCardM
         if(value>=4){dot(g,x+7,y-7);dot(g,x-7,y+7);}
         if(value==6){dot(g,x-7,y);dot(g,x+7,y);}
     }
-    private void dot(GuiGraphics g,int x,int y){g.fill(x-2,y-2,x+2,y+2,INK);}
+    private void dot(GuiGraphics g,int x,int y){g.fill(x-2,y-2,x+2,y+2,CELL_INK);}
     private boolean scratch(double mx,double my) {
         if(requested||answered)return false;
         double x=mx-leftPos,y=my-topPos;boolean hit=false;

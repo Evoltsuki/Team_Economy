@@ -20,7 +20,7 @@ import java.util.*;
 /** Chest-style template grid above the real inventory. Templates never become real stacks. */
 public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
     public static final int GRID_X=112, GRID_Y=66, GRID_STEP=20, PAGE_SIZE=54;
-    private static final int TEXT=0xFF303030, MUTED=0xFF595959;
+    private static final int TEXT=UiTheme.BOX.text, MUTED=UiTheme.BOX.muted;
     private record Choice(BoxReward reward,ItemStack icon,SearchText search){}
     private final List<Choice> choices=new ArrayList<>();
     private JsonArray headers=new JsonArray();
@@ -48,7 +48,7 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
         for(int i=0;i<6;i++){
             int index=poolPage*6+i;if(index>=headers.size())break;
             String id=headers.get(index).getAsJsonObject().get("id").getAsString();
-            button(10,55+i*24,90,22,Component.literal(id),()->{if(leaveDraft())request(0,id,"");}).active=!waiting;
+            button(10,55+i*24,90,22,Component.literal(id),()->{if(leaveDraft())request(0,id,"");},()->id.equals(originalId)).active=!waiting;
         }
         button(10,204,22,18,Component.literal("‹"),()->{poolPage=Math.max(0,poolPage-1);capture();rebuildWidgets();});
         button(78,204,22,18,Component.literal("›"),()->{poolPage=Math.min(Math.max(0,(headers.size()-1)/6),poolPage+1);capture();rebuildWidgets();});
@@ -64,8 +64,8 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
                 button(GRID_X,190,22,18,Component.literal("‹"),()->page(-1)).active=prizePage>0;
                 button(268,190,22,18,Component.literal("›"),()->page(1)).active=prizePage<2;
             }
-            button(308,43,70,20,tr("box_tab"),()->{if(capture()){settings=true;rebuildWidgets();}});
-            button(382,43,74,20,tr("prize_tab"),()->{if(capture()){settings=false;rebuildWidgets();}}).active=selectedEntry()!=null;
+            button(308,43,70,20,tr("box_tab"),()->{if(capture()){settings=true;rebuildWidgets();}},()->settings);
+            button(382,43,74,20,tr("prize_tab"),()->{if(capture()){settings=false;rebuildWidgets();}},()->!settings).active=selectedEntry()!=null;
             if(settings)buildSettings();else buildPrizeEditor();
             button(308,308,70,20,tr("save"),()->{if(capture())request(1,originalId,draft.toString());}).active=ready();
             button(382,308,74,20,tr("discard"),()->{dirty=false;request(0,originalId,"");}).active=!waiting;
@@ -74,11 +74,14 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
     }
     @Override public void resize(Minecraft minecraft,int width,int height){capture();dragOrigin=-1;dragging=false;super.resize(minecraft,width,height);}
     private Button button(int x,int y,int w,int h,Component label,Runnable action){
-        Button b=Button.builder(label,ignored->action.run()).bounds(leftPos+x,topPos+y,w,h).build();
+        return button(x,y,w,h,label,action,()->false);
+    }
+    private Button button(int x,int y,int w,int h,Component label,Runnable action,java.util.function.BooleanSupplier selected){
+        Button b=UiButton.of(label,ignored->action.run()).bounds(leftPos+x,topPos+y,w,h).selected(selected).theme(UiTheme.BOX).build();
         b.setTooltip(Tooltip.create(label));return addRenderableWidget(b);
     }
     private EditBox field(int x,int y,int w,String key,String value,int length){
-        EditBox b=new EditBox(font,leftPos+x,topPos+y,w,16,tr(key));b.setMaxLength(length);b.setValue(value);
+        EditBox b=UiTheme.input(font,leftPos+x,topPos+y,w,16,tr(key));b.setMaxLength(length);b.setValue(value);
         b.setResponder(v->{dirty=true;confirmDelete=false;});addRenderableWidget(b);return b;
     }
     private void buildSettings(){
@@ -211,7 +214,7 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
     private List<Choice> filtered(){return choices.stream().filter(c->c.search.matches(query))
             .filter(c->c.reward.itemKey().startsWith("minecraft:")||flag(draft,"allowModdedItems",false)).toList();}
     private void buildPicker(){
-        search=new EditBox(font,leftPos+114,topPos+45,174,16,tr("search"));search.setMaxLength(128);search.setValue(query);
+        search=UiTheme.input(font,leftPos+114,topPos+45,174,16,tr("search"));search.setMaxLength(128);search.setValue(query);
         search.setHint(tr("search"));search.setResponder(value->{capture();query=value;pickerPage=0;rebuildWidgets();setFocused(search);search.setFocused(true);search.setCursorPosition(query.length());});addRenderableWidget(search);
         List<Choice> matches=filtered();pickerPage=Math.clamp(pickerPage,0,Math.max(0,(matches.size()-1)/PAGE_SIZE));
         for(int i=0;i<PAGE_SIZE;i++){
@@ -219,7 +222,7 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
             Choice choice=matches.get(index);int x=GRID_X+i%9*GRID_STEP,y=GRID_Y+i/9*GRID_STEP;
             var b=new Button(leftPos+x,topPos+y,18,18,choice.icon.isEmpty()?tr("empty"):choice.icon.getHoverName(),ignored->{if(capture())place(choice.reward,grid.firstEmpty());},supplier->supplier.get()){
                 @Override public void renderWidget(GuiGraphics g,int mx,int my,float partial){
-                    if(isHoveredOrFocused())g.fill(getX(),getY(),getX()+18,getY()+18,0x80FFFFFF);
+                    if(isHoveredOrFocused())g.fill(getX(),getY(),getX()+18,getY()+18,0x408B6FA0);
                     if(choice.icon.isEmpty())g.renderItem(new ItemStack(Items.PAPER),getX()+1,getY()+1);
                     else g.renderItem(choice.icon,getX()+1,getY()+1);
                 }
@@ -247,31 +250,25 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
         originalId=draft==null?"":draft.get("id").getAsString();selected=-1;dirty=false;picking=false;settings=true;prizePage=0;rebuildWidgets();
     }
     @Override protected void renderLabels(GuiGraphics g,int mx,int my){}
-    private void well(GuiGraphics g,int x,int y,int w,int h){
-        g.fill(x-1,y-1,x+w+1,y+h+1,0xFFFFFFFF);g.fill(x-1,y-1,x+w,y+h,0xFF373737);g.fill(x,y,x+w,y+h,0xFF8B8B8B);
-    }
     private void slotBackground(GuiGraphics g,int x,int y,boolean selected){
-        if(selected)g.fill(x-2,y-2,x+20,y+20,0xFFB78D29);
-        well(g,x+1,y+1,16,16);
+        UiTheme.BOX.slot(g,x+1,y+1);
+        if(selected)g.renderOutline(x-1,y-1,20,20,UiTheme.BOX.accent);
     }
     @Override protected void renderBg(GuiGraphics g,float partial,int mx,int my){
         int x=leftPos,y=topPos;
-        g.fill(x,y,x+imageWidth,y+imageHeight,0xFF161616);
-        g.fill(x+1,y+1,x+imageWidth-1,y+imageHeight-1,0xFF555555);
-        g.fill(x+2,y+2,x+imageWidth-3,y+imageHeight-3,0xFFFFFFFF);
-        g.fill(x+4,y+4,x+imageWidth-4,y+imageHeight-4,0xFFC6C6C6);
-        g.fill(x+6,y+39,x+104,y+329,0xFFB4B4B4);g.fill(x+302,y+39,x+460,y+329,0xFFB4B4B4);
+        UiTheme.BOX.panel(g,x,y,imageWidth,imageHeight);
+        UiTheme.BOX.section(g,x+6,y+39,98,290);UiTheme.BOX.section(g,x+302,y+39,158,290);
         g.renderItem(new ItemStack(Items.CHEST),x+11,y+11);label(g,title,33,12,395,TEXT);
         label(g,tr("template_subtitle"),12,29,420,MUTED);label(g,tr("pools"),10,43,90,TEXT);
         for(int i=0;i<PAGE_SIZE;i++){
             int slot=prizePage*PAGE_SIZE+i,dx=x+GRID_X+i%9*GRID_STEP,dy=y+GRID_Y+i/9*GRID_STEP;
             slotBackground(g,dx,dy,!picking&&slot==selected);
-            if(!picking&&slot>=BoxPrizeGrid.CAPACITY){g.fill(dx+1,dy+1,dx+17,dy+17,0xFF585858);continue;}
+            if(!picking&&slot>=BoxPrizeGrid.CAPACITY){g.fill(dx+1,dy+1,dx+17,dy+17,UiTheme.BOX.disabled);continue;}
             if(draft!=null&&!picking&&grid.get(slot)!=null){
                 BoxReward prize=reward(grid.get(slot));ItemStack icon=prize.stack();if(icon.isEmpty())icon=new ItemStack(Items.PAPER);
                 g.renderItem(icon,dx+1,dy+1);g.renderItemDecorations(font,icon,dx+1,dy+1,prize.count()==1?"":String.valueOf(prize.count()));
             }
-            if(!picking&&gridAt(mx,my)==slot)g.fill(dx+1,dy+1,dx+17,dy+17,0x80FFFFFF);
+            if(!picking&&gridAt(mx,my)==slot)g.fill(dx+1,dy+1,dx+17,dy+17,0x408B6FA0);
         }
         label(g,Component.translatable("container.inventory"),112,216,180,TEXT);
         for(Slot slot:menu.slots)slotBackground(g,x+slot.x-1,y+slot.y-1,false);
@@ -282,13 +279,13 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
                 label(g,tr("price"),310,146,142,TEXT);label(g,tr("stage"),310,182,142,TEXT);
             }else if(selectedEntry()!=null){
                 JsonObject e=selectedEntry();ItemStack icon=reward(e).stack();
-                well(g,x+310,y+77,36,36);if(!icon.isEmpty())g.renderItem(icon,x+320,y+87);
+                UiTheme.BOX.section(g,x+310,y+77,36,36);if(!icon.isEmpty())g.renderItem(icon,x+320,y+87);
                 label(g,icon.isEmpty()?tr("empty"):icon.getHoverName(),310,123,142,TEXT);
                 label(g,tr("count"),310,146,142,TEXT);label(g,tr("weight"),310,182,142,TEXT);
                 label(g,tr("chance",chance(e)),310,223,142,TEXT);
             }
         }
-        label(g,status.isEmpty()?tr("inventory_hint"):tr(status),10,330,448,status.equals("unsupported_sample")||status.equals("invalid")?0xFF9B2020:MUTED);
+        label(g,status.isEmpty()?tr("inventory_hint"):tr(status),10,330,448,status.equals("unsupported_sample")||status.equals("invalid")?UiTheme.NEGATIVE:MUTED);
     }
     @Override protected void renderPanel(GuiGraphics g,int mx,int my,float partial){
         super.renderPanel(g,mx,my,partial);

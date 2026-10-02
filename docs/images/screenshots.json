@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "captured": "2026-09-28 / 2026-09-29 / 2026-09-30",
+  "version": "1.0.1",
+  "captured": "2026-09-28 / 2026-09-29 / 2026-09-30 / 2026-10-02",
   "source": "Minecraft gameplay screenshots.",
   "shots": [
     {
@@ -197,6 +197,78 @@
         1194,
         759
       ]
+    },
+    {
+      "file": "screenshots/pricing-grid.png",
+      "sha256": "5eae2b76f144584cfc55c2fff99e374c62605493e4222b1d6b60b6505139bec9",
+      "resolution": [
+        800,
+        528
+      ],
+      "captured": "2026-10-02"
+    },
+    {
+      "file": "screenshots/pricing-editor-zh.png",
+      "sha256": "0760e22c64319e47d33545eb0dd8d02702d761f360b52555ea9de1156e0aa1ba",
+      "resolution": [
+        800,
+        528
+      ],
+      "captured": "2026-10-02"
+    },
+    {
+      "file": "screenshots/pricing-editor-en.png",
+      "sha256": "adc89565cc7c7dd5a1d0ebbe516b0156062c5a5f437f40a751b34721b5454486",
+      "resolution": [
+        800,
+        528
+      ],
+      "captured": "2026-10-02"
+    },
+    {
+      "file": "screenshots/box-admin.png",
+      "sha256": "220c5099d6f0b57e5e4e6000dce5d217d410f77ab1ab65751c48f0cef873fc2b",
+      "resolution": [
+        936,
+        688
+      ],
+      "captured": "2026-10-02"
+    },
+    {
+      "file": "screenshots/box-admin-picker.png",
+      "sha256": "3bf1bd6cc4c2382f87c5fd32204acc31a510ae778c8723f9ecdbde838760a1dc",
+      "resolution": [
+        936,
+        688
+      ],
+      "captured": "2026-10-02"
+    },
+    {
+      "file": "screenshots/box-admin-en.png",
+      "sha256": "fc2676627b4ad7623c39635288a67aec12a48346b006e7ce927daa97a33564ad",
+      "resolution": [
+        936,
+        688
+      ],
+      "captured": "2026-10-02"
+    },
+    {
+      "file": "screenshots/terminal-home.png",
+      "sha256": "08d802cfeecbada7c3df5a961971f65d0516e7783b1d1cf759688eb50ef6d817",
+      "resolution": [
+        800,
+        496
+      ],
+      "captured": "2026-10-02"
+    },
+    {
+      "file": "screenshots/scratch-play.png",
+      "sha256": "291307689e85de78e8b62b8fb5aebf640905307ec9abe41c9843ccf1623ef879",
+      "resolution": [
+        640,
+        480
+      ],
+      "captured": "2026-10-02"
     }
   ]
 }

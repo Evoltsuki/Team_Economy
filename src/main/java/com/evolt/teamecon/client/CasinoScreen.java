@@ -15,7 +15,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
@@ -24,8 +23,7 @@ import java.util.function.Predicate;
 
 /** Remote games with start, stake, then secondary controls in descending screen order. */
 public class CasinoScreen extends CompactContainerScreen<CasinoMenu> {
-    private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath("teamecon", "textures/gui/casino.png");
-    private static final int GOLD = 0xFFE9BE61, WHITE = 0xFFF2EEE6, DULL = 0xFFADA99B, GREEN = 0xFF70D6A4, RED = 0xFFEC8474;
+    private static final int ACCENT = UiTheme.ACCENT, TEXT = UiTheme.TEXT, MUTED = UiTheme.MUTED, POSITIVE = UiTheme.POSITIVE, NEGATIVE = UiTheme.NEGATIVE;
     private GameType tab;
     private boolean home;
     private int cardFactor=1;
@@ -73,36 +71,35 @@ public class CasinoScreen extends CompactContainerScreen<CasinoMenu> {
         progressionRevision = ClientCasinoProgression.revision();
         if(home){buildHome();return;}
         if (menu.isRemote()) {
-            addRenderableWidget(TerminalButton.of(tr("terminal.back"),b->{home=true;rebuildWidgets();}).bounds(leftPos+278,topPos+23,32,16).build());
+            addRenderableWidget(UiButton.of(tr("terminal.back"),b->{home=true;rebuildWidgets();}).bounds(leftPos+278,topPos+23,32,16).build());
             GameType[] tabs = {GameType.SLOTS, GameType.ROULETTE, GameType.COLOR_WHEEL, GameType.SCRATCH, GameType.PENGUIN, GameType.MULTIPLIER, GameType.HILO};
             for (int i = 0; i < tabs.length; i++) {
                 GameType next = tabs[i];
-                Button button = addRenderableWidget(TerminalButton.of(tr("tab." + next.id()), b -> {
+                Button button = addRenderableWidget(UiButton.of(tr("tab." + next.id()), b -> {
                     tab = next; oddsScroll = 0; setBet(bet); rebuildWidgets();
-                }).bounds(leftPos + 12 + i * 38, topPos + 23, 37, 16).build());
-                button.active = next != tab;
+                }).bounds(leftPos + 12 + i * 38, topPos + 23, 37, 16).selected(()->next==tab).build());
             }
         }
         if(tab!=GameType.SCRATCH) {
-        betField = new EditBox(font, leftPos + 236, topPos + 64, 40, 16, tr("bet"));
+        betField = UiTheme.input(font, leftPos + 236, topPos + 64, 40, 16, tr("bet"));
         betField.setMaxLength(10);
         betField.setFilter(value -> value.matches("[0-9]*"));
         betField.setValue(String.valueOf(bet));
         betField.setResponder(value -> { try { bet = value.isEmpty() ? 0 : Long.parseLong(value); } catch (NumberFormatException ex) { bet = 0; }
             if(!applyingFactor){betBase=bet;stakeFactor=1;if(factorField!=null)factorField.setValue("1");} });
         addRenderableWidget(betField);
-        addRenderableWidget(TerminalButton.of(tr("max"), b -> setBet(state() == null ? bet : Math.min(state().balance(), betLimit())))
+        addRenderableWidget(UiButton.of(tr("max"), b -> setBet(state() == null ? bet : Math.min(state().balance(), betLimit())))
                 .bounds(leftPos + 280, topPos + 63, 30, 18).build());
         long[] chips = {10, 100, 1000};
         for (int i = 0; i < chips.length; i++) {
             long chip = chips[i];
             Component label = chip == -1 ? Component.literal("½") : chip == 0 ? tr("clear") : Component.literal("+" + chip);
-            addRenderableWidget(TerminalButton.of(label, b -> setBet(chip > 0 ? bet + chip : chip == -1 ? bet / 2 : 0))
+            addRenderableWidget(UiButton.of(label, b -> setBet(chip > 0 ? bet + chip : chip == -1 ? bet / 2 : 0))
                     .bounds(leftPos + 192 + i * 40, topPos + 83, 38, 13).build());
         }
-        factorField=new EditBox(font,leftPos+194,topPos+98,52,13,tr("bet_factor"));
+        factorField=UiTheme.input(font,leftPos+194,topPos+98,52,13,tr("bet_factor"));
         factorField.setMaxLength(7);factorField.setFilter(v->v.matches("[0-9]*"));factorField.setValue(String.valueOf(stakeFactor));addRenderableWidget(factorField);
-        multiplyButton=addRenderableWidget(TerminalButton.of(tr("bet_multiply"),b->{
+        multiplyButton=addRenderableWidget(UiButton.of(tr("bet_multiply"),b->{
             int factor=(int)numeric(factorField.getValue());
             long value=com.evolt.teamecon.casino.MachineBetMenu.multiplied(betBase,factor,betLimit());
             if(value>0){applyingFactor=true;setBet(value);applyingFactor=false;stakeFactor=factor;}
@@ -118,7 +115,7 @@ public class CasinoScreen extends CompactContainerScreen<CasinoMenu> {
 
     private Button action(Component label, int x, int y, int w, int h,
                           Button.OnPress press, Predicate<CasinoSyncPayload> enabled) {
-        Button b = addRenderableWidget(TerminalButton.of(label, press).bounds(leftPos + x, topPos + y, w, h).build());
+        Button b = addRenderableWidget(UiButton.of(label, press).bounds(leftPos + x, topPos + y, w, h).build());
         actions.add(new BoundButton(b, enabled));
         return b;
     }
@@ -134,28 +131,27 @@ public class CasinoScreen extends CompactContainerScreen<CasinoMenu> {
         for(int i=0;i<games.length;i++){GameType game=games[i];addRenderableWidget(new HomeTile(12+i%4*(tw+2),135+i/4*45,tw,41,tr("tab."+game.id()),new ItemStack(machines[i]),()->{home=false;tab=game;rebuildWidgets();}));}
     }
     private void drawHome(GuiGraphics g){
-        g.drawString(font,tr("terminal.home"),12,7,WHITE,false);
-        String level="Lv."+ClientCasinoProgression.level();g.drawString(font,level,imageWidth-14-font.width(level),7,GREEN,false);
-        g.drawString(font,tr("terminal.subtitle"),12,29,DULL,false);
+        g.drawString(font,tr("terminal.home"),12,7,TEXT,false);
+        String level="Lv."+ClientCasinoProgression.level();g.drawString(font,level,imageWidth-14-font.width(level),7,POSITIVE,false);
+        g.drawString(font,tr("terminal.subtitle"),12,29,MUTED,false);
         CasinoSyncPayload s=state();
-        g.drawString(font,tr("balance",s==null?"…":compact(s.balance())),12,47,GOLD,false);
-        if(s!=null&&s.stake()>0)fit(g,tr("terminal.live",tr("tab."+s.sessionGame()),s.cashOut()).getString(),145,47,imageWidth-158,GREEN);
-        g.drawString(font,tr("terminal.games"),12,121,DULL,false);
-        fit(g,tr("terminal.hint").getString(),12,imageHeight-17,imageWidth-24,DULL);
+        g.drawString(font,tr("balance",s==null?"…":compact(s.balance())),12,47,ACCENT,false);
+        if(s!=null&&s.stake()>0)fit(g,tr("terminal.live",tr("tab."+s.sessionGame()),s.cashOut()).getString(),145,47,imageWidth-158,POSITIVE);
+        g.drawString(font,tr("terminal.games"),12,121,MUTED,false);
+        fit(g,tr("terminal.hint").getString(),12,imageHeight-17,imageWidth-24,MUTED);
     }
     private final class HomeTile extends Button {
         private final ItemStack icon;
         HomeTile(int x,int y,int w,int h,Component title,ItemStack icon,Runnable press){super(leftPos+x,topPos+y,w,h,title,b->press.run(),DEFAULT_NARRATION);this.icon=icon;}
         @Override protected void renderWidget(GuiGraphics g,int mx,int my,float partial){
-            g.fill(getX(),getY(),getX()+width,getY()+height,isHoveredOrFocused()?0xFF5A8C91:0xFF304F5F);
-            g.fill(getX()+1,getY()+1,getX()+width-1,getY()+height-1,isHoveredOrFocused()?0xFF294653:0xFF1B3342);
+            UiTheme.button(g,getX(),getY(),width,height,active,isHoveredOrFocused(),false);
             // Machine items contain raised 3D geometry. Clip the preview to its own
             // strip, then place the caption above item depth so no glyph is hidden.
             g.enableScissor(getX()+3,getY()+2,getX()+width-3,getY()+height-16);
             g.renderItem(icon,getX()+7,getY()+5);
             g.disableScissor();
             g.pose().pushPose();g.pose().translate(0,0,300);
-            g.drawString(font,font.plainSubstrByWidth(getMessage().getString(),width-12),getX()+7,getY()+height-13,WHITE,false);
+            g.drawString(font,font.plainSubstrByWidth(getMessage().getString(),width-12),getX()+7,getY()+height-13,TEXT,false);
             g.flush();g.pose().popPose();
         }
     }
@@ -183,12 +179,11 @@ public class CasinoScreen extends CompactContainerScreen<CasinoMenu> {
                 for(int i=0;i<ScratchKind.values().length;i++){
                     ScratchKind kind=ScratchKind.values()[i];
                     Button select=addRenderableWidget(new TicketButton(kind,leftPos+20+i%2*80,topPos+44+i/2*17));
-                    select.active=selectedCard!=kind;
                     select.setTooltip(Tooltip.create(Component.translatable("item.teamecon.scratch_card_"+kind.id())
                             .append("\n").append(Component.translatable("scratch.teamecon.price",kind.price()))
                             .append("\n").append(Component.translatable("scratch.teamecon.rule."+kind.id()))));
                 }
-                addRenderableWidget(TerminalButton.of(Component.translatable("scratch.teamecon.factor",cardFactor),b->{cardFactor=cardFactor*10>Math.min(10000,com.evolt.teamecon.gambling.CasinoProgression.cardStakeLimit(ClientCasinoProgression.level())/selectedCard.price())?1:cardFactor*10;rebuildWidgets();}).bounds(leftPos+230,topPos+67,78,16).build());
+                addRenderableWidget(UiButton.of(Component.translatable("scratch.teamecon.factor",cardFactor),b->{cardFactor=cardFactor*10>Math.min(10000,com.evolt.teamecon.gambling.CasinoProgression.cardStakeLimit(ClientCasinoProgression.level())/selectedCard.price())?1:cardFactor*10;rebuildWidgets();}).bounds(leftPos+230,topPos+67,78,16).build());
                 action(Component.translatable("scratch.teamecon.buy",selectedCard.price()*cardFactor),20,115,159,18,
                         b->send(CasinoActionPayload.Action.BUY_CARD,selectedCard.id(),cardFactor),
                         s->menu.isRemote()&&s.balance()>=selectedCard.price()*cardFactor&&selectedCard.price()*cardFactor<=com.evolt.teamecon.gambling.CasinoProgression.cardStakeLimit(ClientCasinoProgression.level())&&ClientCasinoProgression.canBuy(selectedCard));
@@ -203,13 +198,13 @@ public class CasinoScreen extends CompactContainerScreen<CasinoMenu> {
                 String[] choices = {"red", "black", "number:0"};
                 for (int i = 0; i < choices.length; i++) {
                     String choice = choices[i];
-                    addRenderableWidget(TerminalButton.of(tr("roulette." + (choice.equals("number:0")?"green":choice)).copy().append("  ×"+decimal((choice.equals("number:0")?32:2)*(ClientCasinoProgression.ready()?ClientCasinoProgression.rules().profile("roulette").payoutScale():1)).replaceAll("\\.?0+$","")), b -> { rouletteChoice = choice; })
-                            .bounds(leftPos + 92, topPos + 82 + i * 17, 87, 15).build());
+                    addRenderableWidget(UiButton.of(tr("roulette." + (choice.equals("number:0")?"green":choice)).copy().append("  ×"+decimal((choice.equals("number:0")?32:2)*(ClientCasinoProgression.ready()?ClientCasinoProgression.rules().profile("roulette").payoutScale():1)).replaceAll("\\.?0+$","")), b -> { rouletteChoice = choice; })
+                            .bounds(leftPos + 92, topPos + 82 + i * 17, 87, 15).selected(()->rouletteChoice.equals(choice)).build());
                 }
-                numberField = new EditBox(font, leftPos + 14, topPos + 116, 31, 14, tr("roulette.number"));
+                numberField = UiTheme.input(font, leftPos + 14, topPos + 116, 31, 14, tr("roulette.number"));
                 numberField.setMaxLength(2); numberField.setFilter(v -> v.matches("[0-9]*")); numberField.setValue("0");
                 addRenderableWidget(numberField);
-                addRenderableWidget(TerminalButton.of(tr("roulette.number"), b -> {
+                addRenderableWidget(UiButton.of(tr("roulette.number"), b -> {
                     int value = (int) numeric(numberField.getValue());
                     if (value >= 0 && value <= 36) rouletteChoice = "number:" + value;
                 }).bounds(leftPos + 49, topPos + 114, 38, 18).build());
@@ -278,41 +273,36 @@ public class CasinoScreen extends CompactContainerScreen<CasinoMenu> {
     }
 
     @Override protected void renderBg(GuiGraphics g, float partial, int mouseX, int mouseY) {
-        g.fill(leftPos,topPos,leftPos+imageWidth,topPos+imageHeight,0xFF101F2C);
-        g.renderOutline(leftPos,topPos,imageWidth,imageHeight,0xFF4F7982);
-        g.fill(leftPos+1,topPos+1,leftPos+imageWidth-1,topPos+20,0xFF243D4D);
+        UiTheme.panel(g,leftPos,topPos,imageWidth,imageHeight);
         if(!home){
-            g.fill(leftPos+8,topPos+41,leftPos+184,topPos+136,0xFF162C3A);
-            g.fill(leftPos+189,topPos+41,leftPos+312,topPos+136,0xFF1B3340);
-            g.fill(leftPos+179,topPos+152,leftPos+312,topPos+238,0xFF1B3340);
-            for(var slot:menu.slots)if(slot.isActive()){
-                g.fill(leftPos+slot.x-1,topPos+slot.y-1,leftPos+slot.x+17,topPos+slot.y+17,0xFF43606A);
-                g.fill(leftPos+slot.x,topPos+slot.y,leftPos+slot.x+16,topPos+slot.y+16,0xFF132632);
-            }
+            UiTheme.section(g,leftPos+8,topPos+41,176,95);
+            UiTheme.section(g,leftPos+189,topPos+41,123,95);
+            UiTheme.section(g,leftPos+179,topPos+152,133,84);
+            for(var slot:menu.slots)if(slot.isActive())UiTheme.slot(g,leftPos+slot.x,topPos+slot.y);
         }
     }
 
     @Override protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
         if(home){drawHome(g);return;}
-        g.drawString(font, title, 8, 8, GOLD, false);
-        g.drawString(font, playerInventoryTitle, 8, 154, DULL, false);
-        if(tab!=GameType.SCRATCH)fit(g, tr("bet").getString(), 192, 68, 40, DULL);
-        if (!menu.isRemote()) g.drawString(font, tr("machine_hint"), 12, 26, DULL, false);
+        g.drawString(font, title, 8, 8, ACCENT, false);
+        g.drawString(font, playerInventoryTitle, 8, 154, MUTED, false);
+        if(tab!=GameType.SCRATCH)fit(g, tr("bet").getString(), 192, 68, 40, MUTED);
+        if (!menu.isRemote()) g.drawString(font, tr("machine_hint"), 12, 26, MUTED, false);
         CasinoSyncPayload s = state();
-        if (s == null) { g.drawString(font, tr("waiting"), 10, 140, DULL, false); return; }
+        if (s == null) { g.drawString(font, tr("waiting"), 10, 140, MUTED, false); return; }
         String balance = tr("balance", compact(s.balance())).getString();
-        g.drawString(font, balance, 311 - font.width(balance), 8, GOLD, false);
+        g.drawString(font, balance, 311 - font.width(balance), 8, ACCENT, false);
         drawGame(g, s);
         Component message = ModNetwork.formatMessage(s.messageKey(), s.messageArgs());
         if (message.getString().isEmpty() && s.stake() > 0) message = tr("active_run", tr("tab." + s.sessionGame()), s.cashOut());
-        int color = s.messageKey().contains("won") || s.messageKey().contains("win") || s.messageKey().contains("landed") || s.messageKey().contains("cashed") ? GREEN
-                : s.messageKey().contains("busted") || s.messageKey().contains("fell") || s.messageKey().contains("no_funds") ? RED : WHITE;
+        int color = s.messageKey().contains("won") || s.messageKey().contains("win") || s.messageKey().contains("landed") || s.messageKey().contains("cashed") ? POSITIVE
+                : s.messageKey().contains("busted") || s.messageKey().contains("fell") || s.messageKey().contains("no_funds") ? NEGATIVE : TEXT;
         fit(g, message.getString(), 10, 140, 300, color);
-        g.drawString(font, tr("odds_header"), 182, 154, GOLD, false);
+        g.drawString(font, tr("odds_header"), 182, 154, ACCENT, false);
         List<Component> odds = odds(s);
         oddsScroll = Math.clamp(oddsScroll, 0, Math.max(0, odds.size() - 8));
         for (int i = oddsScroll; i < odds.size() && i < oddsScroll + 8; i++)
-            fit(g, odds.get(i).getString(), 182, 165 + (i - oddsScroll) * 9, 128, DULL);
+            fit(g, odds.get(i).getString(), 182, 165 + (i - oddsScroll) * 9, 128, MUTED);
     }
 
     private float progress() {
@@ -328,38 +318,37 @@ public class CasinoScreen extends CompactContainerScreen<CasinoMenu> {
                 String[] finalSymbols = result.split(",");
                 for (int i = 0; i < 3; i++) {
                     int x = 15 + i * 55;
-                    g.fill(x, 47, x + 50, 100, 0xFF101916);
-                    g.renderOutline(x, 47, 50, 53, GOLD);
+                    UiTheme.section(g,x,47,50,53);
                     float stop = .6F + i * .2F;
                     String symbol = moving && progress < stop ? CasinoVisuals.SYMBOLS[(ticks / 2 + i * 2) % 6]
                             : finalSymbols.length == 3 ? finalSymbols[i] : CasinoVisuals.SYMBOLS[i];
                     CasinoVisuals.item(g, new ItemStack(CasinoVisuals.symbolItem(symbol)), x + 9, 53, 2);
-                    g.drawCenteredString(font, font.plainSubstrByWidth(CasinoVisuals.label("symbol", symbol).getString(), 48), x + 25, 88, WHITE);
+                    UiTheme.centered(g,font, font.plainSubstrByWidth(CasinoVisuals.label("symbol", symbol).getString(), 48), x + 25, 88, TEXT);
                 }
             }
             case MULTIPLIER -> {
                 String value = "×" + decimal(running(s) ? s.multiplier() : crashLost?0:1);
                 g.pose().pushPose(); g.pose().translate(95, 45, 0); g.pose().scale(1.8F, 1.8F, 1);
-                g.drawCenteredString(font, value, 0, 0, crashLost?RED:GREEN); g.pose().popPose();
-                CasinoVisuals.crashCurve(g,15,66,162,28,crashChartPeak,crashLost,running(s)||crashChartPeak>1||crashLost,crashLost?RED:GREEN);
-                fit(g,tr(running(s)?"crash_value":crashLost?"crash_zero":"crash_ready",s.cashOut()).getString(),15,99,162,DULL);
+                UiTheme.centered(g,font, value, 0, 0, crashLost?NEGATIVE:POSITIVE); g.pose().popPose();
+                CasinoVisuals.crashCurve(g,15,66,162,28,crashChartPeak,crashLost,running(s)||crashChartPeak>1||crashLost,crashLost?NEGATIVE:POSITIVE);
+                fit(g,tr(running(s)?"crash_value":crashLost?"crash_zero":"crash_ready",s.cashOut()).getString(),15,99,162,MUTED);
             }
             case PENGUIN -> {
                 CasinoVisuals.penguin(g, 13, 40, progress, lastPenguinWon, moving);
-                fit(g, tr("run_value", running(s) ? s.rounds() : 0, running(s) ? s.cashOut() : 0).getString(), 15, 99, 162, DULL);
+                fit(g, tr("run_value", running(s) ? s.rounds() : 0, running(s) ? s.cashOut() : 0).getString(), 15, 99, 162, MUTED);
             }
             case HILO -> {
                 int roll = moving ? (ticks * 17) % 100 + 1 : (int) numeric(result);
-                g.drawCenteredString(font, tr("hilo_range"), 95, 45, DULL);
+                UiTheme.centered(g,font, tr("hilo_range"), 95, 45, MUTED);
                 g.pose().pushPose(); g.pose().translate(95, 63, 0); g.pose().scale(3, 3, 1);
-                g.drawCenteredString(font, roll == 0 ? "--" : String.valueOf(roll), 0, 0, GOLD); g.pose().popPose();
-                g.drawCenteredString(font, tr("last_roll", roll == 0 ? "--" : roll), 95, 101, DULL);
+                UiTheme.centered(g,font, roll == 0 ? "--" : String.valueOf(roll), 0, 0, ACCENT); g.pose().popPose();
+                UiTheme.centered(g,font, tr("last_roll", roll == 0 ? "--" : roll), 95, 101, MUTED);
             }
             case ROULETTE -> {
                 int roll = (int) numeric(result);
                 CasinoVisuals.wheel(g, 49, 78, roll, progress);
-                g.fill(38, 73, 61, 85, 0xFF162E23);
-                g.drawCenteredString(font, result.isEmpty() || moving ? "?" : String.valueOf(roll), 49, 75, WHITE);
+                UiTheme.section(g,38,73,23,12);
+                UiTheme.centered(g,font, result.isEmpty() || moving ? "?" : String.valueOf(roll), 49, 75, TEXT);
             }
             case COLOR_WHEEL -> {
                 int pocket=result.isEmpty()?0:(int)numeric(result.split(",")[0]);
@@ -367,18 +356,18 @@ public class CasinoScreen extends CompactContainerScreen<CasinoMenu> {
                 if(!moving&&!result.isEmpty()){
                     // The wheel reaches y=108. Keep the full result line below it,
                     // even when a translated label or multiplier is wider than usual.
-                    g.fill(13,113,179,132,0xFF101F2C);
+                    g.fill(13,113,179,132,UiTheme.SECTION);
                     fit(g,tr("color_result",com.evolt.teamecon.gambling.ColorWheelGame.pocket(pocket).multiplier()
-                            *ClientCasinoProgression.rules().profile("color_wheel").payoutScale()).getString(),18,118,156,GOLD);
+                            *ClientCasinoProgression.rules().profile("color_wheel").payoutScale()).getString(),18,118,156,ACCENT);
                 }
             }
             case SCRATCH -> {
                 CasinoVisuals.item(g,new ItemStack(ModRegistries.SCRATCH_CARDS.get(selectedCard).get()),193,44,2F);
-                fit(g,Component.translatable("scratch.teamecon.price",selectedCard.price()*cardFactor).getString(),230,47,79,GOLD);
+                fit(g,Component.translatable("scratch.teamecon.price",selectedCard.price()*cardFactor).getString(),230,47,79,ACCENT);
                 int[] prizes=selectedCard.multipliers();
-                fit(g,"MAX ×"+prizes[prizes.length-1],230,61,79,DULL);
+                fit(g,"MAX ×"+prizes[prizes.length-1],230,61,79,MUTED);
                 var rules=font.split(Component.translatable("scratch.teamecon.rule."+selectedCard.id()),114);
-                for(int i=0;i<Math.min(3,rules.size());i++)g.drawString(font,rules.get(i),194,85+i*9,WHITE,false);
+                for(int i=0;i<Math.min(3,rules.size());i++)g.drawString(font,rules.get(i),194,85+i*9,TEXT,false);
             }
         }
     }
@@ -391,10 +380,9 @@ public class CasinoScreen extends CompactContainerScreen<CasinoMenu> {
             this.kind=kind;
         }
         @Override protected void renderWidget(GuiGraphics g,int mx,int my,float partial){
-            g.fill(getX(),getY(),getX()+width,getY()+height,selectedCard==kind?GOLD:isHoveredOrFocused()?0xFF8BB09C:0xFF526A5E);
-            g.fill(getX()+1,getY()+1,getX()+width-1,getY()+height-1,selectedCard==kind?0xFF315447:0xFF213B31);
+            UiTheme.button(g,getX(),getY(),width,height,active,isHoveredOrFocused(),selectedCard==kind);
             CasinoVisuals.item(g,new ItemStack(ModRegistries.SCRATCH_CARDS.get(kind).get()),getX()+2,getY()+1,.875F);
-            g.drawString(font,font.plainSubstrByWidth(Component.translatable("item.teamecon.scratch_card_"+kind.id()).getString(),57),getX()+19,getY()+4,WHITE,false);
+            g.drawString(font,font.plainSubstrByWidth(Component.translatable("item.teamecon.scratch_card_"+kind.id()).getString(),57),getX()+19,getY()+4,TEXT,false);
         }
     }
     private List<Component> odds(CasinoSyncPayload s) {

@@ -37,8 +37,8 @@ public final class MachineHud {
         var g=event.getGuiGraphics();int width=Math.min(Math.min(300,g.guiWidth()-24),lines.stream().mapToInt(mc.font::width).max().orElse(100)),x=(g.guiWidth()-width)/2,y=7;
         var wrapped = new ArrayList<net.minecraft.util.FormattedCharSequence>();
         for (Component line : lines) wrapped.addAll(mc.font.split(line, width));
-        g.fill(x-4,y-3,x+width+4,y+wrapped.size()*10+1,0xA011202B);
-        for(int i=0;i<wrapped.size();i++)g.drawString(mc.font,wrapped.get(i),x,y+i*10,i==0?0xFFFFD365:0xFFE1E8E8,false);
+        UiTheme.panel(g,x-6,y-5,width+12,wrapped.size()*10+8);
+        for(int i=0;i<wrapped.size();i++)g.drawString(mc.font,wrapped.get(i),x,y+i*10,i==0?UiTheme.ACCENT:UiTheme.TEXT,false);
     }
     private static Component tr(String key,Object... args){return Component.translatable("machine.teamecon."+key,args);}
     private static String number(double n){return String.format(Locale.ROOT,"%.2f",n).replaceAll("\\.?0+$","");}

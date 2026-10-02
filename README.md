@@ -72,13 +72,17 @@ Team Economy 为 Minecraft 生存加入物资回收、积分商店和六种实�
 
 ![刮刮卡购买页：选择卡种并调整票面金额](docs/images/screenshots/scratch-purchase.png)
 
+![刮开涂层，核对幸运数字与奖励倍率](docs/images/screenshots/scratch-play.png)
+
 ![盲盒购买页：预览奖池并选择开启数量](docs/images/screenshots/blind-box-purchase.png)
 
 一次可开 1／10／64 盒，按实际结果扣费和发放。背包装不下的奖品按购买者保存到「待领取」，退出游戏后仍保留；清出空间后点击「领取待领」，或执行 `/teamecon claimboxes`。领完上批奖品后可继续开盒。
 
 后期可兑换**无线终端**，随身使用商店、回收、升级、小游戏和购卡功能。游戏界面与 Patchouli 图文指南支持简体中文、繁体中文和英文。
 
-商店、盲盒与终端采用居中紧凑窗口，即使 GUI 缩放设为「自动」也会保留四周留白。黑红轮盘采用低台，下注点数显示在后方标题下，方便站在正面观察轮面。
+商店与定价面板使用深青色，盲盒与盲盒管理使用深紫色；各界面的按钮、输入框、物品格和状态文字保持一致。商店、盲盒与终端采用居中紧凑窗口，即使 GUI 缩放设为「自动」也会保留四周留白。黑红轮盘采用低台，下注点数显示在后方标题下，方便站在正面观察轮面。
+
+![无线终端的服务与游戏入口](docs/images/screenshots/terminal-home.png)
 
 ### 把玩法和配方带在身边
 
@@ -271,7 +275,7 @@ Python 依赖及联网打包方法见[手动打包指南](docs/手动打包指�
 | `versions/forge/` | Forge 构建入口，共享业务源码转换及 1.20.1 / 1.21.1 平台适配层 |
 | `src/generated/` | 按需生成的数据文件 |
 | `docs/` | 玩家指南、服主配置、打包说明和论坛发布稿 |
-| `docs/images/`、`docs/images/screenshots/` | 截图来源清单与 1.0.0 实机原图 |
+| `docs/images/`、`docs/images/screenshots/` | 截图来源清单与实机界面、玩法图 |
 | `tools/` | 资源生成、校验和打包脚本；逐项用途见 [tools/README.md](tools/README.md) |
 | `gradle/`、`gradle/wrapper/` | 固定 Gradle 版本的启动器，源码构建必需 |
 | `.github/` | 自动构建、凭据检查工作流和问题反馈模板 |

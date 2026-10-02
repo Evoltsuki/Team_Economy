@@ -63,13 +63,17 @@ Upgrading unlocks permission to use equipment. Machines must still be crafted or
 
 ![Scratch ticket purchase page with ticket types and face-value selection](docs/images/screenshots/scratch-purchase.png)
 
+![Scratch off the coating to reveal numbers and prize multipliers](docs/images/screenshots/scratch-play.png)
+
 The separate **Mystery Box Machine** shows its prize pools before you buy. Open 1, 10 or 64 boxes at a time and review the rewards. Each prize tile shows its chance at the top right and a ×N item count below. Pools also include healing, fire resistance, water breathing and other potions, including splash and lingering variants. Pools include materials, valuable items and friendly or neutral mob spawn eggs available in your Minecraft version. Each draw uses the displayed pool; opening a batch does not increase an individual draw's odds.
 
 ![Mystery box purchase page with prize preview and batch selection](docs/images/screenshots/blind-box-purchase.png)
 
 Open 1, 10 or 64 boxes at once. Prizes that fit go into your inventory; overflow belongs to the buyer and is saved in **Pending**, including across logouts. Free some space, then click **Claim pending** or run `/teamecon claimboxes`. Finish claiming a batch before opening another.
 
-The late-game **Wireless Terminal** provides portable access to the shop, recycling, upgrades, games and ticket purchases. Mystery boxes are opened at their own machine. Shop, box and terminal screens use compact, centered windows, including at automatic GUI scale.
+The late-game **Wireless Terminal** provides portable access to the shop, recycling, upgrades, games and ticket purchases. Mystery boxes are opened at their own machine. Shop and pricing panels use teal tones; mystery boxes and their editor use violet. Buttons, inputs, item slots and status text share a consistent style. Shop, box and terminal screens use compact, centered windows, including at automatic GUI scale.
+
+![Wireless Terminal services and games](docs/images/screenshots/terminal-home.png)
 
 ### Keep the rules and recipes with you
 

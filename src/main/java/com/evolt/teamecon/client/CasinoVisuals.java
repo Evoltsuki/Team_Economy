@@ -95,10 +95,10 @@ public final class CasinoVisuals {
     }
     public static void crashCurve(GuiGraphics g,int x,int y,int width,int height,double peak,boolean crashed,boolean visible,int color){
         var chart=CrashChart.observed(peak);
-        g.fill(x,y,x+width,y+height,0xFF10271F);
+        g.fill(x,y,x+width,y+height,UiTheme.PANEL);
         for(int i=0;i<=4;i++){
-            g.fill(x+width*i/4,y,x+width*i/4+1,y+height,0xFF2C493B);
-            g.fill(x,y+height*i/4,x+width,y+height*i/4+1,0xFF2C493B);
+            g.fill(x+width*i/4,y,x+width*i/4+1,y+height,UiTheme.EDGE);
+            g.fill(x,y+height*i/4,x+width,y+height*i/4+1,UiTheme.EDGE);
         }
         if(!visible)return;
         for(int i=1;i<=64;i++)line(g,x+(int)((width-1)*chart.x((i-1)/64D)),y+height-1-(int)((height-2)*chart.y((i-1)/64D)),

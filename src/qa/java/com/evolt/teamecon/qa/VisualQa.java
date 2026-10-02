@@ -99,7 +99,14 @@ public final class VisualQa {
             positionPointer.run();
         });
         delay(2);
-        action("capture " + name, () -> {checkLayout();mc().getToasts().clear();pendingCapture=name;});
+        action("capture " + name, () -> {
+            checkLayout();mc().getToasts().clear();pendingCapture=name;
+            if(mc().screen instanceof CompactContainerScreen<?> screen){
+                double factor=screen.panelScale()*mc().getWindow().getGuiScale();
+                int x=(int)Math.round(screen.getGuiLeft()*factor),y=(int)Math.round(screen.getGuiTop()*factor);
+                RESULTS.put("crop-"+name,x+","+y+","+(x+(int)Math.round(screen.getXSize()*factor))+","+(y+(int)Math.round(screen.getYSize()*factor)));
+            }
+        });
         until("save " + name, () -> CAPTURES.contains(name));
     }
     private static void server(Consumer<ServerPlayer> work) {
@@ -686,7 +693,9 @@ public final class VisualQa {
         action("start accelerating physical crash",()->worldClick(4,.6,1.39));
         until("physical crash starts",()->machine(4).hasRun());delay(32);snapshot("machine-crash-early-growth");
         action("prepare rare hundredfold display fixture",()->server(p->{
-            var run=TeamEconomyMod.get().gambling().sessionOf(p.getUUID());
+            var key=com.evolt.teamecon.gambling.SessionKey.machine(p.getUUID(),p.level().dimension().location().toString(),new BlockPos(20,65,0));
+            var run=TeamEconomyMod.get().gambling().sessionOf(key);
+            require(run!=null,"Physical crash fixture has no machine session");
             long now=p.getServer().overworld().getGameTime();
             // QA only: move an existing run's clock to the rare tail; production still draws its deadline randomly.
             run.startCrash(now-com.evolt.teamecon.gambling.CrashGame.limitAfter(100),com.evolt.teamecon.gambling.CrashGame.limitAfter(run.maxMultiplier())+1);
@@ -726,6 +735,9 @@ public final class VisualQa {
         action("lucky wheel result at Auto scale",()->scale(0));snapshot("terminal-lucky-wheel-auto-result");
         action("restore scale after lucky wheel result",()->scale(2));
         tab("penguin");snapshot("terminal-penguin-clipped-viewport");
+        tab("hilo");snapshot("terminal-hilo-controls");
+        tab("multiplier");snapshot("terminal-multiplier-controls");
+        tab("scratch");snapshot("terminal-scratch-purchase");
         action("finish terminal inspection",VisualQa::closeScreen);delay(5);
         action("buy scratch for scaled drag",()->server(p->{
             p.getInventory().clearContent();
@@ -746,7 +758,7 @@ public final class VisualQa {
             catch(com.mojang.brigadier.exceptions.CommandSyntaxException e){throw new IllegalStateException(e);}
             TeamEconomyMod.get().economy().manager().setBalance(TeamUtil.walletKey(p.getServer(),p.getUUID()),123456);
         }));
-        action("show real transparent team board",()->{scale(2);mc().options.hideGui=false;camera(34,64.3,5.8,180,-2);});
+        action("show real team board",()->{scale(2);mc().options.hideGui=false;camera(34,64.3,5.8,180,-2);});
         delay(28);until("real board received",TeamBoardHud::ready);snapshot("team-real-party-board");
         action("preview crowded team and negative earnings",()->{
             var data=new com.google.gson.JsonObject();data.addProperty("team","田野小队 · 七人以上预览");data.addProperty("balance",4235678);
@@ -761,7 +773,7 @@ public final class VisualQa {
         snapshot("team-multiple-members-preview");
         until("crowded board second page",()->mc().level.getGameTime()/120%2==1);
         snapshot("team-members-second-page");
-        action("minimum transparent board preview",()->scale(4));
+        action("minimum team board preview",()->scale(4));
         until("minimum board first page",()->mc().level.getGameTime()/120%2==0);
         snapshot("team-minimum-gui-preview");
         action("restore live board",()->{teamPreview=null;scale(2);mc().options.hideGui=true;});delay(22);

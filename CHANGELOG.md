@@ -2,6 +2,8 @@
 
 ## 1.0.1 — 待发布 / Unreleased
 
+- 保留商店深青色与盲盒深紫色的外观；定价、盲盒管理、终端、刮卡、下注窗口与 HUD 使用协调的深色面板，统一按钮、输入框、物品格、选中状态和文字层级。
+
 - 自动售货机与 `/teamecon shop` 自动恢复每位玩家上次使用的页签，偏好保存在本机客户端，重启游戏后仍保留；首次使用打开「商品」页。盲盒机与无线终端的指定页面入口保持各自用途。
 - 商店支持中文名称的全拼与拼音首字母搜索。例如「金锭」可输入 `jinding` 或 `jd`，同时支持简体、繁体以及 `lv` / `lü` 输入。名称、物品 ID 与 `#标签` 搜索继续可用。
 - 盲盒奖品格右上角显示概率，下方以「×数量」标注奖品数量；默认奖池增加普通、喷溅及滞留药水，并保留具体效果。
@@ -13,6 +15,8 @@
 - 内置任务奖励命令 `/teamecon reward` 和 `/teamecon_quest_reward`，提供团队钱包追加积分、持久化防重复领取及 Java API；沿用现有任务奖励领取记录。
 
 ### English
+
+- Preserved the teal shop and violet mystery-box appearances. Pricing, box management, terminal, scratch tickets, stake controls and HUDs use coordinated dark panels with consistent controls, item slots, selection states and text hierarchy.
 
 - Vending Machines and `/teamecon shop` restore each player's last tab, saved on the local client across game restarts. First-time users start on **Items**. Mystery Box Machines and Wireless Terminal shortcuts retain their designated pages.
 - Shop searches accept full pinyin and initials for Chinese display names, including simplified/traditional text and `lv` / `lü` input. Name, item ID and `#tag` searches remain available.
