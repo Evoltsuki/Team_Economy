@@ -136,9 +136,9 @@ public final class BlindBoxScreen extends CompactContainerScreen<ShopMenu> {
             var id=ResourceLocation.tryParse(prize.itemKey());
             ItemStack icon=new ItemStack(id==null||prize.itemKey().equals("minecraft:air")?Items.PAPER:BuiltInRegistries.ITEM.get(id));
             g.renderItem(icon,dx+4,dy+1);
-            String count=prize.itemKey().equals("minecraft:air")?"—":String.valueOf(prize.count());
+            String count=prize.itemKey().equals("minecraft:air")?"—":"×"+prize.count();
             g.pose().pushPose();g.pose().translate(dx+12,dy+18,0);g.pose().scale(.625F,.625F,1);
-            g.drawString(font,count,-font.width(count)/2,0,GOLD,false);g.pose().popPose();
+            g.drawString(font,count,-font.width(count)/2,0,WHITE,false);g.pose().popPose();
         }
         fit(g,tr("page",rewardPage+1,Math.max(1,(shown.size()+capacity-1)/capacity)),x+22,imageHeight-96,w-44,DULL);
         long cost=selected==null?0:MoneyMath.total(selected.price(),amount);

@@ -97,7 +97,7 @@
   "gui.teamecon.boxes.ready": "Choose a quantity to open",
   "gui.teamecon.boxes.receipt": "Last opening",
   "gui.teamecon.boxes.reward_page": "Prizes %s/%s · Scroll to browse",
-  "gui.teamecon.boxes.subtitle": "Preview the contents, then choose how many to open",
+  "gui.teamecon.boxes.subtitle": "\u00d7N below each icon shows the item count",
   "gui.teamecon.boxes.title": "Mystery Box Counter",
   "gui.teamecon.boxes.total": "%s boxes · %s points",
   "gui.teamecon.boxes.unit_price": "%s points each",

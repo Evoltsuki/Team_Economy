@@ -97,7 +97,7 @@
   "gui.teamecon.boxes.ready": "選擇數量後開啟",
   "gui.teamecon.boxes.receipt": "本次獎品",
   "gui.teamecon.boxes.reward_page": "獎品 %s/%s · 滾輪翻頁",
-  "gui.teamecon.boxes.subtitle": "先看獎池，再選擇數量開啟",
+  "gui.teamecon.boxes.subtitle": "圖示下 ×N 表示獎品數量",
   "gui.teamecon.boxes.title": "盲盒小站",
   "gui.teamecon.boxes.total": "%s 個 · 共 %s 點",
   "gui.teamecon.boxes.unit_price": "%s 點 / 個",

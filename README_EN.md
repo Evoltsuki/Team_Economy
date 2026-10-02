@@ -63,7 +63,7 @@ Upgrading unlocks permission to use equipment. Machines must still be crafted or
 
 ![Scratch ticket purchase page with ticket types and face-value selection](docs/images/screenshots/scratch-purchase.png)
 
-The separate **Mystery Box Machine** shows its prize pools before you buy. Open 1, 10 or 64 boxes at a time and review the rewards. Pools include materials, valuable items and friendly or neutral mob spawn eggs available in your Minecraft version. Each draw uses the displayed pool; opening a batch does not increase an individual draw's odds.
+The separate **Mystery Box Machine** shows its prize pools before you buy. Open 1, 10 or 64 boxes at a time and review the rewards. Labels such as ×1 below the icons show item counts. Pools include materials, valuable items and friendly or neutral mob spawn eggs available in your Minecraft version. Each draw uses the displayed pool; opening a batch does not increase an individual draw's odds.
 
 ![Mystery box purchase page with prize preview and batch selection](docs/images/screenshots/blind-box-purchase.png)
 
