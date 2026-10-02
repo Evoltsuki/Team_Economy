@@ -37,7 +37,7 @@ public final class TooltipPriceHandler {
         // description id used to keep the type prefix and drop the namespace, so every lookup
         // missed and the tooltip never showed a price.
         String registryKey = PriceService.itemKeyStatic(stack.getItem());
-        if (!com.evolt.teamecon.price.TradePolicy.canSell(registryKey)) return;
+        if (!PriceService.plainModStack(stack)) return;
         long price = ClientPriceCache.priceOf(registryKey);
         if (price <= 0) {
             return;

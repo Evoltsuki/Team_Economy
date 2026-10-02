@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class PriceService {
 
     public enum Source {
-        BASE, DERIVED, FALLBACK, UNKNOWN
+        BASE, DERIVED, FALLBACK, CUSTOM, UNKNOWN
     }
 
     public record Result(long unitPrice, Source source) {
@@ -32,6 +32,22 @@ public final class PriceService {
     }
 
     private final BasePrices basePrices = new BasePrices();
+    private final PriceOverrides overrides = new PriceOverrides();
+    public PriceOverrides overrides() { return overrides; }
+    public boolean canSell(String key) {
+        return overrides.valid() && overrides.get(key).sell() != 0 && (TradePolicy.canSell(key)
+                || configurable(key) && !key.startsWith("teamecon:") && overrides.get(key).sell() > 0);
+    }
+    private static boolean configurable(String key) { return com.evolt.teamecon.shop.ShopCatalog.configurable(key); }
+    public boolean canSell(ItemStack stack) {
+        String key = itemKey(stack.getItem());
+        return canSell(key) && plainModStack(stack);
+    }
+    /** Explicit mod recycling accepts only the default item, never a filled/modified container. */
+    public static boolean plainModStack(ItemStack stack) {
+        return itemKeyStatic(stack.getItem()).startsWith("minecraft:")
+                || ItemStack.isSameItemSameComponents(stack, new ItemStack(stack.getItem()));
+    }
     private final com.evolt.teamecon.shop.ShopCatalog catalog = new com.evolt.teamecon.shop.ShopCatalog();
     private final com.evolt.teamecon.shop.ShopPricing shopPrices = new com.evolt.teamecon.shop.ShopPricing();
     private final MaterialGroups groups = new MaterialGroups();
@@ -69,11 +85,15 @@ public final class PriceService {
     public com.evolt.teamecon.shop.ShopCatalog catalog() { return catalog; }
     public boolean purchasable(String key) {
         ResourceLocation id = ResourceLocation.tryParse(key);
+        if (!overrides.valid() || !catalog.valid() || overrides.get(key).buy() == 0) return false;
+        if (overrides.get(key).buy() > 0) return configurable(key) && id != null && BuiltInRegistries.ITEM.containsKey(id);
         return catalog.allows(key) && id != null && BuiltInRegistries.ITEM.containsKey(id)
-                && (catalog.custom(key) || resolve(key).known());
+                && (catalog.custom(key) || defaultValue(key).known());
     }
     public long purchasePrice(String key, double markup) {
-        long floor = com.evolt.teamecon.economy.MoneyMath.buyPrice(resolve(key).unitPrice(), markup);
+        long value = overrides.get(key).sell() == 0 ? defaultValue(key).unitPrice() : resolve(key).unitPrice();
+        long floor = com.evolt.teamecon.economy.MoneyMath.buyPrice(value, markup);
+        if (overrides.get(key).buy() > 0) return Math.max(overrides.get(key).buy(), floor);
         return catalog.price(key, retailPrice(key, floor), floor);
     }
     public com.evolt.teamecon.shop.ShopPricing shopPrices() { return shopPrices; }
@@ -188,7 +208,17 @@ public final class PriceService {
         }
         out.putAll(basePrices.all());
         out.entrySet().removeIf(entry -> entry.getValue() <= 0 || !TradePolicy.canTrade(entry.getKey()));
+        overrides.all().forEach((key, entry) -> {
+            if (entry.sell() == 0) out.remove(key);
+            else if (entry.sell() > 0) out.put(key, entry.sell());
+        });
         return out;
+    }
+
+    public Map<String, Long> saleSnapshot() {
+        Map<String, Long> result = snapshot();
+        result.keySet().removeIf(key -> !canSell(key));
+        return result;
     }
 
     Long derivedValue(String itemKey) {
@@ -200,6 +230,13 @@ public final class PriceService {
     }
 
     public Result resolve(String itemKey) {
+        if (!overrides.valid()) return new Result(0L, Source.UNKNOWN);
+        long value = overrides.get(itemKey).sell();
+        if (value >= 0) return new Result(value, value == 0 ? Source.UNKNOWN : Source.CUSTOM);
+        return defaultValue(itemKey);
+    }
+
+    public Result defaultValue(String itemKey) {
         if (!TradePolicy.canTrade(itemKey)) return new Result(0L, Source.UNKNOWN);
         if (basePrices.has(itemKey)) {
             long value = basePrices.get(itemKey);

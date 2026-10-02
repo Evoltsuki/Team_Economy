@@ -57,7 +57,7 @@ public final class EconomyService {
     public long saleQuote(ServerPlayer player, ItemStack stack) {
         if (stack.isEmpty()) return -1;
         String key = prices.itemKey(stack.getItem());
-        if (!TradePolicy.canSell(key)) return -1;
+        if (!prices.canSell(stack)) return -1;
         var valued = prices.resolve(key);
         if (!valued.known()) return -1;
         UUID wallet = TeamUtil.walletKey(server, player.getUUID());
@@ -72,7 +72,7 @@ public final class EconomyService {
             return new SellResult(Outcome.NOT_PRICED, 0, 0, 0);
         }
         String itemKey = prices.itemKey(stack.getItem());
-        if (!TradePolicy.canSell(itemKey)) return new SellResult(Outcome.NOT_PRICED, 0, 0, 0);
+        if (!prices.canSell(stack)) return new SellResult(Outcome.NOT_PRICED, 0, 0, 0);
         PriceService.Result valued = prices.resolve(itemKey);
         if (!valued.known()) {
             return new SellResult(Outcome.NOT_PRICED, 0, 0, 0);
@@ -116,7 +116,7 @@ public final class EconomyService {
             ItemStack stack = container.getItem(i);
             if (stack.isEmpty()) continue;
             String key = prices.itemKey(stack.getItem());
-            if (!TradePolicy.canSell(key)) continue;
+            if (!prices.canSell(stack)) continue;
             var valued = prices.resolve(key);
             if (!valued.known()) continue;
             String group = prices.demandGroup(key);
@@ -197,7 +197,7 @@ public final class EconomyService {
 
     public PurchaseRules.Access purchaseAccess(ServerPlayer player, String itemKey) {
         var access = casino.itemAccess(player, manager, itemKey);
-        return access.unlocked() ? progression.item(player, itemKey, prices.catalog()) : access;
+        return access.unlocked() ? progression.item(player, itemKey, prices.catalog(), prices.overrides().get(itemKey).buy() > 0) : access;
     }
 
     public TeamEconomyManager manager() {

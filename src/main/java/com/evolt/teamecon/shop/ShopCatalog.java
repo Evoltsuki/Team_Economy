@@ -28,6 +28,7 @@ public final class ShopCatalog {
         return valid && !disabled.contains(id) && (offers.containsKey(id) || includeDefaults && TradePolicy.canTrade(id));
     }
     public String stage(String id) { return custom(id) ? offers.get(id).stage() : ""; }
+    public String configuredStage(String id) { return offers.containsKey(id) ? offers.get(id).stage() : ""; }
     public long price(String id, long ordinary, long resaleFloor) {
         return custom(id) ? Math.max(offers.get(id).price(), resaleFloor) : ordinary;
     }

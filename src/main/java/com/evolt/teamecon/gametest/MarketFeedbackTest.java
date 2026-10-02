@@ -62,14 +62,14 @@ public final class MarketFeedbackTest {
     }
 
     @GameTest(template="empty")
-    public static void vendingOpensSellWhileBlindBoxKeepsItsOwnPage(GameTestHelper h) {
+    public static void vendingRestoresPreferencesWhileBlindBoxKeepsItsOwnPage(GameTestHelper h) {
         var p=ProgressionTest.player(h,"default-tab");
         for (boolean box : new boolean[]{false,true}) {
             var block=box?ModRegistries.BLIND_BOX_MACHINE.get():ModRegistries.SHOP_MACHINE.get();
             var pos=h.absolutePos(new BlockPos(box?5:2,2,2));
             h.getLevel().setBlock(pos,block.defaultBlockState(),3);
             h.getLevel().getBlockState(pos).useWithoutItem(h.getLevel(),p,new BlockHitResult(Vec3.atCenterOf(pos),Direction.NORTH,pos,false));
-            h.assertTrue(p.containerMenu instanceof ShopMenu && ((ShopMenu)p.containerMenu).initialTab().equals(box?"boxes":"sell"),"Cabinet opened the wrong page");
+            h.assertTrue(p.containerMenu instanceof ShopMenu && ((ShopMenu)p.containerMenu).initialTab().equals(box?"boxes":"remember"),"Cabinet opened the wrong page");
             p.closeContainer();
         }
         h.succeed();

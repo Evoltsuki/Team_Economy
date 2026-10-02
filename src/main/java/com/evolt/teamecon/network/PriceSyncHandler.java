@@ -55,10 +55,7 @@ public final class PriceSyncHandler {
             return;
         }
         prices.clearDirty();
-        Map<String, Long> snapshot = prices.snapshot();
-        if (snapshot.isEmpty()) {
-            return;
-        }
+        Map<String, Long> snapshot = prices.saleSnapshot();
         PriceSyncPayload payload = new PriceSyncPayload(snapshot);
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             PacketDistributor.sendToPlayer(player, payload);

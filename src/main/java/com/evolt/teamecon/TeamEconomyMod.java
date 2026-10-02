@@ -86,6 +86,7 @@ public class TeamEconomyMod {
         // Base prices are also written to the config folder for easy editing.
         prices.basePrices().load(FMLPaths.CONFIGDIR.get().resolve("teamecon_base_prices.json"));
         prices.shopPrices().load(FMLPaths.CONFIGDIR.get());
+        prices.overrides().load(FMLPaths.CONFIGDIR.get());
         prices.setProvider(server.registryAccess());
         // Loot and drops have no recipe, so the rarity floor is what gives them value.
         prices.setRarityFallback(RarityFallback.fromConfig());

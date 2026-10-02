@@ -20,7 +20,7 @@ Team Economy adds material recycling, a points shop, shared team wallets and six
 
 ### Recycle materials and shop for supplies
 
-Vending Machines open on the **Sell** tab, which has a **27-slot staging area**. Add materials, review the quote for the entire batch, then confirm the sale. Points go directly into your wallet. Spend them on vanilla items and enchanted books, with category filters and searches by name, full pinyin, pinyin initials, item ID or `#tag`. For example, `jinding` or `jd` matches the Chinese name for a gold ingot.
+Vending Machines and `/teamecon shop` remember each player's last tab and restore it when reopened, including after a game restart. The first visit opens **Items**. Preferences are saved per player on the local client. The **Sell** tab has a **27-slot staging area**. Add materials, review the quote for the entire batch, then confirm the sale. Points go directly into your wallet. Spend them on vanilla items and enchanted books, with category filters and searches by name, full pinyin, pinyin initials, item ID or `#tag`. For example, `jinding` or `jd` matches the Chinese name for a gold ingot.
 
 Selling more of the same material lowers demand and its recycling value. Purchase prices are calculated separately. Default advancement requirements keep exploration and resource gathering part of survival progression.
 
@@ -138,6 +138,9 @@ These require **operator permission level 2 or higher**. Enable cheats to use th
 | `/teamecon admin level <level> [player]` | Set the target's current wallet level to 1–5, retaining their personal bypass setting |
 | `/teamecon admin bypass <true/false> [player]` | Enable or disable the personal advancement bypass without changing wallet level |
 | `/teamecon admin status [player]` | Show the target's wallet level, balance and personal bypass status |
+| `/teamecon admin prices` | Open the item pricing panel, selecting the held item when present |
+| `/teamecon reward <reward_id> <points> [player]` | Add a one-time quest reward to the target's current wallet |
+| `/teamecon_quest_reward <FTB_reward_id> <points> [player]` | Grant team points using an FTB reward ID |
 | `/teamecon admin reload` | Reload the mod's JSON configuration |
 
 **The bypass applies only to Team Economy and does not grant or remove vanilla advancements.** It persists per player and is not shared with teammates. Wallet level and balance belong to the current personal or team wallet, so changing a team wallet affects its members. Purchases still cost points, and item bans and trading restrictions still apply. `/teamecon admin advancements [player]` is an alias for enabling the bypass.
@@ -179,11 +182,31 @@ Server owners can customize prices, market demand, progression, equipment access
 
 Server owners can replace the default item catalogue, hide items, set purchase prices and explicitly add installed mod items. Mystery box pools support custom rewards, quantities, weights and per-pool switches. Changes apply with `/teamecon admin reload`. Modded items are not recyclable. See the [shop and mystery box examples](docs/server-configuration.md) and the [balance guide (Chinese)](docs/平衡配置指南.md).
 
+## In-game pricing and quest rewards
+
+Operators can open `/teamecon admin prices` to browse creative-style category tabs, an item grid and a scrollbar. Clicking an icon selects it for editing without taking an item. Search the whole catalogue by display name, item ID, Chinese pinyin or initials (`jinding` and `jd` find 金锭).
+
+![In-game item pricing panel with independent purchase and recycling prices](docs/images/screenshots/pricing-editor-en.png)
+
+The screenshot shows example operator overrides: purchase price 2,000 and base recycling price 80.
+
+Purchase and base recycling prices independently support **Inherit**, **Disabled** and **Custom**. Save applies the change immediately; Reset removes that item's overrides. Only edited entries are stored in `config/teamecon_price_overrides.json`. Purchase markup, equipment floors and progression rules still apply, while recycling proceeds depend on market demand. Mod items require an explicit recycling price and must match their default item state; modified or filled variants are not recycled. See [pricing configuration](docs/server-configuration.md).
+
+Quest authors can use the built-in command without an additional reward mod:
+
+```text
+teamecon reward yourpack:chapter1/start 100
+```
+
+For FTB Quests command rewards, execute as the claiming player, use permission level **2**, and enable **team_reward**. Rewards add to the player's current personal/team wallet, once per reward ID per wallet, with claims persisted in the world save. Console calls must append an online player name. Amounts range from 1 to 1,000,000,000; use a unique namespace for your pack.
+
+The `teamecon_quest_reward 7445429B27FE4CD5 25` command is also available. Quest content and amounts belong in your task configuration. See the [quest integration guide](docs/quest-rewards.md) for command behavior and the Java API.
+
 ## Common questions
 
 **What kind of economy is this?** Points are stored in personal or FTB team wallets and used for the system shop and games. The shop follows server rules; it does not provide player-managed listings, prices or stock.
 
-**Can I trade modded items?** The default catalog supports vanilla items and enchantments. Server owners can explicitly add installed mod items to the shop or mystery boxes through JSON configuration. Third-party items are not recyclable, and third-party enchantments are not sold. Team Economy equipment, terminals and tickets use their own acquisition menus and cannot be recycled.
+**Can I trade modded items?** The default catalog supports vanilla items and enchantments. Server owners can explicitly add installed mod items to the shop or mystery boxes through JSON configuration. Operators can explicitly enable recycling for individual mod items in the pricing panel; third-party enchantments are not sold. Team Economy equipment, terminals and tickets use their own acquisition menus and cannot be recycled.
 
 **Can points buy every item?** Some purchases require the player's vanilla advancements. Key loot such as elytra and nether stars is unavailable for purchase by default. Mystery boxes use their own displayed prize pools.
 

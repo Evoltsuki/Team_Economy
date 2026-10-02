@@ -204,12 +204,13 @@ public final class VisualQa {
 
     /** Only changed features are planned. A failed group can be rerun with -PqaScenarios=store, etc. */
     private static void plan() {
-        require(!SCENARIOS.isEmpty() && Set.of("store","machines","terminal","team","guide","boxes","hilo","food","showcase","readme").containsAll(SCENARIOS),
+        require(!SCENARIOS.isEmpty() && Set.of("store","machines","terminal","team","guide","boxes","hilo","food","showcase","readme","prices").containsAll(SCENARIOS),
                 "Unknown QA group: " + SCENARIOS);
         RESULTS.put("scenarios",String.join(",",SCENARIOS));
         until("test world ready", () -> worldReady);
         delay(40);
         if(SCENARIOS.contains("store"))planStore();
+        if(SCENARIOS.contains("prices"))planPrices();
         if(SCENARIOS.contains("machines"))planMachines();
         if(SCENARIOS.contains("boxes")&&!SCENARIOS.contains("store"))planBoxes();
         if(SCENARIOS.contains("hilo")&&!SCENARIOS.contains("machines"))planHilo();
@@ -286,12 +287,99 @@ public final class VisualQa {
         for(int next=manager.casinoLevel(wallet)+1;next<=5;next++)
             require(manager.upgradeCasinoLevel(wallet,next,TeamEconomyMod.get().casinoProgression().levelCost(next)),"Fixture upgrade failed");
     }
+    private static void pricingMode(boolean buy) {
+        var screen=(PriceAdminScreen)mc().screen;
+        int y=screen.getGuiTop()+(buy?94:146);
+        Button b=screen.children().stream().filter(e->e instanceof Button v && v.getY()==y).map(Button.class::cast).findFirst().orElseThrow();
+        double f=screenScale();screen.mouseClicked((b.getX()+8)*f,(b.getY()+8)*f,0);screen.mouseReleased((b.getX()+8)*f,(b.getY()+8)*f,0);
+    }
+    private static void pricingField(boolean buy,String value) {
+        mc().screen.children().stream().filter(EditBox.class::isInstance).map(EditBox.class::cast).toList().get(buy?1:2).setValue(value);
+    }
+    private static void pricingReady(){until("price response",()->mc().screen instanceof PriceAdminScreen s&&s.ready());delay(5);}
+    private static void planPrices() {
+        action("open OP pricing catalogue",()->server(p->{
+            p.getServer().getPlayerList().op(p.getGameProfile());p.getInventory().clearContent();
+            p.inventoryMenu.sendAllDataToRemote();com.evolt.teamecon.price.PriceAdminMenu.open(p);
+        }));
+        until("pricing screen open",()->mc().screen instanceof PriceAdminScreen);
+        delay(12);snapshot("prices-creative-grid");
+        for(String query:List.of("金锭","jinding","jd","minecraft:gold_ingot")){
+            action("pricing search "+query,()->{
+                edit(query);
+                require(mc().screen.children().stream().anyMatch(e->e instanceof Button b && b.visible && b.getMessage().getString().equals(Items.GOLD_INGOT.getDescription().getString())),"Gold absent for "+query);
+                checkLayout();
+            });
+            if(query.equals("jinding"))snapshot("prices-pinyin-search");
+        }
+        action("select gold without taking it",()->click(Items.GOLD_INGOT.getDescription().getString()));pricingReady();
+        action("edit gold prices",()->{pricingMode(true);pricingMode(true);pricingField(true,"2000");pricingMode(false);pricingMode(false);pricingField(false,"80");});
+        snapshot("prices-edit-gold");
+        action("save gold price",()->click("gui.teamecon.prices.save"));pricingReady();
+        action("verify accepted gold prices",()->{
+            var d=((PriceAdminScreen)mc().screen).currentPrice();
+            require(d.buy()==2000&&d.sell()==80&&d.effectiveBuy()==2000&&d.effectiveSell()==80,"Saved price differs");
+            require(((PriceAdminScreen)mc().screen).getMenu().slots.isEmpty()&&mc().player.getInventory().isEmpty(),"Editor generated items");
+        });snapshot("prices-saved-gold");
+        action("show pinyin alongside pricing",()->edit("jinding"));snapshot("prices-search-and-editor");
+        for(String language:List.of("en_us","zh_cn")) {
+            action("pricing language "+language,()->{closeScreen();mc().getLanguageManager().setSelected(language);mc().options.languageCode=language;languageReload=mc().reloadResourcePacks();});
+            until("pricing language ready",()->languageReload.isDone()&&mc().getOverlay()==null);
+            action("open held item pricing",()->server(p->{p.setItemInHand(InteractionHand.MAIN_HAND,new ItemStack(Items.GOLD_INGOT));com.evolt.teamecon.price.PriceAdminMenu.open(p);}));
+            pricingReady();
+            action("search selected gold",()->edit(language.equals("en_us")?"gold ingot":"jinding"));
+            snapshot(language.equals("en_us")?"prices-editor-en":"prices-editor-zh");
+        }
+        for(int scale:List.of(1,4,0)){
+            action("pricing scale "+scale,()->{scale(scale);checkLayout();});snapshot("prices-scale-"+scale);
+        }
+        action("restore gold defaults",()->{scale(2);click("gui.teamecon.prices.restore");});pricingReady();
+        action("verify defaults",()->require(((PriceAdminScreen)mc().screen).currentPrice().sell()==-1,"Reset not saved"));
+        action("find mod item",()->{edit("teamecon_qa:pricing_sample");click("item.teamecon_qa.pricing_sample");});pricingReady();
+        action("configure mod item",()->{pricingMode(true);pricingMode(true);pricingField(true,"200");pricingMode(false);pricingMode(false);pricingField(false,"30");click("gui.teamecon.prices.save");});pricingReady();
+        action("verify real mod purchase and recycling",()->server(p->{
+            String id="teamecon_qa:pricing_sample";var mod=TeamEconomyMod.get();
+            var item=net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.minecraft.resources.ResourceLocation.parse(id));
+            var wallet=TeamUtil.walletKey(p.getServer(),p.getUUID());mod.economy().manager().setBalance(wallet,10000);
+            require(mod.shop().buyItem(p,item,1).outcome()==com.evolt.teamecon.shop.ShopService.Outcome.OK,"Mod purchase denied");
+            require(mod.economy().manager().getBalance(wallet)==9800,"Mod purchase price differs");
+            ItemStack delivered=p.getInventory().items.stream().filter(s->s.is(item)).findFirst().orElseThrow();
+            long quote=mod.economy().saleQuote(p,delivered);
+            require(quote>0&&mod.economy().sell(p,delivered).total()==quote,"Mod recycling quote differs");
+            ItemStack named=new ItemStack(item);named.set(DataComponents.CUSTOM_NAME,Component.literal("Modified sample"));
+            require(!mod.prices().canSell(named),"Modified mod item was accepted");
+            var loaded=new com.evolt.teamecon.price.PriceOverrides();loaded.load(net.neoforged.fml.loading.FMLPaths.CONFIGDIR.get());
+            require(loaded.get(id).buy()==200&&loaded.get(id).sell()==30,"Overrides did not persist");
+            p.getInventory().clearContent();p.inventoryMenu.sendAllDataToRemote();
+        }));delay(8);
+        action("reset mod overrides",()->click("gui.teamecon.prices.restore"));pricingReady();
+        action("close pricing editor",VisualQa::closeScreen);
+        action("pricing complete",()->RESULTS.put("prices","passed"));
+    }
+
     private static void planStore(){
         action("view both revised two-block cabinets",()->camera(34,64.4,5.8,180,-2));delay(18);snapshot("store-cabinets-front");
         action("view shop side surfaces",()->camera(30.5,64.5,2.9,-141,-3));delay(12);snapshot("store-shop-side");
         action("view box side surfaces",()->camera(37.5,64.5,2.9,141,-3));delay(12);snapshot("store-box-side");
         action("view rear service panels",()->camera(34,64.5,-3.5,0,-2));delay(12);snapshot("store-cabinets-rear");
-        action("approach revised storefront",()->camera(32.5,64,3.9,180,-8));delay(12);openShop();
+        action("approach revised storefront",()->camera(32.5,64,3.9,180,-8));delay(12);
+        action("reset isolated QA player preference",()->com.evolt.teamecon.client.ShopTabPreferences.remember(
+                mc().gameDirectory.toPath().resolve("config"),mc().player.getUUID(),"items"));
+        openShop(false);
+        action("initial items page",()->require(hasButton("gui.teamecon.shop.category.all"),"Items page not restored"));
+        action("remember sale page",()->click("gui.teamecon.shop.tab.sell"));
+        action("close sale page",VisualQa::closeScreen);delay(5);openShop(false);
+        action("sale page restored on reopen",()->{
+            require(((ShopScreen)mc().screen).getMenu().getSlot(0).isActive(),"Reopened shop lost sale page");
+            require(hasButton("gui.teamecon.shop.sell_stack"),"Reopened shop lost sale controls");
+        });snapshot("store-remembered-sell");
+        action("remember items page",()->click("gui.teamecon.shop.tab.items"));
+        action("close items page",VisualQa::closeScreen);delay(5);openShop(false);
+        action("items page restored on reopen",()->{
+            require(hasButton("gui.teamecon.shop.category.all"),"Reopened shop lost items page");
+            require(!((ShopScreen)mc().screen).getMenu().getSlot(0).isActive(),"Sale slots active on items page");
+            RESULTS.put("shopPageMemory","sale and items restored after closing and reopening");
+        });
         action("visible categories and increased page capacity",()->{
             var screen=(ShopScreen)mc().screen;
             require(screen.pageCapacity()>=50,"Compact shop must retain at least 50 products per page");
@@ -851,17 +939,18 @@ public final class VisualQa {
         var advancement=Objects.requireNonNull(player.getServer().getAdvancements().get(net.minecraft.resources.ResourceLocation.parse(id)));
         for(String criterion:advancement.value().criteria().keySet())player.getAdvancements().award(advancement,criterion);
     }
-    private static void openShop(){
+    private static void openShop(){ openShop(true); }
+    private static void openShop(boolean browseItems){
         action("open storefront",()->server(p->{
             p.getInventory().selected=1;p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket(1));
             p.level().getBlockState(SHOP).useWithoutItem(p.level(),p,new BlockHitResult(Vec3.atCenterOf(SHOP),Direction.SOUTH,SHOP,false));
         }));
         until("storefront catalogue ready",()->mc().screen instanceof ShopScreen shop&&ClientShopCache.containerId()==shop.getMenu().containerId&&ClientShopCache.items().size()>1000&&ClientCasinoProgression.ready());
-        action("vending defaults to active sale slots",()->{
+        action("vending requests last-page preference",()->{
             var menu=((ShopScreen)mc().screen).getMenu();
-            require(menu.initialTab().equals("sell")&&menu.getSlot(0).isActive(),"Vending machine did not open Sell");
-        });snapshot("store-default-sell");
-        action("browse vending items",()->click("gui.teamecon.shop.tab.items"));
+            require(menu.initialTab().equals("remember"),"Vending machine forced a page");
+        });
+        if(browseItems)action("browse vending items",()->click("gui.teamecon.shop.tab.items"));
     }
     private static void openTerminal(){
         action("open wireless terminal",()->mc().gameMode.useItem(mc().player,InteractionHand.MAIN_HAND));

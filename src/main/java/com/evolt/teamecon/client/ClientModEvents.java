@@ -62,5 +62,6 @@ public final class ClientModEvents {
         event.<com.evolt.teamecon.shop.ShopMenu, net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<com.evolt.teamecon.shop.ShopMenu>>register(ModRegistries.SHOP_MENU.value(), (menu, inventory, title) -> menu.boxesOnly()
                 ? new BlindBoxScreen(menu, inventory, title) : new ShopScreen(menu, inventory, title));
         event.register(ModRegistries.SCRATCH_MENU.value(), ScratchCardScreen::new);
+        event.register(ModRegistries.PRICE_ADMIN_MENU.value(), PriceAdminScreen::new);
     }
 }

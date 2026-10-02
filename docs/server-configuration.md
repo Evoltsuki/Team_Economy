@@ -11,6 +11,34 @@
 
 这些 JSON 位于游戏目录，而非每个存档目录；同一客户端实例的单人世界共用它们。起始余额、购买加价等 TOML 设置位于 `存档/serverconfig/teamecon-server.toml`，建议停服修改。不会自动覆盖服主已有的自定义 JSON。
 
+## 游戏内定价面板
+
+执行 `/teamecon admin prices`（OP 2）。分类标签来自创造模式物品栏；点击网格物品编辑，手持物品时自动选中。输入名称、注册 ID、全拼或拼音首字母可搜索全部物品。面板按物品注册 ID 定价，不区分药水、附魔或自定义数据变体；附魔书购买使用专用附魔目录。
+
+购买与回收两个方向分别设置：沿用默认、不允许交易，或自定义正整数价格。点击保存后立即应用，点击恢复默认删除该物品的面板覆盖。「原规则参考值」来自基础材料与配方等已有规则；面板只覆盖该物品的交易价格，不改变其他配方的材料基础值。调整整条材料链仍使用 `teamecon_base_prices.json`。
+
+文件在首次保存时创建：`config/teamecon_price_overrides.json`。
+
+```json
+{
+  "version": 1,
+  "items": {
+    "minecraft:gold_ingot": {"buy": 200, "sell": 64},
+    "create:iron_sheet": {"buy": 80, "sell": 20},
+    "minecraft:diamond": {"buy": 0}
+  }
+}
+```
+
+- `buy`：玩家购买价；`sell`：系统基础回收价。缺省或 `-1` 沿用原配置，`0` 关闭，正整数设置价格（上限 1,000,000,000）。最多 4,096 项。
+- 面板覆盖优先于目录中的商品价和下架设置；不绕过禁用物品、钱包等级、进度、阶段或设备底价。购买价仍不低于回收估价乘以 `shop.buyMarkup`，面板显示实际生效值。
+- 原版回收默认规则保留。第三方回收默认关闭，只有明确的正数 `sell` 才能开启；仅接受与默认物品数据相同的物品。带自定义名称、附魔、额外库存或储能等非默认数据的变体不回收。本模组设备和票卡不回收。
+- 文件只保存覆盖项。保存保留上一份 `.bak`，恢复默认只移除所选物品的覆盖。多人同时编辑时会拒绝旧修订；外部编辑文件后先执行 `/teamecon admin reload`。
+- 非法覆盖文件会关闭物品买卖，修复并重载后恢复；失败的保存不会改动当前生效表。价格保存会重新检查盲盒和附魔书的价格约束。
+- 本配置与其他 JSON 一样由游戏实例共用。实际回收仍计算市场需求；明确调低/调高单件价格可能影响合成路线收益，需要服主结合整合包配方选择。
+
+English: `/teamecon admin prices` opens the operator-only creative-style editor with name, ID and pinyin search. `buy` and `sell` independently use missing/`-1` for inherited settings, `0` for disabled trading, or a positive custom price. Values override individual trades, not recipe anchors. Explicit mod recycling accepts default-state stacks only. Save applies immediately; external edits require `/teamecon admin reload`.
+
 ## 自定义商店
 
 文件：`config/teamecon_shop_catalog.json`。下面的完整例子只出售面包、铁锭和橡木原木：
@@ -38,7 +66,7 @@
 
 默认 `includeDefaultItems=true`、两数组为空。删除自定义项后重载，该项恢复默认目录行为；要确保下架，应加入 `disabledItems` 或使用仅自定义模式。数组各最多 4,096 项，不支持通配符或标签；同一商品不能重复。
 
-例如，安装相应模组后可添加 `{"item":"create:iron_sheet","price":80}`。没有安装的物品会记录日志且不会显示。第三方物品只按明确的购买配置上架，**不参与本模组回收**。
+例如，安装相应模组后可添加 `{"item":"create:iron_sheet","price":80}`。没有安装的物品会记录日志且不会显示。第三方物品按明确的购买配置上架；目录文件只控制购买。回收需在定价面板中单独设置正数回收价。
 
 自定义价格覆盖普通商店的稀有度购买底价，但仍不低于物品回收估价 × `shop.buyMarkup`。游戏机与终端仍受 `teamecon_casino_levels.json` 中的设备底价限制。价格和目录不会解除原有进度、钱包等级与 `sellOnly` 规则；这些在 `teamecon_progression.json` / `teamecon_casino_levels.json` 中分别配置。普通商店、终端及 `/teamecon buy` 共用同一目录和价格。
 

@@ -46,13 +46,16 @@ public final class PurchaseRules {
         return com.evolt.teamecon.price.TradePolicy.canTrade(id) ? check(player, id, items) : Access.locked("mod_disabled");
     }
     public Access item(ServerPlayer player, String id, ShopCatalog catalog) {
+        return item(player, id, catalog, false);
+    }
+    public Access item(ServerPlayer player, String id, ShopCatalog catalog, boolean adminOffer) {
         if (!catalog.valid()) return Access.locked("config");
-        if (!catalog.allows(id)) return Access.locked("catalog");
-        String stage = catalog.stage(id);
+        if (!adminOffer && !catalog.allows(id)) return Access.locked("catalog");
+        String stage = adminOffer ? catalog.configuredStage(id) : catalog.stage(id);
         if (!stage.isEmpty() && TeConfig.SHOP.useTeamStages.get()
                 && !com.evolt.teamecon.team.TeamUtil.hasStage(server, player.getUUID(), stage))
             return Access.locked("stage:" + stage);
-        return check(player, id, items, catalog.custom(id));
+        return check(player, id, items, adminOffer || catalog.custom(id));
     }
     public Access enchantment(ServerPlayer player, String id) {
         return id != null && id.startsWith("minecraft:") ? check(player, id, enchantments) : Access.locked("mod_disabled");

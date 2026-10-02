@@ -84,7 +84,7 @@ public final class ShopService {
     public com.evolt.teamecon.scratch.ScratchCardService cards() { return cards; }
     public PurchaseRules.Access itemAccess(ServerPlayer player, String key) {
         var access = casino.itemAccess(player, manager, key);
-        return access.unlocked() ? progression.item(player, key, prices.catalog()) : access;
+        return access.unlocked() ? progression.item(player, key, prices.catalog(), prices.overrides().get(key).buy() > 0) : access;
     }
 
     public Result upgradeLevel(ServerPlayer player, int expectedNextLevel) {
@@ -132,7 +132,8 @@ public final class ShopService {
     }
 
     public List<String> itemCatalog() {
-        return java.util.stream.Stream.concat(prices.snapshot().keySet().stream(), prices.catalog().customItems().stream())
+        return java.util.stream.Stream.of(prices.snapshot().keySet().stream(), prices.catalog().customItems().stream(),
+                        prices.overrides().all().keySet().stream(), prices.basePrices().all().keySet().stream()).flatMap(s -> s)
                 .distinct().filter(key -> !key.equals("minecraft:enchanted_book"))
                 .filter(key -> pricesItem(key) != null).sorted().toList();
     }

@@ -27,6 +27,7 @@ public final class ShopNetwork {
     }
 
     public static void register(RegisterPayloadHandlersEvent event) {
+        PriceAdminNetwork.register(event);
         event.registrar("7")
                 .playToServer(ShopActionPayload.TYPE, ShopActionPayload.STREAM_CODEC, ShopNetwork::handleAction)
                 .playToClient(ShopSyncPayload.TYPE, ShopSyncPayload.STREAM_CODEC,

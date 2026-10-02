@@ -29,7 +29,10 @@ public final class ModCommands {
     }
 
     public static void register(RegisterCommandsEvent event) {
+        if (!net.neoforged.fml.ModList.get().isLoaded("teamecon_quests"))
+            event.getDispatcher().register(QuestRewardCommand.command("teamecon_quest_reward"));
         event.getDispatcher().register(Commands.literal("teamecon")
+                .then(QuestRewardCommand.command("reward"))
                 .executes(ctx -> {
                     ctx.getSource().sendSuccess(() -> Component.translatable("command.teamecon.help"), false);
                     return 1;
@@ -53,6 +56,10 @@ public final class ModCommands {
                 .then(Commands.literal("admin")
                         .requires(source -> source.hasPermission(2))
                         .then(Commands.literal("kit").executes(ModCommands::adminMachine))
+                        .then(Commands.literal("prices").executes(ctx -> {
+                            com.evolt.teamecon.price.PriceAdminMenu.open(ctx.getSource().getPlayerOrException());
+                            return 1;
+                        }))
                         .then(Commands.literal("unlock").executes(ctx -> adminProgress(ctx, 5, true))
                                 .then(Commands.argument("player", EntityArgument.player()).executes(ctx -> adminProgress(ctx, 5, true))))
                         .then(Commands.literal("advancements").executes(ctx -> adminProgress(ctx, 0, true))
@@ -150,6 +157,7 @@ public final class ModCommands {
         PriceService.Result result = economy.prices().resolve(key);
         String text = switch (result.source()) {
             case BASE -> "command.teamecon.price_base";
+            case CUSTOM -> "command.teamecon.price_custom";
             case DERIVED -> "command.teamecon.price_derived";
             case FALLBACK -> "command.teamecon.price_fallback";
             default -> "command.teamecon.price_unknown";

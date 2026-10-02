@@ -11,6 +11,7 @@ public enum TxType {
     GAMBLE_LOSS("gamble_loss"),
     BLINDBOX("blindbox"),
     REFUND("refund"),
+    QUEST("quest"),
     ADMIN("admin");
 
     private final String key;

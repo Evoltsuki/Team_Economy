@@ -42,7 +42,12 @@ public class ShopScreen extends CompactContainerScreen<ShopMenu> {
     private final Map<String,SearchText> searchKeys=new HashMap<>();
     private Row selected;
 
-    public ShopScreen(ShopMenu menu, Inventory inventory, Component title) { super(menu,inventory,title); try{tab=Tab.valueOf(menu.initialTab().toUpperCase(Locale.ROOT));}catch(IllegalArgumentException ignored){} }
+    public ShopScreen(ShopMenu menu, Inventory inventory, Component title) {
+        super(menu,inventory,title);
+        String initial = menu.initialTab().equals("remember") ? ShopTabPreferences.last(
+                net.minecraft.client.Minecraft.getInstance().gameDirectory.toPath().resolve("config"), inventory.player.getUUID()) : menu.initialTab();
+        try { tab = Tab.valueOf(initial.toUpperCase(Locale.ROOT)); } catch (IllegalArgumentException ignored) { }
+    }
     private boolean ready() { return ClientShopCache.containerId()==menu.containerId && ClientCasinoProgression.ready(); }
     public int pageCapacity() { return columns*rows; }
 
@@ -60,6 +65,8 @@ public class ShopScreen extends CompactContainerScreen<ShopMenu> {
             Tab value=shownTabs[i];
             addRenderableWidget(new StoreButton(8+i*tabWidth,35,tabWidth-2,18,tr("tab."+value.name().toLowerCase(Locale.ROOT)),()->{
                 tab=value; amount=1; page=0; selectedId=""; query=""; filterMode=""; mod=""; category=Category.ALL;
+                if (menu.initialTab().equals("remember")) ShopTabPreferences.remember(minecraft.gameDirectory.toPath().resolve("config"),
+                        minecraft.player.getUUID(), value.name().toLowerCase(Locale.ROOT));
                 selectedLevel=Math.min(5,ClientCasinoProgression.level()+1); rebuildWidgets();
             },()->tab==value));
         }

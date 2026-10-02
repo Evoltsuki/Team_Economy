@@ -161,14 +161,14 @@ def generate(mc,qa=False):
     if dest.exists(): shutil.rmtree(dest)
     for p in (ROOT/'src/main/java').rglob('*.java'):
         rel=p.relative_to(ROOT/'src/main/java')
-        if 'gametest' in rel.parts and p.name not in ('ConcurrentMachinesTest.java', 'AdminUnlockTest.java', 'ServerConfigurationTest.java', 'MarketFeedbackTest.java'): continue
+        if 'gametest' in rel.parts and p.name not in ('ConcurrentMachinesTest.java', 'AdminUnlockTest.java', 'ServerConfigurationTest.java', 'MarketFeedbackTest.java', 'PriceAdminTest.java', 'QuestRewardsTest.java'): continue
         source=p.read_text(encoding='utf-8')
         if p.name == 'ServerConfigurationTest.java' and mc == '1.21.1':
             # Forge 52 has no FakePlayerFactory; use the existing inert connection fixture.
             source = source.replace('import net.neoforged.neoforge.common.util.FakePlayerFactory;', '')
             source = re.sub(r'FakePlayerFactory.get\(h.getLevel\(\), new GameProfile\(UUID.randomUUID\(\), ("[^"]+")\)\)',
                             r'PortSmokeTest.player(h, \1)', source)
-        if p.name in ('ConcurrentMachinesTest.java', 'AdminUnlockTest.java', 'MarketFeedbackTest.java'):
+        if p.name in ('ConcurrentMachinesTest.java', 'AdminUnlockTest.java', 'MarketFeedbackTest.java', 'PriceAdminTest.java', 'QuestRewardsTest.java'):
             source=source.replace('ProgressionTest.player(', 'PortSmokeTest.player(')
             if mc=='1.20.1': source=source.replace(',h.getLevel().registryAccess()', '')
         if p.name == 'MarketFeedbackTest.java' and mc == '1.20.1':

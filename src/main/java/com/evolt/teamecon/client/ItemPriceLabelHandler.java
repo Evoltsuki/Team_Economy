@@ -64,7 +64,7 @@ public final class ItemPriceLabelHandler {
                 continue;
             }
             String itemKey = PriceService.itemKeyStatic(stack.getItem());
-            if (!com.evolt.teamecon.price.TradePolicy.canSell(itemKey)) continue;
+            if (!com.evolt.teamecon.price.PriceService.plainModStack(stack)) continue;
             Long price = table.priceOf(itemKey);
             if (price == null || price <= 0L) {
                 continue;

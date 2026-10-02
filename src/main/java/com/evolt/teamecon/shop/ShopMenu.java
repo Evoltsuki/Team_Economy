@@ -14,7 +14,7 @@ public class ShopMenu extends AbstractContainerMenu {
     public static final int SALE_SLOTS = 27;
     private final BlockPos pos;
     private boolean remote;
-    private String initialTab="items";
+    private String initialTab="remember";
     private long lastRequest;
     private long nextActionTick;
     private boolean catalogSent;

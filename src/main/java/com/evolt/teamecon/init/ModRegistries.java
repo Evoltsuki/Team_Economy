@@ -130,6 +130,9 @@ public final class ModRegistries {
     public static final DeferredHolder<MenuType<?>, MenuType<ShopMenu>> SHOP_MENU =
             MENUS.register("shop", () -> net.neoforged.neoforge.common.extensions.IMenuTypeExtension.create(ShopMenu::new));
 
+    public static final DeferredHolder<MenuType<?>, MenuType<com.evolt.teamecon.price.PriceAdminMenu>> PRICE_ADMIN_MENU =
+            MENUS.register("price_admin", () -> net.neoforged.neoforge.common.extensions.IMenuTypeExtension.create(com.evolt.teamecon.price.PriceAdminMenu::new));
+
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN_TAB =
             CREATIVE_TABS.register("main", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.teamecon"))
