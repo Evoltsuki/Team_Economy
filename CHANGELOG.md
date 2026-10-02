@@ -2,28 +2,44 @@
 
 ## 1.0.1 — 待发布 / Unreleased
 
-- 保留商店深青色与盲盒深紫色的外观；定价、盲盒管理、终端、刮卡、下注窗口与 HUD 使用协调的深色面板，统一按钮、输入框、物品格、选中状态和文字层级。
+以下为相较 **1.0.0** 的变化。
 
-- 自动售货机与 `/teamecon shop` 自动恢复每位玩家上次使用的页签，偏好保存在本机客户端，重启游戏后仍保留；首次使用打开「商品」页。盲盒机与无线终端的指定页面入口保持各自用途。
-- 商店支持中文名称的全拼与拼音首字母搜索。例如「金锭」可输入 `jinding` 或 `jd`，同时支持简体、繁体以及 `lv` / `lü` 输入。名称、物品 ID 与 `#标签` 搜索继续可用。
-- 盲盒奖品格右上角显示概率，下方以「×数量」标注奖品数量；默认奖池增加普通、喷溅及滞留药水，并保留具体效果。
-- 新增 `/teamecon admin boxes` 容器式管理面板：从背包拖放或 Shift 点击添加奖品样板，拖动换位、右键移除，原物不消耗；支持新增/编辑/删除箱种、设置名称与价格、搜索奖品及药水、调整数量与中奖百分比（小数输入、合计 100% 校验）。
-- 批量开启按实际结果发放，背包溢出奖品持久保存为待领取；可从盲盒机或 `/teamecon claimboxes` 领取，领完前不再开启新批次。
-- 金属块、宝石块、红石块、煤炭块、青金石块与干草块按基础材料数量估价，不叠加可逆压缩的合成加价。默认金锭为 64 点，金块基础估价为 576 点；实际回收收入仍受市场需求影响。服主明确设置的方块基础价格优先。
+### 新增
 
-- 新增 `/teamecon admin prices` 创造物品栏式定价面板，支持中文、物品 ID、全拼和首字母搜索；分别设置购买与回收价格，保存生效并可恢复默认。支持显式开启第三方普通物品回收。
-- 内置任务奖励命令 `/teamecon reward` 和 `/teamecon_quest_reward`，提供团队钱包追加积分、持久化防重复领取及 Java API；沿用现有任务奖励领取记录。
+- 新增物品定价面板 `/teamecon admin prices`，支持按分类浏览及名称、物品 ID、拼音搜索，分别设置购买价与回收价，并可为第三方模组物品启用回收。
+- 新增盲盒管理面板 `/teamecon admin boxes`，支持自定义箱种、名称、价格和奖池；可从背包拖放奖品，设置数量及中奖百分比。
+- 将任务奖励功能合并至主模组，提供 `/teamecon reward`、`/teamecon_quest_reward` 命令及 Java API，无需单独安装任务奖励附属模组。
+
+### 改进
+
+- 自动售货机与 `/teamecon shop` 记忆每位玩家上次打开的页签，重启游戏后自动恢复。
+- 商店新增中文全拼与拼音首字母搜索，支持简体、繁体及 `lv` / `lü` 输入。
+- 盲盒奖池预览新增中奖概率，奖品数量改用「×N」标注。
+- 默认盲盒奖池新增多种普通、喷溅和滞留药水。
+
+### 修复
+
+- 修复批量开启盲盒因背包容量不足而受阻的问题。超出背包容量的奖品保存为待领取，可通过盲盒机或 `/teamecon claimboxes` 领取。
+- 修正金属块、宝石块、红石块、煤炭块、青金石块和干草块的基础估价，移除可逆压缩配方的额外合成加价。默认金锭基础价为 64 点，金块为 576 点。
 
 ### English
 
-- Preserved the teal shop and violet mystery-box appearances. Pricing, box management, terminal, scratch tickets, stake controls and HUDs use coordinated dark panels with consistent controls, item slots, selection states and text hierarchy.
+Changes since **1.0.0**.
 
-- Vending Machines and `/teamecon shop` restore each player's last tab, saved on the local client across game restarts. First-time users start on **Items**. Mystery Box Machines and Wireless Terminal shortcuts retain their designated pages.
-- Shop searches accept full pinyin and initials for Chinese display names, including simplified/traditional text and `lv` / `lü` input. Name, item ID and `#tag` searches remain available.
-- Mystery box tiles show prize chances and × counts. Default pools include normal, splash and lingering potions with their actual effects.
-- Added `/teamecon admin boxes` with a chest-style prize template grid: drag or Shift-click inventory samples, rearrange them and right-click to remove without consuming items. Create, edit and delete box types, names, prices and prize percentages, with decimal input, a 100% total check and item/potion search.
-- Batch openings deliver the actual draws and persist overflow prizes for later collection through the box screen or `/teamecon claimboxes`; pending batches must be claimed before opening more.
-- Metal and gem storage blocks, redstone/coal/lapis blocks and hay bales use the value of their base materials without reversible crafting markup. With defaults, a gold ingot is valued at 64 points and a gold block at 576 before demand adjustments. Explicit server base-price overrides take precedence.
+#### Added
 
-- Added a creative-style operator pricing panel with name/ID/pinyin search, independent purchase and recycling overrides, instant save and reset, and explicit mod-item recycling.
-- Added built-in quest reward commands and a Java API, with additive wallet credits and persistent per-wallet claims, including existing quest reward claim records.
+- Added `/teamecon admin prices`, an item pricing panel with category browsing and name, item ID and pinyin search. Purchase and recycling prices can be set independently, including recycling prices for modded items.
+- Added `/teamecon admin boxes` to manage box types, names, prices and prize pools. Prizes can be dragged from the inventory and assigned quantities and percentage chances.
+- Integrated quest rewards into the main mod, with `/teamecon reward`, `/teamecon_quest_reward` and a Java API. The separate quest reward add-on is no longer required.
+
+#### Changed
+
+- Vending Machines and `/teamecon shop` remember each player's last tab across game restarts.
+- Added full pinyin and initials search for Chinese item names, including simplified/traditional text and `lv` / `lü` input.
+- Mystery box previews now display prize probabilities and mark item quantities with ×N.
+- Added normal, splash and lingering potions to the default mystery box pools.
+
+#### Fixed
+
+- Fixed batch mystery box openings being blocked by insufficient inventory space. Overflow prizes are saved for collection through the box machine or `/teamecon claimboxes`.
+- Corrected base values for metal and gem storage blocks, redstone blocks, coal blocks, lapis blocks and hay bales by removing the reversible crafting markup. Default base values are 64 points for a gold ingot and 576 for a gold block.
