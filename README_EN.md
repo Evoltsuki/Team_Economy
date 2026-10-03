@@ -2,9 +2,9 @@
 
 [简体中文](README.md)
 
-This document describes **1.0.1 (unreleased)**. The current public release is **1.0.0**.
+Current release: **1.0.1**.
 
-[Download 1.0.0](https://github.com/Evoltsuki/Team_Economy/releases/tag/v1.0.0) · [Source code](https://github.com/Evoltsuki/Team_Economy) · [Changelog](CHANGELOG.md) · [Report an issue](https://github.com/Evoltsuki/Team_Economy/issues)
+[Download 1.0.1](https://github.com/Evoltsuki/Team_Economy/releases/tag/v1.0.1) · [Source code](https://github.com/Evoltsuki/Team_Economy) · [Changelog](CHANGELOG.md) · [Report an issue](https://github.com/Evoltsuki/Team_Economy/issues)
 
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1%20%7C%201.21%20%7C%201.21.1-5C913B) ![Loaders](https://img.shields.io/badge/Loaders-NeoForge%20%7C%20Forge-D97834) ![Version](https://img.shields.io/badge/Version-1.0.1-3979A8)
 
@@ -95,7 +95,7 @@ The [web gameplay guide (Chinese)](docs/试玩指南.md) is available without Pa
 
 Download the JAR matching the Minecraft version and loader from [Releases](https://github.com/Evoltsuki/Team_Economy/releases), and place it in the instance’s `mods/` folder. Install one matching JAR per instance. Multiplayer requires the same Minecraft version, loader and mod file on the client and server.
 
-The table lists **1.0.1 targets and filenames**; published downloads are listed on the release page.
+The table lists **1.0.1 targets and filenames**.
 
 | Minecraft | Loader version | Java | File |
 |---|---|---|---|

@@ -2,9 +2,9 @@
 
 [English README](README_EN.md)
 
-本文对应 **1.0.1 待发布版本**；当前公开发行版为 **1.0.0**。
+当前版本：**1.0.1**。
 
-[下载 1.0.0](https://github.com/Evoltsuki/Team_Economy/releases/tag/v1.0.0) · [源码仓库](https://github.com/Evoltsuki/Team_Economy) · [更新日志](CHANGELOG.md) · [问题反馈](https://github.com/Evoltsuki/Team_Economy/issues)
+[下载 1.0.1](https://github.com/Evoltsuki/Team_Economy/releases/tag/v1.0.1) · [源码仓库](https://github.com/Evoltsuki/Team_Economy) · [更新日志](CHANGELOG.md) · [问题反馈](https://github.com/Evoltsuki/Team_Economy/issues)
 
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1%20%7C%201.21%20%7C%201.21.1-5C913B) ![Loaders](https://img.shields.io/badge/Loaders-NeoForge%20%7C%20Forge-D97834) ![Version 1.0.1](https://img.shields.io/badge/Version-1.0.1-3979A8)
 
@@ -97,7 +97,7 @@ Team Economy 是适用于 Minecraft 生存模式的经济与小游戏模组，�
 
 从 [Releases](https://github.com/Evoltsuki/Team_Economy/releases) 下载与 Minecraft 版本和加载器对应的 JAR，放入实例的 `mods/` 目录。每个实例仅安装一个对应版本；多人游戏的客户端与服务端须使用相同的 Minecraft 版本、加载器和模组文件。
 
-下表为 **1.0.1 的支持版本与文件名**，公开发行版以下载页面为准。
+下表列出 **1.0.1 的支持版本与文件名**。
 
 | Minecraft | 加载器版本 | Java | 安装文件 |
 |---|---|---|---|
