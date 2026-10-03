@@ -1,5 +1,23 @@
 # 更新日志 / Changelog
 
+## 未发布 / Unreleased
+
+### 中文
+
+- 盲盒管理支持从可选 JEI 侧栏直接拖入奖品样板，无需开启作弊取物；背包拖放与 Shift 点击仍可使用。
+- 修改奖品概率时，其余奖项自动按原比例分配剩余概率；新增与移除奖品后自动保持合计 100%。
+- 支持将尸壳等原版敌对生物刷怪蛋加入自定义奖池，区分模组物品未开启与额外物品数据不支持的提示。
+- 改善盲盒界面文字清晰度，统一管理面板与盲盒机的本地化箱种名称；恢复背包与 JEI 物品详情在不同界面缩放下的显示。
+- 团队计分板改用透明背景和带阴影文字。
+
+### English
+
+- Drag prize templates directly from the optional JEI sidebar without cheat mode. Inventory drag-and-drop and Shift-click remain available.
+- Editing a prize chance redistributes the remainder proportionally; adding or removing prizes automatically keeps the total at 100%.
+- Custom pools accept vanilla hostile spawn eggs, including Husks. Messages distinguish disabled modded items from unsupported extra item data.
+- Improved mystery-box text clarity and consistent localized box names in both screens. Restored inventory and JEI item tooltips at different GUI scales.
+- The team scoreboard now uses a transparent background with shadowed text.
+
 ## 1.0.1 — 2026-10-03
 
 以下为相较 **1.0.0** 的变化。

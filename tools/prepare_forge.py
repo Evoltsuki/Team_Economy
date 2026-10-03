@@ -61,6 +61,9 @@ def translate(s, name, mc):
             return;
         }''','''        AbstractContainerScreen<?> screen = event.getContainerScreen();''')
     if old:
+        if name.endswith('TeamEconomyJei.java'):
+            for method in ('screenClass','guiLeft','guiTop','guiXSize','guiYSize','screenWidth','screenHeight'):
+                s=s.replace(method+'()', 'get'+method[0].upper()+method[1:]+'()')
         s = s.replace('RenderGuiEvent','RenderGuiOverlayEvent')
         s = re.sub(r'(RenderGuiOverlayEvent.Post event\)\s*\{)', r'\1\n        if (!event.getOverlay().id().getPath().equals("hotbar")) return;', s)
     elif name.endswith(('MachineHud.java','TeamBoardHud.java')):

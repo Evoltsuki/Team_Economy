@@ -35,11 +35,11 @@ public final class BlindBoxScreen extends CompactContainerScreen<ShopMenu> {
         return ClientShopCache.boxes().stream().filter(p->p.poolId().equals(poolId)).findFirst().orElse(null);
     }
     private int poolCapacity() { return Math.max(1,(imageHeight-137)/38); }
-    private int prizeColumns() { return Math.max(1,(imageWidth-leftWidth-38)/34); }
-    private int prizeCapacity() { return prizeColumns()*Math.max(1,(imageHeight-191)/34); }
+    private int prizeColumns() { return Math.max(1,(imageWidth-leftWidth-38)/38); }
+    private int prizeCapacity() { return prizeColumns()*Math.max(1,(imageHeight-191)/38); }
 
     @Override protected void init() {
-        imageWidth=360;imageHeight=260;super.init();
+        imageWidth=360;imageHeight=280;super.init();
         menu.showSales(false);leftWidth=imageWidth>=380?126:100;amountButtons.clear();
         var pools=ready()?ClientShopCache.boxes():List.<ClientShopCache.BoxRow>of();
         if(pool()==null&&!pools.isEmpty())poolId=pools.getFirst().poolId();
@@ -137,20 +137,18 @@ public final class BlindBoxScreen extends CompactContainerScreen<ShopMenu> {
         rewardPage=Math.clamp(rewardPage,0,Math.max(0,(shown.size()-1)/capacity));
         int start=rewardPage*capacity;
         for(int i=start;i<Math.min(shown.size(),start+capacity);i++){
-            var prize=shown.get(i);int dx=x+(i-start)%prizeColumns()*34,dy=94+(i-start)/prizeColumns()*34;
+            var prize=shown.get(i);int dx=x+(i-start)%prizeColumns()*38,dy=94+(i-start)/prizeColumns()*38;
             boolean rare=preview&&com.evolt.teamecon.shop.BoxPrizePolicy.exclusive(prize.itemKey());
-            g.fill(dx,dy,dx+31,dy+31,rare?0xFF775E35:0xFF30273C);
+            g.fill(dx,dy,dx+35,dy+35,rare?0xFF775E35:0xFF30273C);
             var id=ResourceLocation.tryParse(prize.itemKey());
             ItemStack icon=prize.itemKey().equals("minecraft:air")?new ItemStack(Items.PAPER):prize.stack();
-            g.renderItem(icon,dx+7,dy+8);
+            g.renderItem(icon,dx+9,dy+10);
             if(preview){
                 String chance=chanceLabel(prize);
-                g.pose().pushPose();g.pose().translate(dx+30,dy+1,0);g.pose().scale(.625F,.625F,1);
-                g.drawString(font,chance,-font.width(chance),0,GOLD,false);g.pose().popPose();
+                g.drawString(font,chance,dx+34-font.width(chance),dy+1,GOLD,false);
             }
             String count=prize.itemKey().equals("minecraft:air")?"—":"×"+prize.count();
-            g.pose().pushPose();g.pose().translate(dx+15,dy+25,0);g.pose().scale(.625F,.625F,1);
-            g.drawString(font,count,-font.width(count)/2,0,WHITE,false);g.pose().popPose();
+            g.drawString(font,count,dx+17-font.width(count)/2,dy+26,WHITE,false);
         }
         fit(g,tr("page",rewardPage+1,Math.max(1,(shown.size()+capacity-1)/capacity)),x+22,imageHeight-96,w-44,DULL);
         long cost=selected==null?0:MoneyMath.total(selected.price(),amount);
@@ -162,8 +160,8 @@ public final class BlindBoxScreen extends CompactContainerScreen<ShopMenu> {
         super.renderPanel(g,mx,my,partial);
         var shown=displayed();int start=rewardPage*prizeCapacity(),x=leftPos+leftWidth+28;
         for(int i=start;i<Math.min(shown.size(),start+prizeCapacity());i++){
-            int dx=x+(i-start)%prizeColumns()*34,dy=topPos+94+(i-start)/prizeColumns()*34;
-            if(mx>=dx&&mx<dx+31&&my>=dy&&my<dy+31){
+            int dx=x+(i-start)%prizeColumns()*38,dy=topPos+94+(i-start)/prizeColumns()*38;
+            if(mx>=dx&&mx<dx+35&&my>=dy&&my<dy+35){
                 var prize=shown.get(i);var id=ResourceLocation.tryParse(prize.itemKey());
                 Component name=prize.itemKey().equals("minecraft:air")?tr("no_prize"):prize.stack().getHoverName();
                 var lines=new ArrayList<Component>();lines.add(name.copy().append(" ×"+prize.count()));
@@ -204,6 +202,9 @@ public final class BlindBoxScreen extends CompactContainerScreen<ShopMenu> {
         @Override protected void renderWidget(GuiGraphics g,int mx,int my,float partial){frame(g);String value=font.plainSubstrByWidth(getMessage().getString(),width-8);g.drawString(font,value,getX()+(width-font.width(value))/2,getY()+(height-8)/2,active?WHITE:DULL,false);}
     }
     private void fit(GuiGraphics g,Component text,int x,int y,int w,int color){g.drawString(font,font.plainSubstrByWidth(text.getString(),Math.max(1,w)),x,y,color,false);}
-    private static Component poolName(String id){var configured=ClientShopCache.boxes().stream().filter(p->p.poolId().equals(id)).findFirst().orElse(null);if(configured!=null&&!configured.name().isEmpty())return Component.literal(configured.name());String key="shop.teamecon.pool."+id;return net.minecraft.client.resources.language.I18n.exists(key)?Component.translatable(key):Component.literal(id);}
+    private static Component poolName(String id){
+        var configured=ClientShopCache.boxes().stream().filter(p->p.poolId().equals(id)).findFirst().orElse(null);
+        return BoxNames.display(id,configured==null?"":configured.name());
+    }
     private static Component tr(String key,Object...args){return Component.translatable("gui.teamecon.boxes."+key,args);}
 }

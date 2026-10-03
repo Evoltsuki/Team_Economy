@@ -1,0 +1,8 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.evolt.teamecon.client.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": ["ContainerRenderCoordinates"],
+  "injectors": {"defaultRequire": 1}
+}

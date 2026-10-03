@@ -8,6 +8,28 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BoxChancesTest {
+    @Test void editedChanceKeepsItsValueAndPreservesOtherRatios(){
+        var rows=entries("[{\"slot\":0,\"chance\":50},{\"slot\":12,\"chance\":30},{\"slot\":90,\"chance\":20}]");
+        var balanced=BoxChances.rebalance(rows,0,25_000_000);
+        assertArrayEquals(new int[]{25_000_000,45_000_000,30_000_000},BoxChances.weights(balanced));
+        assertEquals(50_000_000,BoxChances.entryUnits(rows.get(0).getAsJsonObject()));
+        assertEquals(90,balanced.get(2).getAsJsonObject().get("slot").getAsInt());
+    }
+    @Test void additionsRemovalAndRoundingStayAtOneHundredPercent(){
+        var rows=entries("[{\"slot\":0,\"chance\":100},{\"slot\":1,\"chance\":50}]");
+        var balanced=BoxChances.rebalance(rows,1,50_000_000);
+        assertArrayEquals(new int[]{50_000_000,50_000_000},BoxChances.weights(balanced));
+        balanced.remove(0);
+        assertArrayEquals(new int[]{100_000_000},BoxChances.weights(BoxChances.rebalance(balanced,-1,0)));
+        var thirds=entries("[{\"slot\":1,\"chance\":1},{\"slot\":2,\"chance\":1},{\"slot\":3,\"chance\":1}]");
+        assertArrayEquals(new int[]{33_333_334,33_333_333,33_333_333},BoxChances.weights(BoxChances.rebalance(thirds,-1,0)));
+    }
+    @Test void changingAOneHundredPercentPrizeCanReviveTheOtherPrizes(){
+        var rows=entries("[{\"slot\":0,\"chance\":100},{\"slot\":1,\"chance\":0},{\"slot\":2,\"chance\":0}]");
+        assertArrayEquals(new int[]{50_000_000,25_000_000,25_000_000},BoxChances.weights(BoxChances.rebalance(rows,0,50_000_000)));
+        assertArrayEquals(new int[]{0,100_000_000,0},BoxChances.weights(BoxChances.rebalance(rows,1,100_000_000)));
+        assertTrue(BoxChances.rebalance(new JsonArray(),-1,0).isEmpty());
+    }
     @TempDir Path dir;
     private JsonArray entries(String json){return JsonParser.parseString(json).getAsJsonArray();}
     private JsonObject pool(JsonArray entries){

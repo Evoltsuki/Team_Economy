@@ -382,6 +382,34 @@ public final class VisualQa {
             method.setAccessible(true);method.invoke(screen,screen.getMenu().getSlot(slot),slot,0,net.minecraft.world.inventory.ClickType.QUICK_MOVE);
         }catch(ReflectiveOperationException ex){throw new IllegalStateException(ex);}
     }
+    private static void jeiSample(BoxAdminScreen screen,ItemStack stack,int slot){
+        if(net.neoforged.fml.ModList.get().isLoaded("jei"))JeiProbe.sample(screen,stack,slot);
+        else screen.acceptJeiSample(stack,slot);
+    }
+    /** Keep optional API verification out of the always-loaded event subscriber. */
+    private static final class JeiProbe {
+        @SuppressWarnings("unchecked")
+        static void sample(BoxAdminScreen screen,ItemStack stack,int slot){
+        final mezz.jei.api.gui.handlers.IGhostIngredientHandler<BoxAdminScreen>[] registered=new mezz.jei.api.gui.handlers.IGhostIngredientHandler[1];
+        var registration=(mezz.jei.api.registration.IGuiHandlerRegistration)java.lang.reflect.Proxy.newProxyInstance(
+                VisualQa.class.getClassLoader(),new Class[]{mezz.jei.api.registration.IGuiHandlerRegistration.class},(proxy,method,args)->{
+                    if(method.getName().equals("addGhostIngredientHandler"))registered[0]=(mezz.jei.api.gui.handlers.IGhostIngredientHandler<BoxAdminScreen>)args[1];
+                    return null;
+                });
+        new com.evolt.teamecon.client.compat.TeamEconomyJei().registerGuiHandlers(registration);
+        var ingredient=new mezz.jei.api.ingredients.ITypedIngredient<ItemStack>(){
+            public mezz.jei.api.ingredients.IIngredientType<ItemStack> getType(){return mezz.jei.api.constants.VanillaTypes.ITEM_STACK;}
+            public ItemStack getIngredient(){return stack;}
+        };
+        var targets=registered[0].getTargetsTyped(screen,ingredient,true);
+        int cell=slot-screen.prizePage()*BoxAdminScreen.PAGE_SIZE;
+        require(targets.size()==Math.min(54,128-screen.prizePage()*54),"JEI drop targets missing");
+        require(targets.get(cell).getArea().getX()==screen.prizeArea(slot).getX(),"JEI target not in screen coordinates");
+        var carried=screen.getMenu().getCarried().copy();targets.get(cell).accept(stack);registered[0].onComplete();
+        require(ItemStack.matches(carried,screen.getMenu().getCarried()),"JEI template changed cursor contents");
+        }
+    }
+
     private static void planBoxAdmin(){
         action("prepare box editor",()->{
             org.lwjgl.glfw.GLFW.glfwSetWindowSize(mc().getWindow().getWindow(),1600,900);scale(2);
@@ -390,30 +418,37 @@ public final class VisualQa {
                 p.getInventory().setItem(11,new ItemStack(Items.EMERALD,4));p.getInventory().setItem(12,new ItemStack(Items.GOLD_INGOT,4));
                 p.inventoryMenu.sendAllDataToRemote();com.evolt.teamecon.shop.BoxAdminMenu.open(p);});
         });boxAdminReady();snapshot("box-admin-overview");
+        snapshot("box-admin-inventory-tooltip",()->{
+            var screen=(BoxAdminScreen)mc().screen;var slot=screen.getMenu().getSlot(0);
+            pointAt(screen.getGuiLeft()+slot.x+8,screen.getGuiTop()+slot.y+8);
+        });
+        if(net.neoforged.fml.ModList.get().isLoaded("jei"))snapshot("box-admin-jei-tooltip",()->
+                pointAt((mc().getWindow().getGuiScaledWidth()-16)/screenScale(),36/screenScale()));
+        for(int guiScale:new int[]{3,4}){
+            action("tooltip GUI scale "+guiScale,()->scale(guiScale));delay(4);
+            snapshot("box-admin-inventory-tooltip-scale"+guiScale,()->{
+                var screen=(BoxAdminScreen)mc().screen;var slot=screen.getMenu().getSlot(0);
+                pointAt(screen.getGuiLeft()+slot.x+8,screen.getGuiTop()+slot.y+8);
+            });
+            if(net.neoforged.fml.ModList.get().isLoaded("jei"))snapshot("box-admin-jei-tooltip-scale"+guiScale,()->
+                    pointAt((mc().getWindow().getGuiScaledWidth()-16)/screenScale(),36/screenScale()));
+        }
+        action("restore tooltip GUI scale",()->scale(2));
         action("new custom box",()->{
             click("gui.teamecon.box_admin.new");
             field("gui.teamecon.box_admin.id").setValue("alchemy");field("gui.teamecon.box_admin.name").setValue("炼金盲盒");field("gui.teamecon.box_admin.price").setValue("100");
-            click("gui.teamecon.box_admin.cap_on");click("gui.teamecon.box_admin.add");
-            field("gui.teamecon.box_admin.search").setValue("zhiliao");
-            require(hasButton("item.minecraft.potion.effect.healing"),"Pinyin search did not find a healing potion");
-        });snapshot("box-admin-potion-search");
-        action("choose healing potion",()->{
-            click("item.minecraft.potion.effect.healing");field("gui.teamecon.box_admin.percent").setValue("12.5%");click("gui.teamecon.box_admin.apply");
-            click("gui.teamecon.box_admin.add");field("gui.teamecon.box_admin.search").setValue("minecraft:swiftness");
-            click("item.minecraft.potion.effect.swiftness");field("gui.teamecon.box_admin.percent").setValue("25");click("gui.teamecon.box_admin.apply");
-        });snapshot("box-admin-under-100");
-        action("incomplete percentages cannot save",()->{
-            click("gui.teamecon.box_admin.save");
-            require(((BoxAdminScreen)mc().screen).ready(),"Incomplete draft was sent to server");
-            require(com.evolt.teamecon.shop.BoxChances.totalUnits(((BoxAdminScreen)mc().screen).currentPool().getAsJsonArray("entries"))==37_500_000,"Draft percentages were silently normalized");
-            require(TeamEconomyMod.get().shop().boxAdmin().pool("alchemy")==null,"Incomplete pool persisted");
-            field("gui.teamecon.box_admin.percent").setValue("100");click("gui.teamecon.box_admin.apply");
-        });snapshot("box-admin-over-100");
-        action("excess percentages cannot save",()->{
-            click("gui.teamecon.box_admin.save");require(((BoxAdminScreen)mc().screen).ready(),"Excess draft was sent to server");
-            require(TeamEconomyMod.get().shop().boxAdmin().pool("alchemy")==null,"Excess pool persisted");
+            click("gui.teamecon.box_admin.cap_on");
+            require(!hasButton("gui.teamecon.box_admin.add"),"Obsolete add button still visible");
+            var screen=(BoxAdminScreen)mc().screen;
+            jeiSample(screen,new com.evolt.teamecon.shop.BoxReward("minecraft:potion","minecraft:healing",1).stack(),0);
+            require(com.evolt.teamecon.shop.BoxChances.totalUnits(screen.currentPool().getAsJsonArray("entries"))==100_000_000,"First prize is not 100%");
+            jeiSample(screen,new ItemStack(Items.HUSK_SPAWN_EGG),1);
+            require(screen.currentPool().getAsJsonArray("entries").size()==2,"Husk sample was rejected");
+            jeiSample(screen,new com.evolt.teamecon.shop.BoxReward("minecraft:potion","minecraft:swiftness",1).stack(),1);
             field("gui.teamecon.box_admin.percent").setValue("87.5");click("gui.teamecon.box_admin.apply");
-            require(com.evolt.teamecon.shop.BoxChances.totalUnits(((BoxAdminScreen)mc().screen).currentPool().getAsJsonArray("entries"))==100_000_000,"Decimal percentages did not total 100");
+            var grid=new com.evolt.teamecon.shop.BoxPrizeGrid(screen.currentPool().getAsJsonArray("entries"));
+            require(com.evolt.teamecon.shop.BoxChances.entryUnits(grid.get(0))==12_500_000,"Other prize did not adjust to 12.5%");
+            require(com.evolt.teamecon.shop.BoxChances.entryUnits(grid.get(1))==87_500_000,"Chosen prize changed");
         });snapshot("box-admin-edit-pool");
         action("shift copy inventory stack into prize template",()->{
             shiftBoxInventory(0);require(mc().player.getInventory().countItem(Items.IRON_INGOT)==16,"Shift sample consumed inventory");
@@ -433,7 +468,7 @@ public final class VisualQa {
             require(((BoxAdminScreen)mc().screen).currentPool().getAsJsonArray("entries").size()==2,"Right click did not remove samples");
             require(mc().player.getInventory().countItem(Items.DIAMOND)==8&&mc().player.getInventory().countItem(Items.IRON_INGOT)==16,"Template movement changed real inventory");
         });
-        action("show exact percentage before saving",()->boxClick(120,74,0));snapshot("box-admin-percentages");
+        action("show exact percentage before saving",()->{boxClick(120,74,0);field("gui.teamecon.box_admin.percent").setValue("12.5");click("gui.teamecon.box_admin.apply");});snapshot("box-admin-percentages");
         action("save custom pool",()->click("gui.teamecon.box_admin.save"));boxAdminReady();
         action("custom pool saved without spawning items",()->{
             require(((BoxAdminScreen)mc().screen).currentPool().get("id").getAsString().equals("alchemy"),"Custom box not saved");
@@ -441,7 +476,7 @@ public final class VisualQa {
             boxClick(142,237,0);require(((BoxAdminScreen)mc().screen).getMenu().getCarried().getCount()==8,"Inventory pickup failed");closeScreen();
         });delay(5);
         action("reopen saved box editor",()->server(com.evolt.teamecon.shop.BoxAdminMenu::open));boxAdminReady();
-        action("select persisted pool",()->click("alchemy"));boxAdminReady();
+        action("select persisted pool",()->click("炼金盲盒"));boxAdminReady();
         action("verify persisted fields",()->{
             require(mc().player.getInventory().countItem(Items.DIAMOND)==8&&((BoxAdminScreen)mc().screen).getMenu().getCarried().isEmpty(),"Closing the editor lost or duplicated the real cursor stack");
             var pool=((BoxAdminScreen)mc().screen).currentPool();require(pool.get("price").getAsLong()==100&&pool.getAsJsonArray("entries").size()==2,"Pool did not persist");
@@ -474,7 +509,7 @@ public final class VisualQa {
             action("box editor language "+language,()->{closeScreen();mc().getLanguageManager().setSelected(language);mc().options.languageCode=language;languageReload=mc().reloadResourcePacks();});
             until("box editor language ready",()->languageReload.isDone()&&mc().getOverlay()==null);
             action("open translated box editor",()->server(com.evolt.teamecon.shop.BoxAdminMenu::open));boxAdminReady();
-            action("select translated custom pool",()->click("alchemy"));boxAdminReady();
+            action("select translated custom pool",()->click("炼金盲盒"));boxAdminReady();
             action("show translated prize percentages",()->boxClick(120,74,0));
             if(language.equals("en_us"))snapshot("box-admin-en");
         }
@@ -497,16 +532,19 @@ public final class VisualQa {
         until("overflow saved on server",()->ClientShopCache.balance()==balanceBefore-7680&&ClientShopCache.pending().stream().mapToInt(ClientShopCache.PrizeRow::count).sum()==28);
         action("view pending prizes",()->click("gui.teamecon.boxes.pending"));snapshot("boxes-pending-64");
         action("reopen with pending rewards",()->{closeScreen();server(p->com.evolt.teamecon.shop.ShopMenu.open(p,SHOP.east(3),false,"boxes"));});
-        until("pending survives menu reopen",()->mc().screen instanceof BlindBoxScreen&&ClientShopCache.pending().stream().mapToInt(ClientShopCache.PrizeRow::count).sum()==28);
+        until("pending survives menu reopen",()->mc().screen instanceof BlindBoxScreen screen
+                &&ClientShopCache.containerId()==screen.getMenu().containerId
+                &&ClientShopCache.pending().stream().mapToInt(ClientShopCache.PrizeRow::count).sum()==28);
         action("make room for remaining prizes",()->server(p->{p.getInventory().clearContent();p.inventoryMenu.sendAllDataToRemote();}));delay(5);
+        until("empty inventory synchronized",()->mc().player.getInventory().isEmpty());
         action("claim overflow without another charge",()->click("gui.teamecon.boxes.claim"));
         until("all pending prizes claimed",()->ClientShopCache.pending().isEmpty()&&mc().player.getInventory().countItem(Items.POTION)==28);
         action("verify claim balance",()->require(ClientShopCache.balance()==balanceBefore-7680,"Claim charged again"));
         action("close claim view",VisualQa::closeScreen);delay(5);
         action("open editor for cleanup",()->server(com.evolt.teamecon.shop.BoxAdminMenu::open));boxAdminReady();
-        action("select custom box for deletion",()->click("alchemy"));boxAdminReady();
+        action("select custom box for deletion",()->click("炼金盲盒"));boxAdminReady();
         action("delete custom box with confirmation",()->{click("gui.teamecon.box_admin.delete");click("gui.teamecon.box_admin.confirm_delete");});boxAdminReady();
-        action("deleted box absent",()->{require(!hasButton("alchemy"),"Deleted pool still appears");closeScreen();RESULTS.put("boxadmin","passed");});
+        action("deleted box absent",()->{require(!hasButton("炼金盲盒"),"Deleted pool still appears");closeScreen();RESULTS.put("boxadmin","passed");});
     }
 
     private static void planStore(){
@@ -592,6 +630,8 @@ public final class VisualQa {
         planBoxes();
     }
     private static void planBoxes(){
+        action("prepare independent box inventory",()->server(p->{p.getInventory().clearContent();p.inventoryMenu.sendAllDataToRemote();}));
+        until("independent box inventory cleared",()->mc().player.getInventory().isEmpty());
         action("approach independent box counter",()->camera(35.5,64.3,4.2,180,-5));delay(10);
         action("open independent box screen without advancements",()->server(p->com.evolt.teamecon.shop.ShopMenu.open(p,SHOP.east(3),false,"boxes")));
         until("independent box catalogue loaded",()->mc().screen instanceof BlindBoxScreen box&&ClientShopCache.containerId()==box.getMenu().containerId&&!ClientShopCache.boxes().isEmpty());
@@ -1222,6 +1262,12 @@ public final class VisualQa {
         finished = true;
         try { GameplayCapture.stop(); } catch (RuntimeException ex) { error.addSuppressed(ex); }
         String detail = (STEPS.isEmpty() ? "startup" : STEPS.getFirst().name()) + ": " + error;
+        if(mc().player!=null){
+            RESULTS.put("failure-state","screen="+(mc().screen==null?"none":mc().screen.getClass().getSimpleName())
+                    +", menu="+mc().player.containerMenu.containerId+", cache="+ClientShopCache.containerId()
+                    +", pending="+ClientShopCache.pending()+", potions="+mc().player.getInventory().countItem(Items.POTION)
+                    +", message="+ClientShopCache.messageKey());
+        }
         TeamEconomyMod.LOGGER.error("VISUAL_QA_FAILED: " + detail, error);
         writeReport("failed", detail); mc().stop();
     }

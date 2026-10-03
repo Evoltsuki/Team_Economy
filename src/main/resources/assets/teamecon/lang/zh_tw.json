@@ -491,11 +491,11 @@
   "gui.teamecon.box_admin.name": "顯示名稱",
   "gui.teamecon.box_admin.box_tab": "箱種設定",
   "gui.teamecon.box_admin.prize_tab": "獎品設定",
-  "gui.teamecon.box_admin.template_subtitle": "獎品樣板欄 · 放入只記錄樣板，不消耗物品",
-  "gui.teamecon.box_admin.inventory_hint": "背包拖放或 Shift 點選新增 · 拖動樣板換位 · 右鍵移除",
+  "gui.teamecon.box_admin.template_subtitle": "從 JEI 或背包拖放獎品 · 不消耗原物",
+  "gui.teamecon.box_admin.inventory_hint": "拖入 JEI 或背包物品；Shift 點擊背包可快速新增。",
   "gui.teamecon.box_admin.slot_hint": "點選設定數量與百分比；拖動換位；右鍵移除",
   "gui.teamecon.box_admin.sample_added": "已記錄獎品樣板，背包原物保留",
-  "gui.teamecon.box_admin.unsupported_sample": "物品或附加資料不支援；模組物品需開啟，改名/附魔等暫不支援",
+  "gui.teamecon.box_admin.unsupported_sample": "此樣板含有暫不支援的附加資料（改名、附魔或容器內容）。",
   "gui.teamecon.box_admin.full": "獎品欄已滿（最多 128 項）",
   "gui.teamecon.box_admin.grid_page": "第 %s / %s 頁",
   "gui.teamecon.box_admin.percent": "中獎機率（%）",
@@ -506,5 +506,9 @@
   "gui.teamecon.box_admin.remaining_short": "剩餘",
   "gui.teamecon.box_admin.allocation_footer": "已分配 %s%% · %s %s%% · 合計 100%% 後儲存",
   "gui.teamecon.box_admin.percent_invalid": "機率請輸入 0–100，最多六位小數（可帶 %%）",
-  "gui.teamecon.box_admin.total_invalid": "各獎品機率合計須為 100%%，請調整已分配與剩餘"
+  "gui.teamecon.box_admin.total_invalid": "各獎品機率合計須為 100%%，請調整已分配與剩餘",
+  "gui.teamecon.box_admin.auto_balance": "其餘獎品自動調整",
+  "gui.teamecon.box_admin.auto_footer": "修改機率後自動調整其餘獎品；拖入物品即可新增",
+  "gui.teamecon.box_admin.unsupported_item": "此物品不能作為獎品。",
+  "gui.teamecon.box_admin.mods_required": "請先在盲盒設定中開啟「第三方物品」。"
 }

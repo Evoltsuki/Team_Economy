@@ -14,6 +14,26 @@ import java.util.*;
 @GameTestHolder("teamecon")
 public final class BoxFeaturesTest {
     @GameTest(template="empty")
+    public static void hostileEggCanBeSavedAndDeliveredAsACustomPrize(GameTestHelper h)throws Exception{
+        var p=ProgressionTest.player(h,"box-husk");p.getInventory().clearContent();
+        Path dir=Files.createTempDirectory("teamecon-box-husk-");
+        try{
+            Files.writeString(dir.resolve("teamecon_blindbox.json"),"{\"version\":1,\"pools\":[]}");
+            var admin=new BoxAdminConfig();admin.load(dir);
+            var draft=com.google.gson.JsonParser.parseString("""
+                {"id":"hostile","name":"敌对生物","price":10,"enforceValueCap":false,"entries":[{"item":"minecraft:husk_spawn_egg","chance":100}]}
+                """).getAsJsonObject();
+            h.assertTrue(BoxReward.fromStack(new ItemStack(Items.HUSK_SPAWN_EGG)).itemKey().equals("minecraft:husk_spawn_egg"),"Husk sample rejected");
+            admin.save("",draft,false,admin.revision(),TeamEconomyMod.get().prices());
+            h.assertTrue(admin.headers().get(0).getAsJsonObject().get("name").getAsString().equals("敌对生物"),"Configured name lost from headers");
+            var manager=new TeamEconomyManager();var wallet=TeamUtil.walletKey(p.getServer(),p.getUUID());manager.setBalance(wallet,100);
+            var shop=new ShopService(p.getServer(),manager,TeamEconomyMod.get().prices());shop.loadConfigs(dir);
+            h.assertTrue(shop.buyBlindBox(p,"hostile",1).outcome()==ShopService.Outcome.OK,"Configured husk box could not be bought");
+            h.assertTrue(p.getInventory().countItem(Items.HUSK_SPAWN_EGG)==1&&manager.getBalance(wallet)==90,"Husk prize not delivered exactly once");
+            h.succeed();
+        }finally{try(var files=Files.list(dir)){for(Path f:files.toList())Files.delete(f);}Files.delete(dir);}
+    }
+    @GameTest(template="empty")
     public static void sixtyFourPotionsPersistOverflowAndClaimExactlyOnce(GameTestHelper h)throws Exception{
         var p=ProgressionTest.player(h,"box-potions");p.getInventory().clearContent();
         var manager=new TeamEconomyManager();var wallet=TeamUtil.walletKey(p.getServer(),p.getUUID());manager.setBalance(wallet,10000);

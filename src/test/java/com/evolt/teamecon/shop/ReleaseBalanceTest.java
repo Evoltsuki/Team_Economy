@@ -70,11 +70,15 @@ class ReleaseBalanceTest {
         assertEquals(.1,eggs.stream().mapToInt(ShopPool.Entry::weight).sum()/10000D,1e-12);
     }
 
-    @Test void livestockRewardsCannotOpenOrdinaryTradingOrDangerousEggs() {
+    @Test void customEggPrizesDoNotEnableOrdinaryTrading() {
         for(String id:BoxPrizePolicy.EGGS) {
             assertTrue(BoxPrizePolicy.allowed(id));assertFalse(TradePolicy.canTrade(id));assertFalse(TradePolicy.canSell(id));
         }
-        for(String id:new String[]{"minecraft:zombie_spawn_egg","minecraft:blaze_spawn_egg","minecraft:warden_spawn_egg","minecraft:spawner","example:cow_spawn_egg"})
+        for(String id:new String[]{"minecraft:husk_spawn_egg","minecraft:zombie_spawn_egg","minecraft:blaze_spawn_egg","minecraft:warden_spawn_egg"}){
+            assertTrue(BoxPrizePolicy.allowed(id));assertFalse(TradePolicy.canTrade(id));assertFalse(TradePolicy.canSell(id));
+            assertFalse(BoxPrizePolicy.EGGS.contains(id));
+        }
+        for(String id:new String[]{"minecraft:spawner","example:cow_spawn_egg"})
             assertFalse(BoxPrizePolicy.allowed(id));
     }
 
@@ -84,7 +88,7 @@ class ReleaseBalanceTest {
         var shop = new ShopService(null, null, null);
         assertTrue(shop.boxAccess(null, pools.byId("rare")).unlocked(),
                 "The shipped treasure pool must remain purchasable with prize-only eggs");
-        for (String id : new String[]{"minecraft:zombie_spawn_egg", "minecraft:spawner", "example:cow_spawn_egg"}) {
+        for (String id : new String[]{"minecraft:spawner", "example:cow_spawn_egg"}) {
             var json = com.google.gson.JsonParser.parseString("""
                     {"id":"invalid","price":512,"stage":"","entries":[{"item":"%s","count":1,"weight":1}]}
                     """.formatted(id)).getAsJsonObject();

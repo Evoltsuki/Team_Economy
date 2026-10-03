@@ -93,6 +93,25 @@ public final class PortClientQa {
             p.teleportTo(world,13,66,12,180,10);p.getAbilities().flying=true;p.onUpdateAbilities();serverReady=true;
         }));
         until("world ready",()->serverReady);delay(25);shot("machines");
+        action("open box editor",()->server(p->{
+            p.getServer().getPlayerList().op(p.getGameProfile());
+            p.getInventory().setItem(9,new ItemStack(net.minecraft.world.item.Items.IRON_INGOT,16));
+            BoxAdminMenu.open(p);
+        }));
+        until("box editor synchronized",()->mc().screen instanceof BoxAdminScreen screen&&screen.ready());
+        for(int guiScale:new int[]{2,0}){
+            action("box editor scale "+guiScale,()->{mc().options.guiScale().set(guiScale);mc().resizeDisplay();});delay(5);
+            action("hover inventory item "+guiScale,()->{
+                var screen=(BoxAdminScreen)mc().screen;var slot=screen.getMenu().getSlot(0);
+                pointAt((screen.getGuiLeft()+slot.x+8)*screen.panelScale(),(screen.getGuiTop()+slot.y+8)*screen.panelScale());
+                require(slot.getItem().is(net.minecraft.world.item.Items.IRON_INGOT),"Editor inventory did not synchronize");
+            });shot("box-editor-inventory-tooltip-"+guiScale);
+            if(net.neoforged.fml.ModList.get().isLoaded("jei")){
+                action("hover JEI item "+guiScale,()->pointAt(mc().getWindow().getGuiScaledWidth()-20,mc().getWindow().getGuiScaledHeight()*.57));
+                shot("box-editor-jei-tooltip-"+guiScale);
+            }
+        }
+        action("close box editor",()->{mc().screen.onClose();mc().options.guiScale().set(2);mc().resizeDisplay();});delay(5);
         action("open shop",()->server(p->ShopMenu.open(p,null,true,"items")));
         until("shop catalog arrived",()->mc().screen instanceof ShopScreen&&!ClientShopCache.items().isEmpty());shot("shop");
         action("automatic GUI scale",()->{mc().options.guiScale().set(0);mc().resizeDisplay();});shot("shop-auto");
@@ -124,6 +143,15 @@ public final class PortClientQa {
         try{Files.createDirectories(output());try(var image=Screenshot.takeScreenshot(mc().getMainRenderTarget())){image.writeToFile(output().resolve(capture+".png"));}
             screenshots.add(capture);capture=null;
         }catch(Throwable e){finish(e);}
+    }
+    private static void pointAt(double x,double y){
+        var window=mc().getWindow();
+        double px=x*window.getScreenWidth()/window.getGuiScaledWidth(),py=y*window.getScreenHeight()/window.getGuiScaledHeight();
+        org.lwjgl.glfw.GLFW.glfwSetCursorPos(window.getWindow(),px,py);
+        try{
+            var move=net.minecraft.client.MouseHandler.class.getDeclaredMethod("onMove",long.class,double.class,double.class);
+            move.setAccessible(true);move.invoke(mc().mouseHandler,window.getWindow(),px,py);
+        }catch(ReflectiveOperationException ex){throw new IllegalStateException(ex);}
     }
     private static void finish(Throwable error){
         if(finished)return;finished=true;

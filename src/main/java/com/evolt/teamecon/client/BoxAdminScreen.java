@@ -8,7 +8,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
@@ -21,18 +20,16 @@ import java.util.*;
 public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
     public static final int GRID_X=112, GRID_Y=66, GRID_STEP=20, PAGE_SIZE=54;
     private static final int TEXT=UiTheme.BOX.text, MUTED=UiTheme.BOX.muted;
-    private record Choice(BoxReward reward,ItemStack icon,SearchText search){}
-    private final List<Choice> choices=new ArrayList<>();
     private JsonArray headers=new JsonArray();
     private BoxPrizeGrid grid=new BoxPrizeGrid(new JsonArray());
     private JsonObject draft;
-    private String originalId="",status="",query="";
+    private String originalId="",status="";
     private long sequence,revision;
-    private int poolPage,prizePage,pickerPage,selected=-1,dragOrigin=-1,lastPaint=-1;
+    private int poolPage,prizePage,selected=-1,dragOrigin=-1,lastPaint=-1;
     private double pressX,pressY;
-    private boolean started,waiting,editable,dirty,picking,confirmDelete,settings=true,dragging;
+    private boolean started,waiting,editable,dirty,confirmDelete,settings=true,dragging;
     private boolean chanceEdited;
-    private EditBox idField,nameField,priceField,stageField,countField,chanceField,search;
+    private EditBox idField,nameField,priceField,stageField,countField,chanceField;
     public BoxAdminScreen(BoxAdminMenu menu,Inventory inventory,Component title){super(menu,inventory,title);}
     public boolean ready(){return editable&&!waiting;}
     public JsonObject currentPool(){capture();return draft==null?null:draft.deepCopy();}
@@ -44,12 +41,12 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
 
     @Override protected void init(){
         imageWidth=468;imageHeight=344;super.init();
-        idField=nameField=priceField=stageField=countField=chanceField=search=null;chanceEdited=false;
+        idField=nameField=priceField=stageField=countField=chanceField=null;chanceEdited=false;
         button(443,8,18,18,Component.literal("×"),this::onClose);
         for(int i=0;i<6;i++){
             int index=poolPage*6+i;if(index>=headers.size())break;
             String id=headers.get(index).getAsJsonObject().get("id").getAsString();
-            button(10,55+i*24,90,22,Component.literal(id),()->{if(leaveDraft())request(0,id,"");},()->id.equals(originalId)).active=!waiting;
+            button(10,55+i*24,90,22,BoxNames.display(id,text(headers.get(index).getAsJsonObject(),"name","")),()->{if(leaveDraft())request(0,id,"");},()->id.equals(originalId)).active=!waiting;
         }
         button(10,204,22,18,Component.literal("‹"),()->{poolPage=Math.max(0,poolPage-1);capture();rebuildWidgets();});
         button(78,204,22,18,Component.literal("›"),()->{poolPage=Math.min(Math.max(0,(headers.size()-1)/6),poolPage+1);capture();rebuildWidgets();});
@@ -58,13 +55,10 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
             if(!confirmDelete){confirmDelete=true;capture();rebuildWidgets();return;}
             request(2,originalId,"");
         }).active=ready()&&!originalId.isEmpty();
-        button(10,282,90,20,tr("refresh"),()->{dirty=false;picking=false;request(3,originalId,"");}).active=!waiting;
+        button(10,282,90,20,tr("refresh"),()->{dirty=false;request(3,originalId,"");}).active=!waiting;
         if(draft!=null){
-            if(picking)buildPicker();else{
-                button(218,43,72,18,tr("add"),this::openPicker).active=ready();
-                button(GRID_X,190,22,18,Component.literal("‹"),()->page(-1)).active=prizePage>0;
-                button(268,190,22,18,Component.literal("›"),()->page(1)).active=prizePage<2;
-            }
+            button(GRID_X,190,22,18,Component.literal("‹"),()->page(-1)).active=prizePage>0;
+            button(268,190,22,18,Component.literal("›"),()->page(1)).active=prizePage<2;
             button(308,43,70,20,tr("box_tab"),()->{if(capture()){settings=true;rebuildWidgets();}},()->settings);
             button(382,43,74,20,tr("prize_tab"),()->{if(capture()){settings=false;rebuildWidgets();}},()->!settings).active=selectedEntry()!=null;
             if(settings)buildSettings();else buildPrizeEditor();
@@ -119,7 +113,8 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
                     int value;
                     try{value=BoxChances.parse(chanceField.getValue());}
                     catch(RuntimeException ex){status="percent_invalid";return false;}
-                    preparePercentages();selectedEntry().addProperty("chance",BoxChances.percent(value));chanceEdited=false;
+                    preparePercentages();
+                    grid=new BoxPrizeGrid(BoxChances.rebalance(grid.entries(),selected,value));chanceEdited=false;
                 }
                 selectedEntry().addProperty("count",count);
             }
@@ -132,23 +127,14 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
         if(BoxChances.totalUnits(grid.entries())!=BoxChances.TOTAL){status="total_invalid";return;}
         request(1,originalId,draft.toString());
     }
-    private long allocated(){
-        long total=BoxChances.totalUnits(grid.entries());
-        if(chanceEdited&&selectedEntry()!=null){
-            try{
-                JsonObject old=new BoxPrizeGrid(BoxChances.asPercentages(grid.entries())).get(selected);
-                total+=BoxChances.parse(chanceField.getValue())-BoxChances.entryUnits(old);
-            }catch(RuntimeException ignored){} // Invalid text is explained when applying or saving.
-        }
-        return total;
-    }
+    private long allocated(){return BoxChances.totalUnits(grid.entries());}
     private boolean leaveDraft(){if(dirty){status="unsaved";return false;}return !waiting;}
     private void page(int delta){if(capture()){prizePage=Math.clamp(prizePage+delta,0,2);rebuildWidgets();}}
     private void newPool(){
         draft=new JsonObject();draft.addProperty("id","new_box");draft.addProperty("price",64);draft.addProperty("stage","");
         draft.addProperty("enabled",true);draft.addProperty("allowModdedItems",false);draft.addProperty("enforceValueCap",true);
         grid=new BoxPrizeGrid(new JsonArray());draft.add("entries",grid.entries());
-        originalId="";dirty=true;selected=-1;prizePage=0;confirmDelete=false;status="";picking=false;settings=true;rebuildWidgets();
+        originalId="";dirty=true;selected=-1;prizePage=0;confirmDelete=false;status="";settings=true;rebuildWidgets();
     }
     private BoxReward reward(JsonObject e){return new BoxReward(e.get("item").getAsString(),text(e,"potion",""),e.has("count")?e.get("count").getAsInt():1);}
     private String chance(JsonObject e){
@@ -162,24 +148,37 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
     }
     private void remove(int slot){
         if(!ready()||slot<0||!capture())return;
-        preparePercentages();grid.set(slot,null);dirty=true;selected=-1;settings=true;status="";rebuildWidgets();
+        preparePercentages();grid.set(slot,null);grid=new BoxPrizeGrid(BoxChances.rebalance(grid.entries(),-1,0));dirty=true;selected=-1;settings=true;status="";rebuildWidgets();
     }
     private void place(BoxReward reward,int slot){
         if(slot<0){status="full";return;}
         preparePercentages();
-        int previous=grid.get(slot)==null?0:BoxChances.entryUnits(grid.get(slot));
+        boolean added=grid.get(slot)==null;
+        int previous=added?BoxChances.TOTAL/(grid.entries().size()+1):BoxChances.entryUnits(grid.get(slot));
         JsonObject entry=new JsonObject();entry.addProperty("item",reward.itemKey());entry.addProperty("count",reward.count());entry.addProperty("chance",BoxChances.percent(previous));
         if(!reward.potion().isEmpty())entry.addProperty("potion",reward.potion());
-        grid.set(slot,entry);selected=slot;prizePage=slot/PAGE_SIZE;dirty=true;settings=false;picking=false;status="sample_added";rebuildWidgets();
+        grid.set(slot,entry);if(added)grid=new BoxPrizeGrid(BoxChances.rebalance(grid.entries(),slot,previous));selected=slot;prizePage=slot/PAGE_SIZE;dirty=true;settings=false;status="sample_added";rebuildWidgets();
     }
     private void copySample(ItemStack stack,int slot,boolean single){
         if(!ready()||draft==null||stack.isEmpty()||!capture())return;
         try{
             BoxReward r=BoxReward.fromStack(stack);
-            if(!BoxPrizePolicy.allowed(r.itemKey())&&!(flag(draft,"allowModdedItems",false)&&!r.itemKey().startsWith("minecraft:")&&!r.itemKey().startsWith("teamecon:")))throw new IllegalArgumentException();
+            if(!BoxPrizePolicy.allowed(r.itemKey())){
+                status=r.itemKey().startsWith("minecraft:")||r.itemKey().startsWith("teamecon:")?"unsupported_item":"mods_required";
+                if(!status.equals("mods_required")||!flag(draft,"allowModdedItems",false))return;
+            }
             place(single?r.withCount(1):r,slot);
         }catch(RuntimeException ex){status="unsupported_sample";}
     }
+    /** JEI drops are templates, just like an inventory sample. No cheat-mode item grant. */
+    public void acceptJeiSample(ItemStack stack,int slot){
+        if(slot>=0&&slot<BoxPrizeGrid.CAPACITY)copySample(stack.copy(),slot,false);
+    }
+    public net.minecraft.client.renderer.Rect2i prizeArea(int slot){
+        int cell=slot-prizePage*PAGE_SIZE;
+        return screenArea(GRID_X+cell%9*GRID_STEP,GRID_Y+cell/9*GRID_STEP,18,18);
+    }
+    @Override protected int reservedRightWidth(){return net.neoforged.fml.ModList.get().isLoaded("jei")?72:0;}
     @Override protected void slotClicked(Slot slot,int slotId,int button,ClickType type){
         if(type==ClickType.QUICK_MOVE&&slot!=null){copySample(slot.getItem(),grid.firstEmpty(),false);return;}
         super.slotClicked(slot,slotId,button,type);
@@ -191,7 +190,7 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
     }
     @Override protected boolean clickPanel(double x,double y,int button){
         int slot=gridAt(x,y);
-        if(!picking&&draft!=null&&slot>=0&&(button==0||button==1)){
+        if(draft!=null&&slot>=0&&(button==0||button==1)){
             if(!ready())return true;
             if(!menu.getCarried().isEmpty()){copySample(menu.getCarried(),slot,button==1);lastPaint=slot;return true;}
             if(button==1){remove(slot);return true;}
@@ -207,7 +206,7 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
     @Override protected boolean dragPanel(double x,double y,int button,double dx,double dy){
         if(dragOrigin>=0&&button==0){dragging|=Math.abs(x-pressX)+Math.abs(y-pressY)>3;return true;}
         int slot=gridAt(x,y);
-        if(!picking&&ready()&&slot>=0&&!menu.getCarried().isEmpty()){
+        if(ready()&&slot>=0&&!menu.getCarried().isEmpty()){
             if(slot!=lastPaint){copySample(menu.getCarried(),slot,button==1);lastPaint=slot;}
             return true;
         }
@@ -221,47 +220,11 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
             }
             dragOrigin=-1;dragging=false;return true;
         }
-        if(!picking&&slot>=0&&slot!=lastPaint&&!menu.getCarried().isEmpty())copySample(menu.getCarried(),slot,button==1);
+        if(slot>=0&&slot!=lastPaint&&!menu.getCarried().isEmpty())copySample(menu.getCarried(),slot,button==1);
         lastPaint=-1;
         return super.mouseReleased(x,y,button);
     }
 
-    private void openPicker(){if(capture()){picking=true;query="";pickerPage=0;buildChoices();rebuildWidgets();}}
-    private void buildChoices(){
-        if(!choices.isEmpty())return;
-        for(var item:BuiltInRegistries.ITEM){
-            String id=BuiltInRegistries.ITEM.getKey(item).toString();
-            if(BoxReward.potionItem(id)){
-                for(var potion:BuiltInRegistries.POTION.keySet())if(!potion.getPath().equals("empty"))addChoice(new BoxReward(id,potion.toString(),1));
-            }else if(id.equals("minecraft:air")||BoxPrizePolicy.allowed(id)||!id.startsWith("minecraft:")&&!id.startsWith("teamecon:"))addChoice(new BoxReward(id,"",1));
-        }
-    }
-    private void addChoice(BoxReward reward){
-        ItemStack icon=reward.stack();String name=icon.isEmpty()?tr("empty").getString():icon.getHoverName().getString();
-        choices.add(new Choice(reward,icon,SearchText.of(name,reward.itemKey()+" "+reward.potion())));
-    }
-    private List<Choice> filtered(){return choices.stream().filter(c->c.search.matches(query))
-            .filter(c->c.reward.itemKey().startsWith("minecraft:")||flag(draft,"allowModdedItems",false)).toList();}
-    private void buildPicker(){
-        search=UiTheme.input(font,leftPos+114,topPos+45,174,16,tr("search"));search.setMaxLength(128);search.setValue(query);
-        search.setHint(tr("search"));search.setResponder(value->{capture();query=value;pickerPage=0;rebuildWidgets();setFocused(search);search.setFocused(true);search.setCursorPosition(query.length());});addRenderableWidget(search);
-        List<Choice> matches=filtered();pickerPage=Math.clamp(pickerPage,0,Math.max(0,(matches.size()-1)/PAGE_SIZE));
-        for(int i=0;i<PAGE_SIZE;i++){
-            int index=pickerPage*PAGE_SIZE+i;if(index>=matches.size())break;
-            Choice choice=matches.get(index);int x=GRID_X+i%9*GRID_STEP,y=GRID_Y+i/9*GRID_STEP;
-            var b=new Button(leftPos+x,topPos+y,18,18,choice.icon.isEmpty()?tr("empty"):choice.icon.getHoverName(),ignored->{if(capture())place(choice.reward,grid.firstEmpty());},supplier->supplier.get()){
-                @Override public void renderWidget(GuiGraphics g,int mx,int my,float partial){
-                    if(isHoveredOrFocused())g.fill(getX(),getY(),getX()+18,getY()+18,0x408B6FA0);
-                    if(choice.icon.isEmpty())g.renderItem(new ItemStack(Items.PAPER),getX()+1,getY()+1);
-                    else g.renderItem(choice.icon,getX()+1,getY()+1);
-                }
-            };
-            b.active=ready();b.setTooltip(Tooltip.create(b.getMessage().copy().append("\n"+choice.reward.itemKey()+" "+choice.reward.potion())));addRenderableWidget(b);
-        }
-        button(112,190,22,18,Component.literal("‹"),()->{pickerPage=Math.max(0,pickerPage-1);capture();rebuildWidgets();});
-        button(268,190,22,18,Component.literal("›"),()->{pickerPage=Math.min(Math.max(0,(matches.size()-1)/PAGE_SIZE),pickerPage+1);capture();rebuildWidgets();});
-        button(140,190,122,18,tr("back"),()->{capture();picking=false;rebuildWidgets();});
-    }
     private void request(int action,String id,String json){
         if(waiting)return;waiting=true;confirmDelete=false;dragOrigin=-1;dragging=false;
         ClientPayloadSender.sendToServer(new BoxAdminActionPayload(menu.containerId,++sequence,revision,action,id,json));
@@ -276,7 +239,7 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
         if(status.equals("conflict")){capture();editable=false;rebuildWidgets();return;}
         revision=payload.revision();draft=payload.pool().isEmpty()?null:JsonParser.parseString(payload.pool()).getAsJsonObject();
         grid=new BoxPrizeGrid(draft==null?new JsonArray():draft.getAsJsonArray("entries"));
-        originalId=draft==null?"":draft.get("id").getAsString();selected=-1;dirty=false;picking=false;settings=true;prizePage=0;rebuildWidgets();
+        originalId=draft==null?"":draft.get("id").getAsString();selected=-1;dirty=false;settings=true;prizePage=0;rebuildWidgets();
     }
     @Override protected void renderLabels(GuiGraphics g,int mx,int my){}
     private void slotBackground(GuiGraphics g,int x,int y,boolean selected){
@@ -291,18 +254,18 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
         label(g,tr("template_subtitle"),12,29,420,MUTED);label(g,tr("pools"),10,43,90,TEXT);
         for(int i=0;i<PAGE_SIZE;i++){
             int slot=prizePage*PAGE_SIZE+i,dx=x+GRID_X+i%9*GRID_STEP,dy=y+GRID_Y+i/9*GRID_STEP;
-            slotBackground(g,dx,dy,!picking&&slot==selected);
-            if(!picking&&slot>=BoxPrizeGrid.CAPACITY){g.fill(dx+1,dy+1,dx+17,dy+17,UiTheme.BOX.disabled);continue;}
-            if(draft!=null&&!picking&&grid.get(slot)!=null){
+            slotBackground(g,dx,dy,slot==selected);
+            if(slot>=BoxPrizeGrid.CAPACITY){g.fill(dx+1,dy+1,dx+17,dy+17,UiTheme.BOX.disabled);continue;}
+            if(draft!=null&&grid.get(slot)!=null){
                 BoxReward prize=reward(grid.get(slot));ItemStack icon=prize.stack();if(icon.isEmpty())icon=new ItemStack(Items.PAPER);
                 g.renderItem(icon,dx+1,dy+1);g.renderItemDecorations(font,icon,dx+1,dy+1,prize.count()==1?"":String.valueOf(prize.count()));
             }
-            if(!picking&&gridAt(mx,my)==slot)g.fill(dx+1,dy+1,dx+17,dy+17,0x408B6FA0);
+            if(gridAt(mx,my)==slot)g.fill(dx+1,dy+1,dx+17,dy+17,0x408B6FA0);
         }
         label(g,Component.translatable("container.inventory"),112,216,180,TEXT);
         for(Slot slot:menu.slots)slotBackground(g,x+slot.x-1,y+slot.y-1,false);
         if(draft!=null){
-            if(!picking){label(g,tr("prizes"),112,49,102,TEXT);label(g,tr("grid_page",prizePage+1,3),142,195,118,MUTED);}
+            label(g,tr("prizes"),112,49,102,TEXT);label(g,tr("grid_page",prizePage+1,3),142,195,118,MUTED);
             if(settings){
                 label(g,tr("name"),310,74,142,TEXT);label(g,tr("id"),310,110,142,TEXT);
                 label(g,tr("price"),310,146,142,TEXT);label(g,tr("stage"),310,182,142,TEXT);
@@ -313,17 +276,17 @@ public final class BoxAdminScreen extends CompactContainerScreen<BoxAdminMenu> {
                 label(g,tr("count"),310,146,142,TEXT);label(g,tr("percent"),310,182,142,TEXT);
                 long used=allocated();
                 label(g,tr("allocated",BoxChances.format(used)),310,220,142,used>BoxChances.TOTAL?UiTheme.NEGATIVE:TEXT);
-                label(g,tr(used>BoxChances.TOTAL?"over":"remaining",BoxChances.format(Math.abs(BoxChances.TOTAL-used))),310,234,142,used==BoxChances.TOTAL?UiTheme.POSITIVE:MUTED);
+                label(g,tr("auto_balance"),310,234,142,MUTED);
             }
         }
-        long used=draft==null?0:allocated();
-        Component footer=status.isEmpty()?draft==null?tr("inventory_hint"):tr("allocation_footer",BoxChances.format(used),tr(used>BoxChances.TOTAL?"over_short":"remaining_short"),BoxChances.format(Math.abs(BoxChances.TOTAL-used))):tr(status);
-        label(g,footer,10,330,448,status.equals("unsupported_sample")||status.equals("invalid")||status.equals("percent_invalid")||status.equals("total_invalid")?UiTheme.NEGATIVE:MUTED);
+        Component footer=status.isEmpty()?draft==null?tr("inventory_hint"):tr("auto_footer"):tr(status);
+        label(g,footer,10,330,448,status.equals("unsupported_sample")||status.equals("unsupported_item")||status.equals("mods_required")||status.equals("invalid")||status.equals("percent_invalid")||status.equals("total_invalid")?UiTheme.NEGATIVE:MUTED);
     }
     @Override protected void renderPanel(GuiGraphics g,int mx,int my,float partial){
         super.renderPanel(g,mx,my,partial);
+        renderTooltip(g,mx,my);
         int slot=gridAt(mx,my);
-        if(!picking&&!dragging&&menu.getCarried().isEmpty()&&draft!=null&&slot>=0&&grid.get(slot)!=null){
+        if(!dragging&&menu.getCarried().isEmpty()&&draft!=null&&slot>=0&&grid.get(slot)!=null){
             JsonObject e=grid.get(slot);ItemStack icon=reward(e).stack();
             List<Component> lines=new ArrayList<>();lines.add(icon.isEmpty()?tr("empty"):icon.getHoverName());
             lines.add(tr("chance",chance(e)));lines.add(tr("slot_hint"));g.renderComponentTooltip(font,lines,mx,my);

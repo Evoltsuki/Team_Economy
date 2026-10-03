@@ -36,7 +36,7 @@
     {
       "type": "patchouli:text",
       "title": "Potions and custom pools",
-      "text": "Each default pool has five potion entries, including splash and lingering variants.$(br2)Operators: /teamecon admin boxes opens a prize template grid. Drag or Shift-click inventory items to add samples without consuming them. Select a template to edit quantity and percentage. Chances must total 100% to save. Box settings controls names and prices."
+      "text": "Each default pool has five potion entries, including splash and lingering variants.$(br2)Operators: /teamecon admin boxes opens prize templates. Drag or Shift-click inventory items, or drag from the optional JEI sidebar. Originals are not consumed. Set a quantity and percentage; other chances adjust proportionally. Box settings controls names and prices."
     },
     {
       "type": "patchouli:crafting",

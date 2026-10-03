@@ -183,11 +183,13 @@ Modded items require an explicit recycling price. Recycling supports their defau
 
 `/teamecon admin boxes` opens the mystery box editor. Operators can create, edit and delete box types, set names and prices, control availability and assign optional stages.
 
-The prize template grid appears above the player’s inventory. Drag or Shift-click inventory items to add templates, drag templates to rearrange them, and right-click to remove them. Templates do not consume the original items; empty cells are excluded from draws. Each prize has a quantity and a percentage from **0 to 100**, with up to six decimal places. The panel shows allocated, remaining or excess probability; the total must be **100%** before saving. New prizes start at **0%**, with other percentages unchanged.
+The prize template grid appears above the player’s inventory. Drag or Shift-click inventory items to add templates, drag templates to rearrange them, and right-click to remove them. Templates do not consume the originals; empty cells are excluded from draws. With a matching **JEI** installation, the item list appears on the right and items can be dragged directly into prize cells without enabling cheat mode. Inventory templates also work without JEI. Hover over inventory or JEI items to view their tooltips.
 
-**Add prize** supports name, item ID, potion ID, Chinese pinyin and initials searches. Prizes support ordinary items and specific potion effects. Inventory samples with additional data, such as names, enchantments or container contents, are not supported.
+Each prize has a quantity and a percentage from **0 to 100**, with up to six decimal places. Editing a percentage keeps that value and redistributes the remainder among the other prizes in their existing ratio. For example, changing the first prize in `50%, 30%, 20%` to `60%` produces `60%, 24%, 16%`. A new prize receives `100 ÷ new prize count` percent; removing a prize redistributes its share. The total stays at **100%**. A single prize has a **100%** chance; a prize at **0%** is excluded from draws.
 
-![Chest-style prize templates and player inventory](docs/images/screenshots/box-admin-en.png)
+Supported templates include ordinary items, vanilla spawn eggs (including Husks) and specific potion effects. Enable the pool’s modded-item option for modded prizes. Samples with names, enchantments or container contents are not supported; the message distinguishes this from a disabled modded-item option. Box names use the same translations as the player’s machine and can also be customized.
+
+![Chest-style prize templates and player inventory](docs/images/screenshots/box-admin-current-en.png)
 
 Changes are saved to `config/teamecon_blindbox.json`, apply immediately and retain a `.bak` backup. Each pool has separate controls for modded prizes and value checks. See [configuration details](docs/server-configuration.md).
 

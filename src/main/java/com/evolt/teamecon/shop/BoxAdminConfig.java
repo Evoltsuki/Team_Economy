@@ -37,6 +37,7 @@ public final class BoxAdminConfig {
         for(JsonElement value:root.getAsJsonArray("pools")){
             JsonObject p=value.getAsJsonObject(),header=new JsonObject();
             header.add("id",p.get("id"));header.add("price",p.get("price"));
+            if(p.has("name"))header.add("name",p.get("name"));
             header.addProperty("enabled",!p.has("enabled")||p.get("enabled").getAsBoolean());out.add(header);
         }
         return out;

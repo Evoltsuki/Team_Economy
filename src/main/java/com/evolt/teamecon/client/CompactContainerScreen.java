@@ -18,7 +18,8 @@ public abstract class CompactContainerScreen<T extends AbstractContainerMenu> ex
 
     @Override protected void init() {
         var window = minecraft.getWindow();
-        panelScale = Math.min(1F, Math.min(window.getGuiScaledWidth() * .78F / imageWidth,
+        panelScale = Math.min(1F, Math.min(Math.min(window.getGuiScaledWidth() * .78F,
+                window.getGuiScaledWidth()-reservedRightWidth()-12F) / imageWidth,
                 window.getGuiScaledHeight() * .78F / imageHeight));
         // Keep Minecraft's bitmap glyphs on whole framebuffer pixels. Fractional
         // downsampling otherwise drops strokes, especially in Chinese text.
@@ -27,21 +28,33 @@ public abstract class CompactContainerScreen<T extends AbstractContainerMenu> ex
         width = (int)Math.ceil(window.getGuiScaledWidth() / panelScale);
         height = (int)Math.ceil(window.getGuiScaledHeight() / panelScale);
         super.init();
+        leftPos = Math.max(4,(int)((window.getGuiScaledWidth()-reservedRightWidth())/panelScale-imageWidth)/2);
     }
 
     public final float panelScale() { return panelScale; }
+    protected int reservedRightWidth(){return 0;}
+    public final net.minecraft.client.renderer.Rect2i screenArea(int x,int y,int w,int h){
+        int left=(int)Math.floor((leftPos+x)*panelScale),top=(int)Math.floor((topPos+y)*panelScale);
+        return new net.minecraft.client.renderer.Rect2i(left,top,
+                (int)Math.ceil((leftPos+x+w)*panelScale)-left,(int)Math.ceil((topPos+y+h)*panelScale)-top);
+    }
+    public final net.minecraft.client.renderer.Rect2i panelArea(){return screenArea(0,0,imageWidth,imageHeight);}
 
     @Override public final void render(GuiGraphics graphics, int mouseX, int mouseY, float partial) {
         graphics.flush();
         var scaled = new GuiGraphics(minecraft, graphics.bufferSource()) {
-            @Override public int guiWidth() { return width; }
-            @Override public int guiHeight() { return height; }
+            // Overlays such as JEI reset the pose to draw in viewport coordinates.
+            private boolean viewportPose(){return Math.abs(pose().last().pose().m00()-1F)<.0001F;}
+            @Override public int guiWidth() { return viewportPose()?minecraft.getWindow().getGuiScaledWidth():width; }
+            @Override public int guiHeight() { return viewportPose()?minecraft.getWindow().getGuiScaledHeight():height; }
             @Override public void enableScissor(int x0, int y0, int x1, int y1) {
-                super.enableScissor((int)Math.floor(x0 * panelScale), (int)Math.floor(y0 * panelScale),
-                        (int)Math.ceil(x1 * panelScale), (int)Math.ceil(y1 * panelScale));
+                float scale = viewportPose() ? 1 : panelScale;
+                super.enableScissor((int)Math.floor(x0 * scale), (int)Math.floor(y0 * scale),
+                        (int)Math.ceil(x1 * scale), (int)Math.ceil(y1 * scale));
             }
             @Override public boolean containsPointInScissor(int x, int y) {
-                return super.containsPointInScissor((int)(x * panelScale), (int)(y * panelScale));
+                float scale = viewportPose() ? 1 : panelScale;
+                return super.containsPointInScissor((int)(x * scale), (int)(y * scale));
             }
         };
         scaled.pose().mulPose(graphics.pose().last().pose());

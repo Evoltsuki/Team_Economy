@@ -18,7 +18,10 @@ public final class BoxPrizePolicy {
     }).map(name -> "minecraft:" + name + "_spawn_egg").collect(java.util.stream.Collectors.toUnmodifiableSet());
     private BoxPrizePolicy() {}
     public static boolean exclusive(String id) { return EGGS.contains(id); }
-    public static boolean allowed(String id) { return exclusive(id) || TradePolicy.canSell(id); }
+    public static boolean allowed(String id) {
+        // Administrators may explicitly add hostile eggs; defaults still use EGGS.
+        return id.startsWith("minecraft:") && id.endsWith("_spawn_egg") || TradePolicy.canSell(id);
+    }
     public static Item item(String text) {
         ResourceLocation id = ResourceLocation.tryParse(text);
         return allowed(text) && id != null && BuiltInRegistries.ITEM.containsKey(id)

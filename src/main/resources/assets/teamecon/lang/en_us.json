@@ -491,11 +491,11 @@
   "gui.teamecon.box_admin.name": "Display name",
   "gui.teamecon.box_admin.box_tab": "Box settings",
   "gui.teamecon.box_admin.prize_tab": "Prize settings",
-  "gui.teamecon.box_admin.template_subtitle": "Prize templates · Adding a sample does not consume the item",
-  "gui.teamecon.box_admin.inventory_hint": "Drag or Shift-click inventory to add · Drag templates to move · Right-click to remove",
+  "gui.teamecon.box_admin.template_subtitle": "Drag prizes from JEI or inventory · Originals are kept",
+  "gui.teamecon.box_admin.inventory_hint": "Drag items from JEI or your inventory; Shift-click inventory to add.",
   "gui.teamecon.box_admin.slot_hint": "Click to edit quantity/chance; drag to move; right-click to remove",
   "gui.teamecon.box_admin.sample_added": "Sample added; the original inventory item is preserved",
-  "gui.teamecon.box_admin.unsupported_sample": "Unsupported item/data. Enable mod items; renamed/enchanted samples are unsupported.",
+  "gui.teamecon.box_admin.unsupported_sample": "This sample has unsupported data (name, enchantments or stored contents).",
   "gui.teamecon.box_admin.full": "Prize grid is full (128 entries maximum)",
   "gui.teamecon.box_admin.grid_page": "Page %s / %s",
   "gui.teamecon.box_admin.percent": "Chance (%)",
@@ -506,5 +506,9 @@
   "gui.teamecon.box_admin.remaining_short": "remaining",
   "gui.teamecon.box_admin.allocation_footer": "Allocated %s%% · %s %s%% · Total must be 100%% to save",
   "gui.teamecon.box_admin.percent_invalid": "Enter 0–100 with up to 6 decimals; %% is optional",
-  "gui.teamecon.box_admin.total_invalid": "Prize chances must total 100%%; adjust the remaining or excess chance"
+  "gui.teamecon.box_admin.total_invalid": "Prize chances must total 100%%; adjust the remaining or excess chance",
+  "gui.teamecon.box_admin.auto_balance": "Other chances adjust automatically",
+  "gui.teamecon.box_admin.auto_footer": "Changing a chance rebalances other prizes. Drag items to add prizes.",
+  "gui.teamecon.box_admin.unsupported_item": "This item cannot be used as a prize.",
+  "gui.teamecon.box_admin.mods_required": "Enable modded items in this box’s settings first."
 }

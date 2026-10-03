@@ -72,4 +72,34 @@ public final class BoxChances {
         }
         return result;
     }
+
+    /** Set one prize exactly and share the remainder in the other prizes' current ratio.
+     * A negative slot normalizes all remaining prizes, for example after a removal. */
+    public static JsonArray rebalance(JsonArray source, int fixedSlot, int fixedUnits) {
+        if(fixedUnits<0||fixedUnits>TOTAL)throw new IllegalArgumentException("Invalid percentage");
+        JsonArray result=asPercentages(source);
+        if(result.isEmpty())return result;
+        int fixed=-1;
+        for(int i=0;i<result.size();i++){
+            JsonObject row=result.get(i).getAsJsonObject();
+            if(fixedSlot>=0&&row.has("slot")&&row.get("slot").getAsInt()==fixedSlot)fixed=i;
+        }
+        if(fixedSlot>=0&&fixed<0)throw new IllegalArgumentException("Missing prize");
+        if(result.size()==1){result.get(0).getAsJsonObject().addProperty("chance",percent(TOTAL));return result;}
+        int remaining=TOTAL-(fixed<0?0:fixedUnits),n=result.size();
+        long total=0;int count=n-(fixed<0?0:1);
+        for(int i=0;i<n;i++)if(i!=fixed)total+=entryUnits(result.get(i).getAsJsonObject());
+        boolean equal=total==0;if(equal)total=count;
+        long[] remainders=new long[n];Arrays.fill(remainders,-1);
+        int[] allocated=new int[n];Integer[] order=new Integer[n];long used=0;
+        for(int i=0;i<n;i++){
+            order[i]=i;if(i==fixed){allocated[i]=fixedUnits;continue;}
+            long scaled=(long)(equal?1:entryUnits(result.get(i).getAsJsonObject()))*remaining;
+            allocated[i]=(int)(scaled/total);remainders[i]=scaled%total;used+=allocated[i];
+        }
+        Arrays.sort(order,Comparator.<Integer>comparingLong(i->remainders[i]).reversed().thenComparingInt(i->i));
+        for(int i=0;i<remaining-used;i++)allocated[order[i]]++;
+        for(int i=0;i<n;i++)result.get(i).getAsJsonObject().addProperty("chance",percent(allocated[i]));
+        return result;
+    }
 }

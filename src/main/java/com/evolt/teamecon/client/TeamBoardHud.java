@@ -17,8 +17,8 @@ public final class TeamBoardHud {
         var g=event.getGuiGraphics();var font=mc.font;var rows=data.getAsJsonArray("members");
         int capacity=Math.max(1,Math.min(7,(mc.getWindow().getGuiScaledHeight()/2-26)/11)),pages=Math.max(1,(rows.size()+capacity-1)/capacity);
         int page=(int)(mc.level.getGameTime()/120%pages),start=page*capacity,count=Math.min(capacity,rows.size()-start);
-        float scale=.75F;
-        // 132 GUI pixels at 75% scale, with room for longer names and page numbers.
+        float scale=1F;
+        // Native glyph size and shadow remain readable over the world.
         int limit=Math.min(176,(int)(mc.getWindow().getGuiScaledWidth()/3/scale));
         String pageLabel=pages>1?(page+1)+"/"+pages:"";
         int pageSpace=pages>1?font.width(pageLabel)+5:0;
@@ -34,17 +34,16 @@ public final class TeamBoardHud {
         g.pose().pushPose();
         g.pose().translate(mc.getWindow().getGuiScaledWidth()-w*scale-7,(mc.getWindow().getGuiScaledHeight()-h*scale)/2,0);
         g.pose().scale(scale,scale,1);
-        UiTheme.panel(g,x-6,y-6,w+12,h+11);
         String title=font.plainSubstrByWidth(data.get("team").getAsString(),Math.max(1,w-pageSpace));
-        g.drawString(font,title,x,y,UiTheme.ACCENT,false);
-        g.drawString(font,font.plainSubstrByWidth(balance,w),x,y+11,UiTheme.TEXT,false);
+        g.drawString(font,title,x,y,UiTheme.ACCENT,true);
+        g.drawString(font,font.plainSubstrByWidth(balance,w),x,y+11,UiTheme.TEXT,true);
         for(int i=0;i<count;i++){
             var row=rows.get(start+i).getAsJsonObject();long n=row.get("earned").getAsLong();String value=(n<0?"−":n>0?"+":"")+CasinoScreen.compact(Math.abs(n));
             String name=font.plainSubstrByWidth(row.get("name").getAsString(),Math.max(1,w-font.width(value)-5));
-            g.drawString(font,name,x,y+23+i*10,row.get("online").getAsBoolean()?UiTheme.TEXT:UiTheme.MUTED,false);
-            g.drawString(font,value,x+font.width(name)+5,y+23+i*10,n<0?UiTheme.NEGATIVE:UiTheme.POSITIVE,false);
+            g.drawString(font,name,x,y+23+i*10,row.get("online").getAsBoolean()?UiTheme.TEXT:UiTheme.MUTED,true);
+            g.drawString(font,value,x+font.width(name)+5,y+23+i*10,n<0?UiTheme.NEGATIVE:UiTheme.POSITIVE,true);
         }
-        if(pages>1)g.drawString(font,pageLabel,x+w-font.width(pageLabel),y,UiTheme.MUTED,false);
+        if(pages>1)g.drawString(font,pageLabel,x+w-font.width(pageLabel),y,UiTheme.MUTED,true);
         g.pose().popPose();
     }
 }

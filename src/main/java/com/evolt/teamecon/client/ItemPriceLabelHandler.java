@@ -46,6 +46,9 @@ public final class ItemPriceLabelHandler {
         GuiGraphics graphics = event.getGuiGraphics();
         int mouseX = event.getMouseX();
         int mouseY = event.getMouseY();
+        if(screen instanceof CompactContainerScreen<?> compact){
+            mouseX=(int)(mouseX/compact.panelScale());mouseY=(int)(mouseY/compact.panelScale());
+        }
 
         for (Slot slot : menu.slots) {
             if (!slot.isActive()) {

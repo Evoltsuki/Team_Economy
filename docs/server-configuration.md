@@ -46,9 +46,9 @@ English: `/teamecon admin prices` opens the operator-only creative-style editor 
 - 将背包物品拖到样板格，或 Shift 点击背包物品快速添加。样板只记录配置，不消耗原物；拿在光标上的真实物品可放回背包，关闭界面也会按正常容器规则归还。
 - 拖动样板可换位或交换，右键移除。选中样板后，在「奖品设置」修改数量并填写中奖百分比（如 `12.5`）；右键持有的真实物品放入样板格时记录 1 个。
 - 奖品有 3 页，最多 128 项；空格只用于排版，不算空奖。保存后保留格子位置。未保存的编辑可取消。
-- 「添加奖品」保留中文、全拼、首字母、物品 ID 和药水 ID 搜索。背包样本支持默认状态物品与带具体效果的标准药水；改名、附魔或容器内容等无法表示的额外数据会提示不支持，不会被悄悄丢弃。
+- 安装 JEI 后，可从右侧物品列表直接拖入奖品格，无需作弊取物；未安装时使用背包拖放或 Shift 点击。支持默认状态物品、原版刷怪蛋（包括尸壳）与带具体效果的标准药水；改名、附魔或容器内容等额外数据会提示不支持。模组物品需开启对应箱种的允许选项。
 
-每项概率范围为 `0–100`，最多六位小数；输入框也接受末尾的 `%`。面板显示已分配和剩余，合计必须为 `100%` 才能保存，未分配部分不会自动变成空奖。新增奖品以 `0%` 开始，移除奖品后留下相应的未分配概率；替换同一格的物品保留该格概率。`0%` 奖品保留样板但不被抽中。
+每项概率范围为 `0–100`，最多六位小数；输入框也接受末尾的 `%`。修改一项后，其余奖品按原比例分配剩余概率；新增奖品分配 `100 ÷ 新奖品总数`，移除奖品后重新分配，合计保持 `100%`。仅一个奖品时为 `100%`，其余奖品原概率全为零时均分剩余比例。替换同格物品保留概率；`0%` 奖品保留样板但不被抽中。手动编辑 JSON 时仍须保证总和为 `100%`。
 
 最后点击「保存」生效。
 
@@ -160,7 +160,7 @@ English: `/teamecon admin prices` opens the operator-only creative-style editor 
 Server-side files live in the game's `config/` directory. Edit UTF-8 JSON, then run `/teamecon admin reload` as OP 2. Open menus receive the updated catalogue. Back up edited files and check the server log for rejected entries.
 
 - `teamecon_shop_catalog.json`: set `includeDefaultItems=false` for a custom-only item shop; list exact IDs in `disabledItems` to hide them. Add `{ "item": "namespace:item", "price": 80 }` to `items` for an explicit offer. An optional `stage` adds an FTB stage requirement. Installed third-party items are supported by explicit offers; recycling requires an explicit price in the pricing panel. Purchase prices retain the resale-price × markup floor and equipment floors; progression and sell-only rules still apply.
-- `/teamecon admin boxes`: create/edit/delete box types in game. Drag or Shift-click inventory stacks into a 9×6 template grid, rearrange or remove templates without consuming the originals, then edit prices, potion variants and percentages. Enter 0–100 with up to six decimal places; the total must be 100% to save. New prizes start at 0% and do not change other chances. Save is immediate and keeps a backup. `/teamecon claimboxes` collects saved overflow rewards without another charge.
+- `/teamecon admin boxes`: create/edit/delete box types in game. Drag or Shift-click inventory stacks into a 9×6 template grid, rearrange or remove templates without consuming the originals, then edit prices, potion variants and percentages. Enter 0–100 with up to six decimal places; other chances adjust proportionally to keep the total at 100%. New prizes receive an initial share automatically. With JEI installed, drag items directly from its sidebar without cheat mode. Save is immediate and keeps a backup. `/teamecon claimboxes` collects saved overflow rewards without another charge.
 - `teamecon_blindbox.json`: optional `name` labels the box; `entries[].potion` selects the potion registry ID for potion items or tipped arrows. Overflow prizes remain in the buyer's saved pending list; finish claiming it before opening another batch. Use the complete `version` / `pools` example above. Each opening draws one `entries` row. `count` controls quantity; numeric `chance` is the exact percentage (0–100, up to six decimal places), and all entries must total 100. A zero chance never wins. Relative `weight` entries remain supported when no entry in that pool uses `chance`; the two formats cannot be mixed. Header-only edits preserve existing weights. `enabled=false` hides a pool. `allowModdedItems=true` permits explicitly listed installed third-party rewards. `enforceValueCap=false` opts that pool out of the weighted resale-value check. The legacy top-level array remains supported.
 - Malformed item catalogues close item purchases; invalid reward pools are disabled without charging players. Missing mod items are logged. Duplicate pool IDs disable the entire pool file. Correct the file and reload to recover. No custom NBT/components are supported.
 

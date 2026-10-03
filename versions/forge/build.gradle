@@ -20,6 +20,7 @@ minecraft {
     mappings channel: 'official', version: mc
     runs {
         configureEach {
+            args '-mixin.config=teamecon.mixins.json'
             workingDirectory layout.buildDirectory.dir(portQa ? 'client-qa' : 'run').get().asFile
             property 'forge.enabledGameTestNamespaces', 'teamecon'
             if (portQa) property 'teamecon.portQa', 'true'
@@ -31,9 +32,15 @@ minecraft {
     }
 }
 repositories {
-    maven { url = 'https://maven.blamejared.com'; content { includeGroup 'vazkii.patchouli' } }
+    maven { url = 'https://maven.blamejared.com'; content { includeGroup 'vazkii.patchouli'; includeGroup 'mezz.jei' } }
 }
 dependencies {
+    def jeiVersion = mc == '1.20.1' ? '15.20.0.106' : '19.21.0.247'
+    compileOnly "mezz.jei:jei-${mc}-common-api:${jeiVersion}"
+    if (providers.gradleProperty('withJei').isPresent()) {
+        def jeiRuntime = "mezz.jei:jei-${mc}-forge:${jeiVersion}"
+        runtimeOnly(mc == '1.20.1' ? fg.deobf(jeiRuntime) : jeiRuntime)
+    }
     minecraft "net.minecraftforge:forge:${mc}-${targets[mc]}"
     // Only the stable openBookGUI API is referenced; Patchouli remains optional.
     compileOnly 'vazkii.patchouli:Patchouli:1.20.1-84.1-FORGE:api'
@@ -64,6 +71,7 @@ tasks.named('processResources') { dependsOn prepare, tasks.named('compileJava') 
 tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
 tasks.named('test') { useJUnitPlatform() }
 tasks.named('jar') {
+    manifest.attributes('MixinConfigs': 'teamecon.mixins.json')
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     exclude 'com/evolt/teamecon/gametest/**', 'com/evolt/teamecon/qa/**'
     exclude 'data/teamecon/structure/qa_empty.nbt', 'data/teamecon/structures/qa_empty.nbt'
