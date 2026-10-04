@@ -1,15 +1,5 @@
 # 更新日志 / Changelog
 
-## 未发布 / Unreleased
-
-### 中文
-
-- 刮刮卡恢复纸质票券背景、各卡种彩色标题栏与独立边框样式。
-
-### English
-
-- Restored the scratch tickets’ paper background, card-specific colored headers and distinctive borders.
-
 ## 1.0.2 — 2026-10-04
 
 ### 中文
@@ -19,6 +9,7 @@
 - 支持将尸壳等原版敌对生物刷怪蛋加入自定义奖池，区分模组物品未开启与额外物品数据不支持的提示。
 - 改善盲盒界面文字清晰度，统一管理面板与盲盒机的本地化箱种名称；恢复背包与 JEI 物品详情在不同界面缩放下的显示。
 - 团队计分板改用透明背景和带阴影文字。
+- 刮刮卡恢复纸质票券背景、各卡种彩色标题栏与独立边框样式。
 
 ### English
 
@@ -27,6 +18,7 @@
 - Custom pools accept vanilla hostile spawn eggs, including Husks. Messages distinguish disabled modded items from unsupported extra item data.
 - Improved mystery-box text clarity and consistent localized box names in both screens. Restored inventory and JEI item tooltips at different GUI scales.
 - The team scoreboard now uses a transparent background with shadowed text.
+- Restored the scratch tickets’ paper background, card-specific colored headers and distinctive borders.
 
 ## 1.0.1 — 2026-10-03
 

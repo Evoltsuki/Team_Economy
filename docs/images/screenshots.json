@@ -1,6 +1,6 @@
 {
-  "version": "1.0.1",
-  "captured": "2026-09-28 / 2026-09-29 / 2026-09-30 / 2026-10-02 / 2026-10-03",
+  "version": "1.0.2",
+  "captured": "2026-09-28 / 2026-09-29 / 2026-09-30 / 2026-10-02 / 2026-10-03 / 2026-10-04",
   "source": "Minecraft gameplay screenshots.",
   "shots": [
     {
@@ -263,7 +263,7 @@
     },
     {
       "file": "screenshots/scratch-play.png",
-      "sha256": "291307689e85de78e8b62b8fb5aebf640905307ec9abe41c9843ccf1623ef879",
+      "sha256": "c13dd000078789bd16ff03af0f7ef276ff51b9f7db92b5d431960a6a1718b598",
       "resolution": [
         640,
         480
