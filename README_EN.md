@@ -2,11 +2,11 @@
 
 [简体中文](README.md)
 
-Current release: **1.0.1**.
+Current release: **1.0.2**.
 
-[Download 1.0.1](https://github.com/Evoltsuki/Team_Economy/releases/tag/v1.0.1) · [Source code](https://github.com/Evoltsuki/Team_Economy) · [Changelog](CHANGELOG.md) · [Report an issue](https://github.com/Evoltsuki/Team_Economy/issues)
+[Download 1.0.2](https://github.com/Evoltsuki/Team_Economy/releases/tag/v1.0.2) · [Source code](https://github.com/Evoltsuki/Team_Economy) · [Changelog](CHANGELOG.md) · [Report an issue](https://github.com/Evoltsuki/Team_Economy/issues)
 
-![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1%20%7C%201.21%20%7C%201.21.1-5C913B) ![Loaders](https://img.shields.io/badge/Loaders-NeoForge%20%7C%20Forge-D97834) ![Version](https://img.shields.io/badge/Version-1.0.1-3979A8)
+![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1%20%7C%201.21%20%7C%201.21.1-5C913B) ![Loaders](https://img.shields.io/badge/Loaders-NeoForge%20%7C%20Forge-D97834) ![Version](https://img.shields.io/badge/Version-1.0.2-3979A8)
 
 Team Economy is a survival economy and minigame mod for Minecraft. It provides material recycling, a points shop and six physical game machines. Points earned from recycling can fund supplies, equipment upgrades and games. Optional FTB Teams integration adds shared wallets and equipment levels.
 
@@ -95,14 +95,14 @@ The [web gameplay guide (Chinese)](docs/试玩指南.md) is available without Pa
 
 Download the JAR matching the Minecraft version and loader from [Releases](https://github.com/Evoltsuki/Team_Economy/releases), and place it in the instance’s `mods/` folder. Install one matching JAR per instance. Multiplayer requires the same Minecraft version, loader and mod file on the client and server.
 
-The table lists **1.0.1 targets and filenames**.
+The table lists **1.0.2 targets and filenames**.
 
 | Minecraft | Loader version | Java | File |
 |---|---|---|---|
-| 1.21.1 | NeoForge 21.1.1+ | 21 | `teamecon-neoforge-1.21.1-1.0.1.jar` |
-| 1.21 | NeoForge 21.0.143+ | 21 | `teamecon-neoforge-1.21-1.0.1.jar` |
-| 1.20.1 | Forge 47.4.10 | 17 | `teamecon-forge-1.20.1-1.0.1.jar` |
-| 1.21.1 | Forge 52.1.0 | 21 | `teamecon-forge-1.21.1-1.0.1.jar` |
+| 1.21.1 | NeoForge 21.1.1+ | 21 | `teamecon-neoforge-1.21.1-1.0.2.jar` |
+| 1.21 | NeoForge 21.0.143+ | 21 | `teamecon-neoforge-1.21-1.0.2.jar` |
+| 1.20.1 | Forge 47.4.10 | 17 | `teamecon-forge-1.20.1-1.0.2.jar` |
+| 1.21.1 | Forge 52.1.0 | 21 | `teamecon-forge-1.21.1-1.0.2.jar` |
 
 The NeoForge versions are the minimum supported stable releases for each Minecraft branch. Optional integrations must also meet their own dependency requirements.
 
@@ -254,7 +254,7 @@ py -3.12 tools/package_release.py --offline
 
 Remove `--offline` if dependencies need downloading. See the [packaging guide (Chinese)](docs/手动打包指南.md) for target-specific commands and JDK selection.
 
-`release/1.0.1/` contains four mod JARs, `CHANGELOG.md` and `SHA256SUMS.txt`.
+`release/1.0.2/` contains four mod JARs, `CHANGELOG.md` and `SHA256SUMS.txt`.
 
 </details>
 

@@ -2,11 +2,11 @@
 
 [English README](README_EN.md)
 
-当前版本：**1.0.1**。
+当前版本：**1.0.2**。
 
-[下载 1.0.1](https://github.com/Evoltsuki/Team_Economy/releases/tag/v1.0.1) · [源码仓库](https://github.com/Evoltsuki/Team_Economy) · [更新日志](CHANGELOG.md) · [问题反馈](https://github.com/Evoltsuki/Team_Economy/issues)
+[下载 1.0.2](https://github.com/Evoltsuki/Team_Economy/releases/tag/v1.0.2) · [源码仓库](https://github.com/Evoltsuki/Team_Economy) · [更新日志](CHANGELOG.md) · [问题反馈](https://github.com/Evoltsuki/Team_Economy/issues)
 
-![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1%20%7C%201.21%20%7C%201.21.1-5C913B) ![Loaders](https://img.shields.io/badge/Loaders-NeoForge%20%7C%20Forge-D97834) ![Version 1.0.1](https://img.shields.io/badge/Version-1.0.1-3979A8)
+![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1%20%7C%201.21%20%7C%201.21.1-5C913B) ![Loaders](https://img.shields.io/badge/Loaders-NeoForge%20%7C%20Forge-D97834) ![Version 1.0.2](https://img.shields.io/badge/Version-1.0.2-3979A8)
 
 Team Economy 是适用于 Minecraft 生存模式的经济与小游戏模组，提供物资回收、积分商店和六种实体游戏设备。玩家通过出售材料获得点数，用于采购物资、升级设备权限和参与游戏。与 FTB Teams 联动时，同队成员共享钱包和设备等级。
 
@@ -97,14 +97,14 @@ Team Economy 是适用于 Minecraft 生存模式的经济与小游戏模组，�
 
 从 [Releases](https://github.com/Evoltsuki/Team_Economy/releases) 下载与 Minecraft 版本和加载器对应的 JAR，放入实例的 `mods/` 目录。每个实例仅安装一个对应版本；多人游戏的客户端与服务端须使用相同的 Minecraft 版本、加载器和模组文件。
 
-下表列出 **1.0.1 的支持版本与文件名**。
+下表列出 **1.0.2 的支持版本与文件名**。
 
 | Minecraft | 加载器版本 | Java | 安装文件 |
 |---|---|---|---|
-| 1.21.1 | NeoForge 21.1.1+ | 21 | `teamecon-neoforge-1.21.1-1.0.1.jar` |
-| 1.21 | NeoForge 21.0.143+ | 21 | `teamecon-neoforge-1.21-1.0.1.jar` |
-| 1.20.1 | Forge 47.4.10 | 17 | `teamecon-forge-1.20.1-1.0.1.jar` |
-| 1.21.1 | Forge 52.1.0 | 21 | `teamecon-forge-1.21.1-1.0.1.jar` |
+| 1.21.1 | NeoForge 21.1.1+ | 21 | `teamecon-neoforge-1.21.1-1.0.2.jar` |
+| 1.21 | NeoForge 21.0.143+ | 21 | `teamecon-neoforge-1.21-1.0.2.jar` |
+| 1.20.1 | Forge 47.4.10 | 17 | `teamecon-forge-1.20.1-1.0.2.jar` |
+| 1.21.1 | Forge 52.1.0 | 21 | `teamecon-forge-1.21.1-1.0.2.jar` |
 
 NeoForge 列出对应 Minecraft 分支的最低正式版本；可选联动模组还需满足各自的依赖要求。
 
@@ -238,7 +238,7 @@ bash ./gradlew releaseMod
 py -3.12 tools/package_release.py --offline
 ```
 
-Python 依赖及联网打包方法见[手动打包指南](docs/手动打包指南.md)。完整打包另需 JDK 17（Forge 1.20.1）及 Python 3.11+；四个目标的命令见打包指南。`release/1.0.1/` 包含四份玩家 JAR、`CHANGELOG.md` 和 `SHA256SUMS.txt`。
+Python 依赖及联网打包方法见[手动打包指南](docs/手动打包指南.md)。完整打包另需 JDK 17（Forge 1.20.1）及 Python 3.11+；四个目标的命令见打包指南。`release/1.0.2/` 包含四份玩家 JAR、`CHANGELOG.md` 和 `SHA256SUMS.txt`。
 
 </details>
 
@@ -259,7 +259,7 @@ Python 依赖及联网打包方法见[手动打包指南](docs/手动打包指�
 | `.github/` | 自动构建、凭据检查工作流和问题反馈模板 |
 | `.githooks/` | 提交前扫描暂存区，阻止已知凭据进入提交 |
 | `dist/` | 本地构建得到的玩家 JAR 与校验值 |
-| `release/`、`release/1.0.1/` | 按版本存放四份玩家 JAR、更新日志与 SHA-256 校验清单 |
+| `release/`、`release/1.0.2/` | 按版本存放四份玩家 JAR、更新日志与 SHA-256 校验清单 |
 | `build/` | 本地构建输出与临时文件 |
 | `.gradle/` | Gradle 构建缓存 |
 | `logs/` | 本地运行日志 |
