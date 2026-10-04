@@ -1,5 +1,15 @@
 # 更新日志 / Changelog
 
+## 未发布 / Unreleased
+
+### 中文
+
+- 刮刮卡恢复纸质票券背景、各卡种彩色标题栏与独立边框样式。
+
+### English
+
+- Restored the scratch tickets’ paper background, card-specific colored headers and distinctive borders.
+
 ## 1.0.2 — 2026-10-04
 
 ### 中文
